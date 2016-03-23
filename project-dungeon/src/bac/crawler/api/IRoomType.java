@@ -1,6 +1,5 @@
 package bac.crawler.api;
 
-import bac.crawler.api.util.Direction;
 import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.IDescribedComponent;
@@ -16,6 +15,13 @@ import bjc.utils.funcdata.FunctionalList;
  *
  */
 public interface IRoomType extends IDescribedComponent {
+	/**
+	 * Get a thing capable of describing the contents of this type of room
+	 * 
+	 * @return A describer for the contents of the type of this room
+	 */
+	public IDescriber getDescriber();
+
 	/**
 	 * Get the directions that exits are in for rooms in this type
 	 * 
@@ -38,11 +44,4 @@ public interface IRoomType extends IDescribedComponent {
 	 * @return A description of the exit in the given description
 	 */
 	public ExitDesc getExitInDirection(RelativeDirection d);
-
-	/**
-	 * Get a thing capable of describing the contents of this type of room
-	 * 
-	 * @return A describer for the contents of the type of this room
-	 */
-	public IDescriber getDescriber();
 }

@@ -17,17 +17,30 @@ import bjc.utils.funcdata.FunctionalList;
  *
  */
 public enum Direction {
-	/*
-	 * The two x-axis directions
+	/**
+	 * Negative z-axis
 	 */
-	NORTH, SOUTH,
-	/*
-	 * The two y-axis directions
+	DOWN,
+	/**
+	 * Positive y-axis
 	 */
-	EAST, WEST,
-	/*
-	 * The two z-axis directions (z because right-hand rule)
-	 */UP, DOWN;
+	EAST,
+	/**
+	 * Positive x-axis
+	 */
+	NORTH,
+	/**
+	 * Negative x-axis
+	 */
+	SOUTH,
+	/**
+	 * Positive z-axis
+	 */
+	UP,
+	/**
+	 * Negative y-axis
+	 */
+	WEST;
 
 	/**
 	 * The source of randomness for picking random directions
@@ -91,6 +104,28 @@ public enum Direction {
 	 */
 	public static Direction properValueOf(String val) {
 		return valueOf(val.toUpperCase());
+	}
+
+	/**
+	 * Test if this direction is a cardinal direction
+	 * 
+	 * @return If the direction is cardinal or not
+	 */
+	public boolean isCardinal() {
+		switch (this) {
+			case EAST:
+			case NORTH:
+			case SOUTH:
+			case WEST:
+				return true;
+			case DOWN:
+			case UP:
+				return false;
+			default:
+				throw new InvalidDirectionException(
+						"WAT. Somehow ended up with an invalid direction "
+								+ this);
+		}
 	}
 
 	/**
@@ -180,27 +215,5 @@ public enum Direction {
 		 * Make sure the word is properly capitalized for english
 		 */
 		return WordUtils.capitalize(super.toString().toLowerCase());
-	}
-
-	/**
-	 * Test if this direction is a cardinal direction
-	 * 
-	 * @return If the direction is cardinal or not
-	 */
-	public boolean isCardinal() {
-		switch (this) {
-			case EAST:
-			case NORTH:
-			case SOUTH:
-			case WEST:
-				return true;
-			case DOWN:
-			case UP:
-				return false;
-			default:
-				throw new InvalidDirectionException(
-						"WAT. Somehow ended up with an invalid direction "
-								+ this);
-		}
 	}
 }

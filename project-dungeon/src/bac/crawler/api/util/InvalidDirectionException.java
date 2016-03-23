@@ -10,6 +10,11 @@ package bac.crawler.api.util;
 public class InvalidDirectionException extends IllegalArgumentException {
 
 	/**
+	 * Version for serialization
+	 */
+	private static final long serialVersionUID = 6852151917518831932L;
+
+	/**
 	 * Create a new {@link InvalidDirectionException} with the given cause
 	 * 
 	 * @param cause
@@ -18,10 +23,5 @@ public class InvalidDirectionException extends IllegalArgumentException {
 	public InvalidDirectionException(String cause) {
 		super(cause);
 	}
-
-	/**
-	 * Version for serialization
-	 */
-	private static final long serialVersionUID = 6852151917518831932L;
 
 }

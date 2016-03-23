@@ -7,11 +7,30 @@ package bac.crawler.api.util;
  *
  */
 public enum RelativeDirection {
-	/*
-	 * Basic cardinal relative directions
+	/**
+	 * Same as direction
 	 */
-	LEFT, RIGHT, FORWARD, BACKWARD;
+	BACKWARD,
+	/**
+	 * Opposing direction
+	 */
+	FORWARD,
+	/**
+	 * Counterclockwise from direction
+	 */
+	LEFT,
+	/**
+	 * Clockwise from direction
+	 */
+	RIGHT;
 
+	/**
+	 * Change another direction by turning the way this direction specifies
+	 * 
+	 * @param d
+	 *            The direction to change
+	 * @return The direction after turning this way
+	 */
 	public Direction makeAbsolute(Direction d) {
 		// Only cardinal directions can be truly absolutized
 		if (d.isCardinal()) {

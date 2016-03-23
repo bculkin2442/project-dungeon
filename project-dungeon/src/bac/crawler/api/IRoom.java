@@ -14,6 +14,13 @@ import bjc.utils.funcdata.FunctionalList;
  */
 public interface IRoom {
 	/**
+	 * Returns a description of the contents of the room
+	 * 
+	 * @return The description of the contents of the room
+	 */
+	public String getDescription();
+
+	/**
 	 * Get the directions that exits lie in
 	 * 
 	 * @return A list of directions that exits lie in
@@ -28,11 +35,4 @@ public interface IRoom {
 	 * @return The exit that lies in the given direction
 	 */
 	public IExit getExitInDirection(Direction d);
-
-	/**
-	 * Returns a description of the contents of the room
-	 * 
-	 * @return The description of the contents of the room
-	 */
-	public String getDescription();
 }

@@ -32,6 +32,32 @@ public class DescriberFileParser {
 	}
 
 	/**
+	 * Continue reading a description
+	 * 
+	 * @param fst
+	 *            The string tokenizer with the rest of the description
+	 * @param stat
+	 *            The current parser states
+	 */
+	private static void continueDescription(FunctionalStringTokenizer fst,
+			DescriberState stat) {
+		String desc = fst.toList((s) -> s).reduceAux("", (t, u) -> t + u,
+				t -> t);
+
+		stat.continueDesc(desc);
+	}
+
+	/**
+	 * End parsing a description
+	 * 
+	 * @param stat
+	 *            The current state of the parser
+	 */
+	private static void endDesc(DescriberState stat) {
+		stat.endDesc();
+	}
+
+	/**
 	 * Parse a describer from a provided stream
 	 * 
 	 * @param is
@@ -62,31 +88,5 @@ public class DescriberFileParser {
 		par.doWith((left, right) -> {
 			right.startDesc(prob, desc);
 		});
-	}
-
-	/**
-	 * Continue reading a description
-	 * 
-	 * @param fst
-	 *            The string tokenizer with the rest of the description
-	 * @param stat
-	 *            The current parser states
-	 */
-	private static void continueDescription(FunctionalStringTokenizer fst,
-			DescriberState stat) {
-		String desc = fst.toList((s) -> s).reduceAux("", (t, u) -> t + u,
-				t -> t);
-
-		stat.continueDesc(desc);
-	}
-
-	/**
-	 * End parsing a description
-	 * 
-	 * @param stat
-	 *            The current state of the parser
-	 */
-	private static void endDesc(DescriberState stat) {
-		stat.endDesc();
 	}
 }

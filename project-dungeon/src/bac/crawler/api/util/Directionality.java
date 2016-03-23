@@ -7,17 +7,17 @@ package bac.crawler.api.util;
  *
  */
 public enum Directionality {
-	/*
-	 * An exit that is always only traversable one way
-	 */
-	UNIDIRECTIONAL,
-	/*
+	/**
 	 * An exit that is always traversable both ways
 	 */
 	BIDIRECTIONAL,
-	/*
+	/**
 	 * An exit that can be either unidirectional or bidirectional
 	 */
-	BOTH
+	BOTH,
+	/**
+	 * An exit that is always only traversable one way
+	 */
+	UNIDIRECTIONAL
 
 }

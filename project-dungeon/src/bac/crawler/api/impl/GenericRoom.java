@@ -32,6 +32,11 @@ public class GenericRoom implements IRoom {
 	}
 
 	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	@Override
 	public FunctionalList<Direction> getExitDirections() {
 		Set<Direction> extDirs = exits.keySet();
 		FunctionalList<Direction> ret = new FunctionalList<>();
@@ -46,11 +51,6 @@ public class GenericRoom implements IRoom {
 	@Override
 	public IExit getExitInDirection(Direction d) {
 		return exits.get(d);
-	}
-
-	@Override
-	public String getDescription() {
-		return description;
 	}
 
 }
