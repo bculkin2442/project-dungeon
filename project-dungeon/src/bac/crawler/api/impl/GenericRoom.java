@@ -17,6 +17,7 @@ import bjc.utils.funcdata.FunctionalList;
 public class GenericRoom implements IRoom {
 	private String					description;
 	private Map<Direction, IExit>	exits;
+	private boolean					visited;
 
 	/**
 	 * Create a new generic room
@@ -53,4 +54,13 @@ public class GenericRoom implements IRoom {
 		return exits.get(d);
 	}
 
+	@Override
+	public boolean hasBeenVisited() {
+		return visited;
+	}
+
+	@Override
+	public void visit() {
+		visited = true;
+	}
 }

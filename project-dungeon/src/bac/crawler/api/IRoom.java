@@ -35,4 +35,16 @@ public interface IRoom {
 	 * @return The exit that lies in the given direction
 	 */
 	public IExit getExitInDirection(Direction d);
+
+	/**
+	 * Check if this room has been visited before
+	 * 
+	 * @return Whether or not this room has been visited before
+	 */
+	public boolean hasBeenVisited();
+
+	/**
+	 * Mark a room as being visited
+	 */
+	public void visit();
 }
