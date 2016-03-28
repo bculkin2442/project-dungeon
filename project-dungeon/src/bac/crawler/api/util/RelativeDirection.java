@@ -54,4 +54,15 @@ public enum RelativeDirection {
 			return this.makeAbsolute(Direction.NORTH);
 		}
 	}
+
+	/**
+	 * Properly convert a string to a relative direction
+	 * 
+	 * @param s
+	 *            The string to convert
+	 * @return The relative direction represented by the string
+	 */
+	public static RelativeDirection properValueOf(String s) {
+		return valueOf(s.toUpperCase());
+	}
 }
