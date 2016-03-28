@@ -14,11 +14,22 @@ import bjc.utils.gen.WeightedRandom;
  *
  */
 public class RoomArchetypeState {
+	private Path						currentDirectory;
 	private Path						containingDirectory;
 
 	private WeightedRandom<IRoomType>	roomTypes;
 
 	private int							currentProbability;
+
+	/**
+	 * Create a new state for a room archetype
+	 * 
+	 * @param currentDir
+	 *            The directory this room archetype is loaded from
+	 */
+	public RoomArchetypeState(Path currentDir) {
+		currentDirectory = currentDir;
+	}
 
 	/**
 	 * Set the containing directory for the files this room archetype needs
@@ -27,7 +38,7 @@ public class RoomArchetypeState {
 	 *            The path of a directory with supporting files.
 	 */
 	public void setContainingDirectory(Path container) {
-		containingDirectory = container;
+		containingDirectory = currentDirectory.resolve(container);
 	}
 
 	/**
@@ -70,16 +81,11 @@ public class RoomArchetypeState {
 	 */
 	public void addType(Path typePath) {
 		if (containingDirectory != null) {
-			roomTypes.addProb(currentProbability, loadTypeFromPath(
-					containingDirectory.resolve(typePath)));
+			roomTypes.addProb(currentProbability, RoomTypeFileParser
+					.readRoomType(containingDirectory.resolve(typePath)));
 		} else {
 			roomTypes.addProb(currentProbability,
-					loadTypeFromPath(typePath));
+					RoomTypeFileParser.readRoomType(typePath));
 		}
-	}
-
-	private static IRoomType loadTypeFromPath(Path typePath) {
-		// TODO implement me :)
-		return null;
 	}
 }
