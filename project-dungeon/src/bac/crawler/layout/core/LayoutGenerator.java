@@ -26,15 +26,55 @@ import bjc.utils.data.GenHolder;
  *
  */
 public class LayoutGenerator implements IDungeon {
-	private static Random			rng	= new Random();
+	static {
+		String name = "Core Dungeon Generator";
+		String author = "Benjamin Culkin";
 
-	private ComponentDescription	cdesc;
+		int version = 1;
 
-	private IRoomArchetype			doors;
+		String description =
+				"A simple table-based dungeon generator using tables from"
+						+ " D&D's Fifth-edition DMG to create rooms. Works on a lazy"
+						+ " basis, as only explored rooms are generated";
 
-	private IRoomArchetype			initialRooms;
-	private IRoomArchetype			passages;
-	private IRoomArchetype			stairs;
+		cdesc = new ComponentDescription(name, author, description,
+				version);
+	}
+
+	private static Random				rng	= new Random();
+	private static ComponentDescription	cdesc;
+
+	private IRoomArchetype				doors;
+
+	private IRoomArchetype				initialRooms;
+	private IRoomArchetype				passages;
+	private IRoomArchetype				stairs;
+
+	/**
+	 * Create a new core layout generator that uses rooms from the provided
+	 * archetypes
+	 * 
+	 * @param initialRooms
+	 *            The archetype for initial rooms. These are the rooms
+	 *            where you enter the game, as well as the rooms you end up
+	 *            in if you fall/jump down a well
+	 * @param doors
+	 *            The archetype for what lies beyond doors. Has nothing to
+	 *            do with the doors themselves, only what lies on the other
+	 *            side of them
+	 * @param passages
+	 *            The archetype for corridors and such.
+	 * @param stairs
+	 *            The archetype for what lies on the end of stairs
+	 */
+	public LayoutGenerator(IRoomArchetype initialRooms,
+			IRoomArchetype doors, IRoomArchetype passages,
+			IRoomArchetype stairs) {
+		this.doors = doors;
+		this.initialRooms = initialRooms;
+		this.passages = passages;
+		this.stairs = stairs;
+	}
 
 	private IRoom buildConnectingRoom(GenHolder<IRoom> entranceRoom,
 			Direction entranceDirection, IRoomType type,
