@@ -11,7 +11,8 @@ import com.eleet.dragonconsole.CommandProcessor;
 public class IOProcessor extends CommandProcessor {
 	@Override
 	public void processCommand(String input) {
-		// TODO Figure out how this is going to work
-		super.processCommand(input);
+		this.output("\n");
+		this.output("You entered: " + input + "\n");
+		this.output("crawler>>");
 	}
 }

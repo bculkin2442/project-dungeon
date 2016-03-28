@@ -55,6 +55,9 @@ public class DungeonCrawler {
 		dcf.setPreferredSize(new Dimension(640, 480));
 
 		dcf.setJMenuBar(createMenubar(dcf));
+		dcf.setResizable(true);
+
+		dcf.setTitle("Project: Dungeon Crawler Pre-alpha Version");
 	}
 
 	/**
