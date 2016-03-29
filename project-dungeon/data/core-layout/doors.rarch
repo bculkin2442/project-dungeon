@@ -1,0 +1,12 @@
+pragma containing-directory doors
+
+pragma component-description doors.cdesc
+
+9 chamber.rtype
+
+5 passage-20-1passage.rtype
+
+2 passage-10-2passage-t.rtype
+
+1 stairs.rtype
+	deadend-trap.rtype

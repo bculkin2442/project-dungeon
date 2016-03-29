@@ -1,0 +1,8 @@
+pragma containing-directory stairs
+
+pragma component-description stairs.cdesc
+
+2 deadend.rtype
+
+9 passage.rtype
+	chamber.rtype

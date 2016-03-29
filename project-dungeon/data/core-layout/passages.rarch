@@ -1,0 +1,25 @@
+pragma containing-directory passages
+
+pragma component-description passages.cdesc
+
+2 passage-30-1passage.rtype
+
+1 passage-20-1door-r.rtype
+
+1 passage-20-1door-l.rtype
+
+1 passage-20-1door.rtype
+
+2 passage-20-1passage-r.rtype
+
+2 passage-20-1passage-l.rtype
+
+1 passage-20-deadend-secret.rtype
+
+2 passage-20-turnleft.rtype
+
+2 passage-20-turnright.rtype
+
+4 chamber.rtype
+
+1 stairs.rtype

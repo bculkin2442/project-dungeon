@@ -1,0 +1,14 @@
+pragma containing-directory init-rooms
+
+pragma component-description init-rooms.cdesc
+
+1 square-2020-4passage.rtype
+	square-2020-2door-1passage.rtype
+	square-4040-3door.rtype
+	rectangle-8020-2longpassage-2shortdoors.rtype
+	rectangle-2040-4passage.rtype
+	circle-40-4passage.rtype
+	circle-40-4passage-1well.rtype
+	square-2020-2door-1passage-1secretdoor.rtype
+	passage-10-3passage.rtype
+	passage-10-4passage.rtype
