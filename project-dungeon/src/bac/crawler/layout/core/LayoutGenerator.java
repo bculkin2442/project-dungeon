@@ -32,10 +32,9 @@ public class LayoutGenerator implements IDungeon {
 
 		int version = 1;
 
-		String description =
-				"A simple table-based dungeon generator using tables from"
-						+ " D&D's Fifth-edition DMG to create rooms. Works on a lazy"
-						+ " basis, as only explored rooms are generated";
+		String description = "A simple table-based dungeon generator using tables from"
+				+ " D&D's Fifth-edition DMG to create rooms. Works on a lazy"
+				+ " basis, as only explored rooms are generated";
 
 		cdesc = new ComponentDescription(name, author, description,
 				version);
@@ -84,10 +83,10 @@ public class LayoutGenerator implements IDungeon {
 
 		for (RelativeDirection relativeDirection : type.getExitDirections()
 				.toIterable()) {
-			Direction absoluteDir =
-					relativeDirection.makeAbsolute(entranceDirection);
-			ExitDesc exitDescription =
-					type.getExitInDirection(relativeDirection);
+			Direction absoluteDir = relativeDirection
+					.makeAbsolute(entranceDirection);
+			ExitDesc exitDescription = type
+					.getExitInDirection(relativeDirection);
 
 			GenHolder<Supplier<IRoom>> roomSupplier = new GenHolder<>();
 
@@ -149,9 +148,9 @@ public class LayoutGenerator implements IDungeon {
 										+ ". WAT");
 				}
 
-				LazyExit lexit =
-						new LazyExit(exitDescriber::getDescription,
-								roomSupplier.unwrap((s) -> s));
+				LazyExit lexit = new LazyExit(
+						exitDescriber::getDescription,
+						roomSupplier.unwrap((s) -> s));
 
 				exits.put(absoluteDir, lexit);
 			});
@@ -187,10 +186,10 @@ public class LayoutGenerator implements IDungeon {
 
 		for (RelativeDirection relativeDirection : type.getExitDirections()
 				.toIterable()) {
-			Direction absoluteDir =
-					relativeDirection.makeAbsolute(entrance);
-			ExitDesc exitDescription =
-					type.getExitInDirection(relativeDirection);
+			Direction absoluteDir = relativeDirection
+					.makeAbsolute(entrance);
+			ExitDesc exitDescription = type
+					.getExitInDirection(relativeDirection);
 
 			GenHolder<Supplier<IRoom>> roomSupplier = new GenHolder<>();
 
@@ -252,9 +251,9 @@ public class LayoutGenerator implements IDungeon {
 										+ ". WAT");
 				}
 
-				LazyExit lexit =
-						new LazyExit(exitDescriber::getDescription,
-								roomSupplier.unwrap((s) -> s));
+				LazyExit lexit = new LazyExit(
+						exitDescriber::getDescription,
+						roomSupplier.unwrap((s) -> s));
 
 				exits.put(absoluteDir, lexit);
 			});
