@@ -11,6 +11,7 @@ import bac.crawler.api.impl.GenericRoomType;
 import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.ComponentDescription;
+import bjc.utils.components.ComponentDescriptionFileParser;
 
 /**
  * State for room type parser
@@ -29,13 +30,10 @@ public class RoomTypeState {
 	/**
 	 * Create a new room type parsing state
 	 * 
-	 * @param cdsc
-	 *            The description of this room type
 	 * @param currentDir
 	 *            The directory this room type is in
 	 */
-	public RoomTypeState(ComponentDescription cdsc, Path currentDir) {
-		cdesc = cdsc;
+	public RoomTypeState(Path currentDir) {
 		currentDirectory = currentDir;
 	}
 
@@ -74,6 +72,22 @@ public class RoomTypeState {
 	 */
 	public IRoomType toRoomType() {
 		return new GenericRoomType(cdesc, roomDescriber, exits);
+	}
+
+	/**
+	 * Set the description of this
+	 * 
+	 * @param descPath
+	 */
+	public void setComponentDescription(Path descPath) {
+		try {
+			cdesc = ComponentDescriptionFileParser
+					.fromStream(new FileInputStream(
+							currentDirectory.resolve(descPath).toFile()));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

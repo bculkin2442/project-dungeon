@@ -12,6 +12,7 @@ import bac.crawler.api.util.ExitType;
 import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.data.Pair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
+import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;
 
 /**
@@ -34,6 +35,12 @@ public class RoomTypeFileParser {
 				RoomTypeFileParser::parseExit, (stat) -> {
 					// No need to do anything on rule end
 				});
+
+		reader.addPragma("component-description", (fst, stat) -> {
+			String path = ListUtils.collapseTokens(fst.toList((s) -> s));
+
+			stat.setComponentDescription(Paths.get(path, ""));
+		});
 	}
 
 	private static void beginRule(FunctionalStringTokenizer fst,
@@ -91,7 +98,7 @@ public class RoomTypeFileParser {
 		Path currentDir = inputFile.resolveSibling("");
 
 		try {
-			RoomTypeState initState = new RoomTypeState(null, currentDir);
+			RoomTypeState initState = new RoomTypeState(currentDir);
 			FileInputStream stream = new FileInputStream(
 					inputFile.toFile());
 

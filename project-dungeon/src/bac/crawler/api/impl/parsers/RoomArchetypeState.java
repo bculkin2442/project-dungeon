@@ -1,10 +1,14 @@
 package bac.crawler.api.impl.parsers;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.IRoomType;
 import bac.crawler.api.impl.GenericRoomArchetype;
+import bjc.utils.components.ComponentDescription;
+import bjc.utils.components.ComponentDescriptionFileParser;
 import bjc.utils.gen.WeightedRandom;
 
 /**
@@ -16,6 +20,8 @@ import bjc.utils.gen.WeightedRandom;
 public class RoomArchetypeState {
 	private Path						currentDirectory;
 	private Path						containingDirectory;
+
+	private ComponentDescription		cdesc;
 
 	private WeightedRandom<IRoomType>	roomTypes;
 
@@ -58,7 +64,7 @@ public class RoomArchetypeState {
 	 * @return The archetype this state was used to parse
 	 */
 	public IRoomArchetype getArchetype() {
-		return new GenericRoomArchetype(roomTypes, null);
+		return new GenericRoomArchetype(roomTypes, cdesc);
 	}
 
 	/**
@@ -86,6 +92,23 @@ public class RoomArchetypeState {
 		} else {
 			roomTypes.addProb(currentProbability,
 					RoomTypeFileParser.readRoomType(typePath));
+		}
+	}
+
+	/**
+	 * Set the description for this archetype
+	 * 
+	 * @param descPath
+	 *            The path to the file with the description
+	 */
+	public void setComponentDescription(Path descPath) {
+		try {
+			cdesc = ComponentDescriptionFileParser
+					.fromStream(new FileInputStream(containingDirectory
+							.resolve(descPath).toFile()));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import bac.crawler.api.IRoomArchetype;
 import bjc.utils.data.Pair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
+import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;
 
 /**
@@ -21,7 +22,6 @@ public class RoomArchetypeFileParser {
 	private static RuleBasedConfigReader<RoomArchetypeState> reader;
 
 	static {
-		// TODO write the reader methods
 		reader = new RuleBasedConfigReader<>(
 				RoomArchetypeFileParser::startArchetypes,
 				RoomArchetypeFileParser::continueArchetypes, (stat) -> {
@@ -30,10 +30,15 @@ public class RoomArchetypeFileParser {
 				});
 
 		reader.addPragma("containing-directory", (fst, stat) -> {
-			String path = fst.toList((s) -> s).reduceAux("",
-					(newString, state) -> state + newString, (s) -> s);
+			String path = ListUtils.collapseTokens(fst.toList((s) -> s));
 
 			stat.setContainingDirectory(Paths.get(path, ""));
+		});
+
+		reader.addPragma("component-description", (fst, stat) -> {
+			String path = ListUtils.collapseTokens(fst.toList((s) -> s));
+
+			stat.setComponentDescription(Paths.get(path, ""));
 		});
 	}
 
@@ -64,7 +69,7 @@ public class RoomArchetypeFileParser {
 	 *            The file to use for input
 	 * @return A room archetype parsed from the provided file
 	 */
-	public IRoomArchetype parseFromStream(File inputFile) {
+	public static IRoomArchetype parseFromStream(File inputFile) {
 
 		try {
 			Path currentDir = inputFile.toPath().resolveSibling("");
