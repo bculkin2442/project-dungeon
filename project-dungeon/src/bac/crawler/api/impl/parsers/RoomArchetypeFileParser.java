@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import bac.crawler.api.IRoomArchetype;
 import bjc.utils.data.Pair;
@@ -40,6 +41,13 @@ public class RoomArchetypeFileParser {
 
 			stat.setComponentDescription(Paths.get(path, ""));
 		});
+
+		reader.addPragma("from-archetype", (fst, stat) -> {
+			int prob = Integer.parseInt(fst.nextToken());
+
+			stat.addReference(
+					ListUtils.collapseTokens(fst.toList((s) -> s)), prob);
+		});
 	}
 
 	private static void startArchetypes(FunctionalStringTokenizer fst,
@@ -67,16 +75,19 @@ public class RoomArchetypeFileParser {
 	 * 
 	 * @param inputFile
 	 *            The file to use for input
+	 * @param archetypes
+	 *            The archetypes to use for reference
 	 * @return A room archetype parsed from the provided file
 	 */
-	public static IRoomArchetype parseFromStream(File inputFile) {
+	public static IRoomArchetype parseFromStream(File inputFile,
+			Map<String, IRoomArchetype> archetypes) {
 
 		try {
 			Path currentDir = inputFile.toPath().resolveSibling("");
 
 			return reader
 					.fromStream(new FileInputStream(inputFile),
-							new RoomArchetypeState(currentDir))
+							new RoomArchetypeState(currentDir, archetypes))
 					.getArchetype();
 		} catch (FileNotFoundException fnfex) {
 			System.err.println("Error loading an archetype from file "

@@ -3,7 +3,9 @@ package bac.crawler.api.impl.parsers;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.IRoomType;
@@ -19,23 +21,28 @@ import bjc.utils.gen.WeightedRandom;
  *
  */
 public class RoomArchetypeState {
-	private Path						currentDirectory;
-	private Path						containingDirectory;
+	private Path								currentDirectory;
+	private Path								containingDirectory;
 
-	private ComponentDescription		cdesc;
+	private ComponentDescription				cdesc;
 
-	private WeightedRandom<IRoomType>	roomTypes;
+	private WeightedRandom<Supplier<IRoomType>>	roomTypes;
 
-	private int							currentProbability;
+	private int									currentProbability;
+	private Map<String, IRoomArchetype>			archetypes;
 
 	/**
 	 * Create a new state for a room archetype
 	 * 
 	 * @param currentDir
 	 *            The directory this room archetype is loaded from
+	 * @param archetypes
+	 *            A set of archetypes to use for reference
 	 */
-	public RoomArchetypeState(Path currentDir) {
+	public RoomArchetypeState(Path currentDir,
+			Map<String, IRoomArchetype> archetypes) {
 		currentDirectory = currentDir;
+		this.archetypes = archetypes;
 
 		roomTypes = new WeightedRandom<>(new Random());
 	}
@@ -90,11 +97,12 @@ public class RoomArchetypeState {
 	 */
 	public void addType(Path typePath) {
 		if (containingDirectory != null) {
-			roomTypes.addProbability(currentProbability, RoomTypeFileParser
-					.readRoomType(containingDirectory.resolve(typePath)));
+			roomTypes.addProbability(currentProbability,
+					() -> RoomTypeFileParser.readRoomType(
+							containingDirectory.resolve(typePath)));
 		} else {
 			roomTypes.addProbability(currentProbability,
-					RoomTypeFileParser.readRoomType(typePath));
+					() -> RoomTypeFileParser.readRoomType(typePath));
 		}
 	}
 
@@ -113,5 +121,18 @@ public class RoomArchetypeState {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Add a reference to another archetype
+	 * 
+	 * @param reference
+	 *            The name of the archetype to reference
+	 * @param prob
+	 *            The probability of referencing that archeetype
+	 */
+	public void addReference(String reference, int prob) {
+		roomTypes.addProbability(prob,
+				() -> archetypes.get(reference).getType());
 	}
 }

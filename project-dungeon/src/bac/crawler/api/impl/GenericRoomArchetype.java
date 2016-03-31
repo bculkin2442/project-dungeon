@@ -1,5 +1,7 @@
 package bac.crawler.api.impl;
 
+import java.util.function.Supplier;
+
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.IRoomType;
 import bjc.utils.components.ComponentDescription;
@@ -12,8 +14,8 @@ import bjc.utils.gen.WeightedRandom;
  *
  */
 public class GenericRoomArchetype implements IRoomArchetype {
-	private WeightedRandom<IRoomType>	roomTypes;
-	private ComponentDescription		cdesc;
+	private WeightedRandom<Supplier<IRoomType>>	roomTypes;
+	private ComponentDescription				cdesc;
 
 	/**
 	 * Create a new room archetype
@@ -23,7 +25,8 @@ public class GenericRoomArchetype implements IRoomArchetype {
 	 * @param cdesc
 	 *            The description of this archetype
 	 */
-	public GenericRoomArchetype(WeightedRandom<IRoomType> roomTypes,
+	public GenericRoomArchetype(
+			WeightedRandom<Supplier<IRoomType>> roomTypes,
 			ComponentDescription cdesc) {
 		this.roomTypes = roomTypes;
 		this.cdesc = cdesc;
@@ -31,7 +34,7 @@ public class GenericRoomArchetype implements IRoomArchetype {
 
 	@Override
 	public IRoomType getType() {
-		return roomTypes.generateValue();
+		return roomTypes.generateValue().get();
 	}
 
 	/*
