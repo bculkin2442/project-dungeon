@@ -28,6 +28,7 @@ public class RoomTypeFileParser {
 	private static IDescriber							passageDescriber;
 	private static IDescriber							stairDescriber;
 	private static IDescriber							wellDescriber;
+	private static IDescriber							chamberDescriber;
 
 	static {
 		// The only continued rule is exits
@@ -48,9 +49,8 @@ public class RoomTypeFileParser {
 		par.doWith((initString, stat) -> {
 			switch (initString) {
 				case "describer":
-					String describerPath = fst.toList((s) -> s).reduceAux(
-							"", (currString, state) -> state + currString,
-							(s) -> s);
+					String describerPath = ListUtils
+							.collapseTokens(fst.toList((s) -> s));
 
 					stat.setDescriber(Paths.get(describerPath, ""));
 					break;
@@ -78,6 +78,9 @@ public class RoomTypeFileParser {
 				break;
 			case WELL:
 				stat.addExit(rdir, new ExitDesc(eType, wellDescriber));
+				break;
+			case CHAMBER:
+				stat.addExit(rdir, new ExitDesc(eType, chamberDescriber));
 				break;
 			default:
 				throw new IllegalStateException(
@@ -150,5 +153,15 @@ public class RoomTypeFileParser {
 	 */
 	public static void setWellExitDescriber(IDescriber wellExitDescriber) {
 		RoomTypeFileParser.wellDescriber = wellExitDescriber;
+	}
+
+	/**
+	 * Set the describer to use for describing chambers
+	 * 
+	 * @param chamberDescriber
+	 *            The describer for describing chambers
+	 */
+	public static void setChamberDescriber(IDescriber chamberDescriber) {
+		RoomTypeFileParser.chamberDescriber = chamberDescriber;
 	}
 }
