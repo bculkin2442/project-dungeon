@@ -1,5 +1,6 @@
 package bac.crawler.commands;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.eleet.dragonconsole.DragonConsole;
@@ -16,11 +17,15 @@ import bac.crawler.navigator.NavigatorCore;
  *
  */
 public class InitialCommandMode implements ICommandMode {
-	private DragonConsole console;
+	private DragonConsole	console;
+	private Path			dataDir;
 
 	@Override
 	public ICommandMode processCommand(String command, String[] args) {
 		switch (command) {
+			case "list":
+				listCommands();
+				return this;
 			case "start":
 				return startNavigationMode();
 			default:
@@ -40,9 +45,13 @@ public class InitialCommandMode implements ICommandMode {
 		return this;
 	}
 
+	private void listCommands() {
+		// TODO Auto-generated method stub
+
+	}
+
 	private ICommandMode startNavigationMode() {
-		IDungeon dungeon = GeneratorInitializer
-				.createGenerator(Paths.get("data", "core-layout"));
+		IDungeon dungeon = GeneratorInitializer.createGenerator(dataDir);
 
 		NavigatorCore navCore = new NavigatorCore(dungeon.buildDungeon());
 
@@ -70,5 +79,6 @@ public class InitialCommandMode implements ICommandMode {
 	public InitialCommandMode(DragonConsole cons) {
 		console = cons;
 
+		dataDir = Paths.get("data", "core-layout");
 	}
 }

@@ -7,5 +7,5 @@ package bac.crawler;
  *
  */
 public class CrawlerState {
-
+	
 }
