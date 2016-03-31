@@ -31,7 +31,7 @@ public class GenericRoomArchetype implements IRoomArchetype {
 
 	@Override
 	public IRoomType getType() {
-		return roomTypes.genVal();
+		return roomTypes.generateValue();
 	}
 
 	/*

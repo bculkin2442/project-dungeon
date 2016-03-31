@@ -27,6 +27,6 @@ public class GenericDescriber implements IDescriber {
 
 	@Override
 	public String getDescription() {
-		return descs.genVal();
+		return descs.generateValue();
 	}
 }

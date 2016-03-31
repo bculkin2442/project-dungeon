@@ -26,7 +26,7 @@ public class LazyExit extends LazyPair<String, IRoom> implements IExit {
 	 *            The source to use for obtaining a destination room
 	 */
 	public LazyExit(Supplier<String> dsc, Supplier<IRoom> dst) {
-		del = new LazyHolder<>(() -> new Pair<>(dsc.get(), dst.get()));
+		delegatePair = new LazyHolder<>(() -> new Pair<>(dsc.get(), dst.get()));
 	}
 
 	@Override

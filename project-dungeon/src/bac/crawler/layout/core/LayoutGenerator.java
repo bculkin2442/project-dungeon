@@ -43,9 +43,10 @@ public class LayoutGenerator implements IDungeon {
 	private static Random				rng	= new Random();
 	private static ComponentDescription	cdesc;
 
-	private IRoomArchetype				doors;
-
 	private IRoomArchetype				initialRooms;
+
+	private IRoomArchetype				chambers;
+	private IRoomArchetype				doors;
 	private IRoomArchetype				passages;
 	private IRoomArchetype				stairs;
 
@@ -68,11 +69,12 @@ public class LayoutGenerator implements IDungeon {
 	 */
 	public LayoutGenerator(IRoomArchetype initialRooms,
 			IRoomArchetype doors, IRoomArchetype passages,
-			IRoomArchetype stairs) {
+			IRoomArchetype stairs, IRoomArchetype chambers) {
 		this.doors = doors;
 		this.initialRooms = initialRooms;
 		this.passages = passages;
 		this.stairs = stairs;
+		this.chambers = chambers;
 	}
 
 	private IRoom buildConnectingRoom(GenHolder<IRoom> entranceRoom,
@@ -114,7 +116,7 @@ public class LayoutGenerator implements IDungeon {
 						} else {
 							roomSupplier.transform((r) -> () -> {
 								return buildConnectingRoom(roomHolder,
-										absoluteDir, passages.getType(),
+										absoluteDir, chambers.getType(),
 										entranceDescriber);
 							});
 						}
@@ -142,6 +144,12 @@ public class LayoutGenerator implements IDungeon {
 							return buildInitialRoom(stairs.getType());
 						});
 						break;
+					case CHAMBER:
+						roomSupplier.transform((r) -> () -> {
+							return buildConnectingRoom(roomHolder,
+									absoluteDir, stairs.getType(),
+									entranceDescriber);
+						});
 					default:
 						throw new IllegalArgumentException(
 								"Got an invalid exit type " + exitType

@@ -1,0 +1,17 @@
+pragma containing-directory chambers
+
+pragma component-description chambers.cdesc
+
+2 square-2020.rtype
+	square-3030.rtype
+	square-4040.rtype
+	rectangle-2030.rtype
+	rectangle-3040.rtype
+	rectangle 4050-l.rtype
+
+1 rectangle-5080-l.rtype
+	circle-30.rtype
+	circle-50-l.rtype
+	octagon-4040-l.rtype
+	octagon-6060-l.rtype
+	trapezoid-4060-l.rtype

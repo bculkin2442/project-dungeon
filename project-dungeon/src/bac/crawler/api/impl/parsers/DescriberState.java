@@ -37,7 +37,7 @@ public class DescriberState {
 	 * Stop parsing a description
 	 */
 	public void endDesc() {
-		descs.addProb(prob, desc);
+		descs.addProbability(prob, desc);
 	}
 
 	/**

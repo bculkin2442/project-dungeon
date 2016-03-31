@@ -27,7 +27,11 @@ public enum ExitType {
 	/**
 	 * A well/hole that leads down and is always only oneway
 	 */
-	WELL(UNIDIRECTIONAL);
+	WELL(UNIDIRECTIONAL),
+	/**
+	 * A chamber entrance that is always two way
+	 */
+	CHAMBER(BIDIRECTIONAL);
 
 	/**
 	 * Create a value of the enumeration from a string

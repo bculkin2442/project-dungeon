@@ -13,12 +13,12 @@ import bjc.utils.data.Pair;
 public class Exit extends Pair<String, IRoom> implements IExit {
 	@Override
 	public String getDescription() {
-		return l;
+		return leftValue;
 	}
 
 	@Override
 	public IRoom getDestination() {
-		return r;
+		return rightValue;
 	}
 
 }

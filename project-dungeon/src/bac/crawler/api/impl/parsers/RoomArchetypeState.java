@@ -3,6 +3,7 @@ package bac.crawler.api.impl.parsers;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.util.Random;
 
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.IRoomType;
@@ -35,6 +36,8 @@ public class RoomArchetypeState {
 	 */
 	public RoomArchetypeState(Path currentDir) {
 		currentDirectory = currentDir;
+
+		roomTypes = new WeightedRandom<>(new Random());
 	}
 
 	/**
@@ -87,10 +90,10 @@ public class RoomArchetypeState {
 	 */
 	public void addType(Path typePath) {
 		if (containingDirectory != null) {
-			roomTypes.addProb(currentProbability, RoomTypeFileParser
+			roomTypes.addProbability(currentProbability, RoomTypeFileParser
 					.readRoomType(containingDirectory.resolve(typePath)));
 		} else {
-			roomTypes.addProb(currentProbability,
+			roomTypes.addProbability(currentProbability,
 					RoomTypeFileParser.readRoomType(typePath));
 		}
 	}

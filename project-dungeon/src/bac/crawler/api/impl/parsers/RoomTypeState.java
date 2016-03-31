@@ -3,6 +3,7 @@ package bac.crawler.api.impl.parsers;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
 
 import bac.crawler.api.IDescriber;
@@ -35,6 +36,8 @@ public class RoomTypeState {
 	 */
 	public RoomTypeState(Path currentDir) {
 		currentDirectory = currentDir;
+
+		exits = new HashMap<>();
 	}
 
 	/**

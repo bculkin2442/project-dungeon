@@ -3,8 +3,6 @@ package bac.crawler.layout.core;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import java.util.Map;
-
 import bac.crawler.api.IDungeon;
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.impl.parsers.DescriberFileParser;
@@ -36,12 +34,12 @@ public class GeneratorInitializer {
 							.parseFromStream(inputPath);
 				});
 
-		Map<String, IRoomArchetype> components = archetypeRepo
-				.getComponents();
-
 		LayoutGenerator lgen = new LayoutGenerator(
-				components.get("init-rooms"), components.get("doors"),
-				components.get("passages"), components.get("stairs"));
+				archetypeRepo.getComponentByName("init-rooms.rarch"),
+				archetypeRepo.getComponentByName("doors.rarch"),
+				archetypeRepo.getComponentByName("passages.rarch"),
+				archetypeRepo.getComponentByName("stairs.rarch"),
+				archetypeRepo.getComponentByName("chambers.rarch"));
 
 		return lgen;
 	}
