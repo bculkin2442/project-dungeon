@@ -33,8 +33,14 @@ public class GenericRoomArchetype implements IRoomArchetype {
 	}
 
 	@Override
-	public IRoomType getType() {
-		return roomTypes.generateValue().get();
+	public IRoomType getType(boolean hasEntrance) {
+		IRoomType type = roomTypes.generateValue().get();
+
+		if (hasEntrance && type instanceof ComplexRoomType) {
+			((ComplexRoomType) type).setHasEntrance(true);
+		}
+
+		return type;
 	}
 
 	/*

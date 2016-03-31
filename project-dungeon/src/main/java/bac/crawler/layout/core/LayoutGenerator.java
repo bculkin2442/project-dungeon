@@ -87,7 +87,7 @@ public class LayoutGenerator implements IDungeon {
 					case DOOR:
 						roomSupplier.transform((r) -> () -> {
 							return buildConnectingRoom(roomHolder,
-									absoluteDir, doors.getType(),
+									absoluteDir, doors.getType(true),
 									entranceDescriber);
 						});
 						break;
@@ -99,12 +99,13 @@ public class LayoutGenerator implements IDungeon {
 							// empirical rule
 							roomSupplier.transform((r) -> () -> {
 								return buildRoom(absoluteDir,
-										passages.getType());
+										passages.getType(false));
 							});
 						} else {
 							roomSupplier.transform((r) -> () -> {
 								return buildConnectingRoom(roomHolder,
-										absoluteDir, chambers.getType(),
+										absoluteDir,
+										chambers.getType(true),
 										entranceDescriber);
 							});
 						}
@@ -117,25 +118,25 @@ public class LayoutGenerator implements IDungeon {
 							// empirical rule
 							roomSupplier.transform((r) -> () -> {
 								return buildRoom(absoluteDir,
-										stairs.getType());
+										stairs.getType(false));
 							});
 						} else {
 							roomSupplier.transform((r) -> () -> {
 								return buildConnectingRoom(roomHolder,
-										absoluteDir, stairs.getType(),
+										absoluteDir, stairs.getType(true),
 										entranceDescriber);
 							});
 						}
 						break;
 					case WELL:
 						roomSupplier.transform((r) -> () -> {
-							return buildInitialRoom(stairs.getType());
+							return buildInitialRoom(stairs.getType(false));
 						});
 						break;
 					case CHAMBER:
 						roomSupplier.transform((r) -> () -> {
 							return buildConnectingRoom(roomHolder,
-									absoluteDir, stairs.getType(),
+									absoluteDir, stairs.getType(true),
 									entranceDescriber);
 						});
 					default:
@@ -167,7 +168,7 @@ public class LayoutGenerator implements IDungeon {
 
 	@Override
 	public IRoom buildDungeon() {
-		return buildInitialRoom(initialRooms.getType());
+		return buildInitialRoom(initialRooms.getType(false));
 	}
 
 	private IRoom buildInitialRoom(IRoomType type) {
@@ -196,7 +197,7 @@ public class LayoutGenerator implements IDungeon {
 					case DOOR:
 						roomSupplier.transform((r) -> () -> {
 							return buildConnectingRoom(roomHolder,
-									absoluteDir, doors.getType(),
+									absoluteDir, doors.getType(true),
 									exitDescriber);
 						});
 						break;
@@ -208,12 +209,13 @@ public class LayoutGenerator implements IDungeon {
 							// empirical rule
 							roomSupplier.transform((r) -> () -> {
 								return buildRoom(absoluteDir,
-										passages.getType());
+										passages.getType(false));
 							});
 						} else {
 							roomSupplier.transform((r) -> () -> {
 								return buildConnectingRoom(roomHolder,
-										absoluteDir, passages.getType(),
+										absoluteDir,
+										passages.getType(true),
 										exitDescriber);
 							});
 						}
@@ -226,19 +228,19 @@ public class LayoutGenerator implements IDungeon {
 							// empirical rule
 							roomSupplier.transform((r) -> () -> {
 								return buildRoom(absoluteDir,
-										stairs.getType());
+										stairs.getType(false));
 							});
 						} else {
 							roomSupplier.transform((r) -> () -> {
 								return buildConnectingRoom(roomHolder,
-										absoluteDir, stairs.getType(),
+										absoluteDir, stairs.getType(true),
 										exitDescriber);
 							});
 						}
 						break;
 					case WELL:
 						roomSupplier.transform((r) -> () -> {
-							return buildInitialRoom(stairs.getType());
+							return buildInitialRoom(stairs.getType(false));
 						});
 						break;
 					default:

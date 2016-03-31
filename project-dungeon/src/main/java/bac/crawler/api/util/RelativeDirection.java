@@ -1,5 +1,10 @@
 package bac.crawler.api.util;
 
+import java.util.Random;
+import java.util.function.Consumer;
+
+import bjc.utils.funcdata.FunctionalList;
+
 /**
  * Represents a direction that is relative to another direction
  * 
@@ -23,6 +28,8 @@ public enum RelativeDirection {
 	 * Clockwise from direction
 	 */
 	RIGHT;
+
+	private static Random RNG = new Random();
 
 	/**
 	 * Change another direction by turning the way this direction specifies
@@ -64,5 +71,43 @@ public enum RelativeDirection {
 	 */
 	public static RelativeDirection properValueOf(String s) {
 		return valueOf(s.toUpperCase());
+	}
+
+	/**
+	 * Perform a specified action for a random number of relative
+	 * directions.
+	 * 
+	 * @param nDirections
+	 *            The number of cardinal directions to act on. Must be
+	 *            greater than 0 and less then 5
+	 * @param action
+	 *            The action to perform for each of the relative directions
+	 * @param ignoreBackwards
+	 *            Whether or not to not have a chance of one of the
+	 *            directions being backwards
+	 */
+	public static void forRandomDirections(int nDirections,
+			Consumer<RelativeDirection> action, boolean ignoreBackwards) {
+		int maxNDirections = ignoreBackwards ? 3 : 4;
+		if (nDirections <= 0 || nDirections > maxNDirections) {
+			throw new IllegalArgumentException(
+					"Tried to do things with incorrect number of relative directions. Tried with "
+							+ nDirections);
+		} else {
+			FunctionalList<RelativeDirection> relativeDirs = new FunctionalList<>(
+					values());
+
+			if (ignoreBackwards) {
+				relativeDirs.removeMatching(BACKWARD);
+			}
+
+			for (int i = 0; i <= maxNDirections - nDirections; i++) {
+				RelativeDirection rDir = relativeDirs.randItem(RNG);
+
+				relativeDirs.removeMatching(rDir);
+			}
+
+			relativeDirs.forEach(action);
+		}
 	}
 }

@@ -19,7 +19,8 @@ public class GenericRoomType implements IRoomType {
 	private ComponentDescription				cdesc;
 
 	private IDescriber							desc;
-	private Map<RelativeDirection, ExitDesc>	exits;
+	
+	protected Map<RelativeDirection, ExitDesc>	exits;
 
 	/**
 	 * Create a new generic room type
