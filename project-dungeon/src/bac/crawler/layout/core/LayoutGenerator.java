@@ -66,6 +66,8 @@ public class LayoutGenerator implements IDungeon {
 	 *            The archetype for corridors and such.
 	 * @param stairs
 	 *            The archetype for what lies on the end of stairs
+	 * @param chambers
+	 *            The archetype for what lies in chambers
 	 */
 	public LayoutGenerator(IRoomArchetype initialRooms,
 			IRoomArchetype doors, IRoomArchetype passages,
