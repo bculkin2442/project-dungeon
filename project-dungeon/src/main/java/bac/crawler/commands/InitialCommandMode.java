@@ -7,6 +7,7 @@ import com.eleet.dragonconsole.DragonConsole;
 
 import bac.crawler.ICommandMode;
 import bac.crawler.api.IDungeon;
+import bac.crawler.api.stubs.ExitDescriberStub;
 import bac.crawler.layout.core.GeneratorInitializer;
 import bac.crawler.navigator.NavigatorCore;
 
@@ -28,6 +29,9 @@ public class InitialCommandMode implements ICommandMode {
 				return this;
 			case "start":
 				return startNavigationMode();
+			case "stub-start":
+				return startStubbedNavigationMode();
+
 			default:
 				if (args != null) {
 					console.appendErrorMessage(
@@ -43,6 +47,17 @@ public class InitialCommandMode implements ICommandMode {
 		}
 
 		return this;
+	}
+
+	private ICommandMode startStubbedNavigationMode() {
+		console.append(
+				"You are in a mazy of twisty little passages, all alike.\n");
+		
+		ExitDescriberStub.stubOutGenerator();
+
+		NavigatorCore navCore = null;
+
+		return new NavigatorCommandMode(navCore, console);
 	}
 
 	private void listCommands() {
