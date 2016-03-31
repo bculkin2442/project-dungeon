@@ -54,29 +54,15 @@ public class LayoutGenerator implements IDungeon {
 	 * Create a new core layout generator that uses rooms from the provided
 	 * archetypes
 	 * 
-	 * @param initialRooms
-	 *            The archetype for initial rooms. These are the rooms
-	 *            where you enter the game, as well as the rooms you end up
-	 *            in if you fall/jump down a well
-	 * @param doors
-	 *            The archetype for what lies beyond doors. Has nothing to
-	 *            do with the doors themselves, only what lies on the other
-	 *            side of them
-	 * @param passages
-	 *            The archetype for corridors and such.
-	 * @param stairs
-	 *            The archetype for what lies on the end of stairs
-	 * @param chambers
-	 *            The archetype for what lies in chambers
+	 * @param archetypes
+	 *            The archetypes necessary for generating the dungeon
 	 */
-	public LayoutGenerator(IRoomArchetype initialRooms,
-			IRoomArchetype doors, IRoomArchetype passages,
-			IRoomArchetype stairs, IRoomArchetype chambers) {
-		this.doors = doors;
-		this.initialRooms = initialRooms;
-		this.passages = passages;
-		this.stairs = stairs;
-		this.chambers = chambers;
+	public LayoutGenerator(LayoutGeneratorArchetypes archetypes) {
+		this.doors = archetypes.getDoors();
+		this.initialRooms = archetypes.getInitialRooms();
+		this.passages = archetypes.getPassages();
+		this.stairs = archetypes.getStairs();
+		this.chambers = archetypes.getChambers();
 	}
 
 	private IRoom buildConnectingRoom(GenHolder<IRoom> entranceRoom,

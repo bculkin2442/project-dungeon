@@ -32,7 +32,7 @@ public class GeneratorInitializer {
 		loadExitDescribers(dataDir);
 
 		Map<String, IRoomArchetype> env = new HashMap<>();
-		
+
 		FileComponentRepository<IRoomArchetype> archetypeRepo = new FileComponentRepository<>(
 				dataDir.toFile(), (inputPath) -> {
 					return RoomArchetypeFileParser
@@ -40,13 +40,10 @@ public class GeneratorInitializer {
 				});
 
 		archetypeRepo.getComponents().forEach(env::put);
-		
-		LayoutGenerator lgen = new LayoutGenerator(
-				archetypeRepo.getComponentByName("init-rooms.rarch"),
-				archetypeRepo.getComponentByName("doors.rarch"),
-				archetypeRepo.getComponentByName("passages.rarch"),
-				archetypeRepo.getComponentByName("stairs.rarch"),
-				archetypeRepo.getComponentByName("chambers.rarch"));
+
+		LayoutGeneratorArchetypes chosenArchetypes = LayoutGeneratorArchetypes
+				.fromRepository(archetypeRepo.getComponents());
+		LayoutGenerator lgen = new LayoutGenerator(chosenArchetypes);
 
 		return lgen;
 	}
