@@ -2,6 +2,8 @@ package bac.crawler;
 
 import java.util.Arrays;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import com.eleet.dragonconsole.CommandProcessor;
 import com.eleet.dragonconsole.DragonConsole;
 
@@ -14,7 +16,8 @@ import bac.crawler.commands.InitialCommandMode;
  *
  */
 public class IOProcessor extends CommandProcessor {
-	private ICommandMode mode;
+	private ICommandMode	mode;
+	private boolean			exiting;
 
 	@Override
 	public void processCommand(String input) {
@@ -28,10 +31,42 @@ public class IOProcessor extends CommandProcessor {
 			args = null;
 		}
 
-		if (mode != null) {
-			mode = mode.processCommand(tokens[0], args);
+		if (exiting) {
+			switch (tokens[0]) {
+				case "yes":
+					output("\nExiting now. Thanks for playing :)");
+					System.exit(0);
+				case "no":
+					output("\nOkay. Keep playing.\n");
+					break;
+				default:
+					output("\nAssuming " + tokens[0]
+							+ " means no. Keep playing");
+					break;
+			}
 
-			this.output(mode.getName() + ">>");
+			exiting = false;
+			this.output("\n" + mode.getName() + ">>");
+			// This command's no good any longer
+			return;
+		}
+
+		if (mode != null) {
+			switch (tokens[0]) {
+				case "exit":
+					exiting = true;
+					output("\nAre you sure you want to exit? (yes/no): ");
+					break;
+				case "clear":
+					this.getConsole().clearConsole();
+					break;
+				default:
+					mode = mode.processCommand(tokens[0], args);
+			}
+
+			if (!exiting) {
+				this.output("\n" + mode.getName() + ">>");
+			}
 		} else {
 			this.output("\n");
 			this.output("You entered: " + input + "\n");
@@ -43,7 +78,13 @@ public class IOProcessor extends CommandProcessor {
 	public void install(DragonConsole consle) {
 		super.install(consle);
 
-		mode = new InitialCommandMode(consle::append,
-				consle::appendErrorMessage);
+		mode = new InitialCommandMode((strang) -> {
+			consle.append("\n" + WordUtils.wrap(strang, 75));
+		}, strang -> {
+			consle.append("&" + consle.getErrorColor() + "\n"
+					+ WordUtils.wrap(strang, 75) + "&"
+					+ consle.getDefaultColor());
+
+		});
 	}
 }

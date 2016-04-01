@@ -47,17 +47,9 @@ public class InitialCommandMode implements ICommandMode {
 		dataDir = Paths.get("data", "core-layout");
 	}
 
-	private void listCommands() {
-		// TODO Auto-generated method stub
-
-	}
-
 	@Override
 	public ICommandMode processCommand(String command, String[] args) {
 		switch (command) {
-			case "list":
-				listCommands();
-				return this;
 			case "start":
 				return startNavigationMode();
 			case "stub-start":
@@ -90,7 +82,7 @@ public class InitialCommandMode implements ICommandMode {
 
 	private ICommandMode startStubbedNavigationMode() {
 		outputNormal.accept(
-				"\nYou are in a mazy of twisty little passages, all alike.\n");
+				"You are in a mazy of twisty little passages, all alike.");
 
 		ExitDescriberStub.stubOutGenerator();
 
@@ -103,12 +95,14 @@ public class InitialCommandMode implements ICommandMode {
 					+ " smooth stone walls. Looks like all the others";
 		};
 
+		ArchetypeStub chamberStub = new ArchetypeStub(chamberDescriber);
+
 		IDescriber passageDescriber = () -> {
 			return "A passage with smooth walls, hewn from the "
 					+ "surrounding rock. Looks like all the others";
 		};
 
-		ArchetypeStub chamberStub = new ArchetypeStub(chamberDescriber);
+		ArchetypeStub passageStub = new ArchetypeStub(passageDescriber);
 
 		RoomArchetypeState doorBuilder = new RoomArchetypeState(null,
 				archetypeMap);
@@ -123,9 +117,12 @@ public class InitialCommandMode implements ICommandMode {
 		stairBuilder.addReference("passage", 1);
 
 		layoutBuilder.setInitialRooms(chamberStub).setChambers(chamberStub)
-				.setPassages(new ArchetypeStub(passageDescriber))
+				.setPassages(passageStub)
 				.setDoors(doorBuilder.getArchetype())
 				.setStairs(stairBuilder.getArchetype());
+
+		archetypeMap.put("chamber", chamberStub);
+		archetypeMap.put("passage", passageStub);
 
 		LayoutGenerator gen = new LayoutGenerator(layoutBuilder.build());
 
@@ -145,5 +142,16 @@ public class InitialCommandMode implements ICommandMode {
 	 */
 	private void unrecognizedHelp(String command, String[] args) {
 		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public boolean canHandleCommand(String command) {
+		switch(command) {
+			case "start":
+			case "stub-start":
+				return true;
+			default:
+				return false;
+		}
 	}
 }

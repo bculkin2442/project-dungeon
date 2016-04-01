@@ -30,6 +30,8 @@ public class NavigatorCommandMode implements ICommandMode {
 	 */
 	public NavigatorCommandMode(NavigatorCore navCore,
 			Consumer<String> outputNormal, Consumer<String> outputError) {
+		core = navCore;
+
 		this.outputNormal = outputNormal;
 		// TODO Auto-generated constructor stub
 		this.outputError = outputError;
@@ -125,6 +127,24 @@ public class NavigatorCommandMode implements ICommandMode {
 						.accept("\n\t Valid directions are the four cardinal directions"
 								+ " (north, east, south, west) and up or down");
 			}
+		}
+	}
+
+	@Override
+	public String getName() {
+		return "navigator";
+	}
+	
+	@Override
+	public boolean canHandleCommand(String command) {
+		switch(command) {
+			case "look":
+			case "go":
+			case "move":
+			case "walk":
+				return true;
+			default:
+				return false;
 		}
 	}
 }

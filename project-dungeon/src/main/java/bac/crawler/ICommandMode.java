@@ -6,7 +6,6 @@ package bac.crawler;
  * @author ben
  *
  */
-@FunctionalInterface
 public interface ICommandMode {
 	/**
 	 * Process a command in this mode
@@ -20,6 +19,13 @@ public interface ICommandMode {
 	 */
 	public ICommandMode processCommand(String command, String[] args);
 
+	/**
+	 * Check to see if this mode can handle the specified command
+	 * @param command The command to check
+	 * @return Whether or not this mode can handle the command
+	 */
+	public boolean canHandleCommand(String command);
+	
 	/**
 	 * Get the name of this command mode
 	 * 
