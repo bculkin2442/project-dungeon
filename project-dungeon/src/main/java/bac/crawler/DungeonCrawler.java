@@ -10,6 +10,8 @@ import javax.swing.SwingUtilities;
 import com.eleet.dragonconsole.DragonConsole;
 import com.eleet.dragonconsole.DragonConsoleFrame;
 
+import say.swing.JFontChooser;
+
 /**
  * The main class of the game
  * 
@@ -91,8 +93,20 @@ public class DungeonCrawler {
 			dcf.getConsole().append("crawler>>");
 		});
 
+		JMenuItem setFont = new JMenuItem("Set Font...");
+		setFont.addActionListener((ev) -> {
+			JFontChooser fontPicker = new JFontChooser();
+
+			if (fontPicker.showDialog(dcf) == JFontChooser.OK_OPTION) {
+				dcf.getConsole()
+						.setConsoleFont(fontPicker.getSelectedFont());
+			}
+		});
+
 		styleMenu.add(defaultStyle);
 		styleMenu.add(osxStyle);
+		styleMenu.addSeparator();
+		styleMenu.add(setFont);
 
 		menuBar.add(styleMenu);
 		return menuBar;

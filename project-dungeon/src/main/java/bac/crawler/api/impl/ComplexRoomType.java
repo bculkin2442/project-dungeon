@@ -34,7 +34,7 @@ public class ComplexRoomType extends GenericRoomType {
 	static {
 		smallExitCount = new WeightedRandom<>(source);
 
-		smallExitCount.addProbability(5, 0);
+		// smallExitCount.addProbability(5, 0);
 		smallExitCount.addProbability(6, 1);
 		smallExitCount.addProbability(4, 2);
 		smallExitCount.addProbability(3, 3);
@@ -42,7 +42,7 @@ public class ComplexRoomType extends GenericRoomType {
 
 		largeExitCount = new WeightedRandom<>(source);
 
-		largeExitCount.addProbability(3, 0);
+		// largeExitCount.addProbability(3, 0);
 		largeExitCount.addProbability(5, 1);
 		largeExitCount.addProbability(5, 2);
 		largeExitCount.addProbability(3, 3);
@@ -65,18 +65,18 @@ public class ComplexRoomType extends GenericRoomType {
 	 * @param desc
 	 *            The thing to use for generating descriptions of this room
 	 *            type
-	 * @param hasEntrance
+	 * @param hasEntrnce
 	 *            Whether or not this room type has an entrance
 	 * @param isLrge
 	 *            Whether or not this room is considered "large" for exit
 	 *            generation purposes
 	 */
 	public ComplexRoomType(ComponentDescription cdesc, IDescriber desc,
-			boolean hasEntrance, boolean isLrge) {
+			boolean hasEntrnce, boolean isLrge) {
 		super(cdesc, desc, null);
 
 		isLarge = isLrge;
-		hasEntrance = false;
+		hasEntrance = hasEntrnce;
 	}
 
 	@Override
@@ -109,6 +109,7 @@ public class ComplexRoomType extends GenericRoomType {
 						new ExitTypeDescriber(chosenType)));
 			}, hasEntrance);
 		}
+
 		return newExits;
 	}
 

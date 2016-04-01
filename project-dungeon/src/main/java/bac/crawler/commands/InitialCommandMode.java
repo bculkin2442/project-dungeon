@@ -17,6 +17,7 @@ import bac.crawler.layout.core.GeneratorInitializer;
 import bac.crawler.layout.core.LayoutGenerator;
 import bac.crawler.layout.core.LayoutGeneratorArchetypes.Builder;
 import bac.crawler.navigator.NavigatorCore;
+import bjc.utils.funcutils.ListUtils;
 
 /**
  * The mode for commands when the game is first started
@@ -86,6 +87,22 @@ public class InitialCommandMode implements ICommandMode {
 
 		ExitDescriberStub.stubOutGenerator();
 
+		NavigatorCore navCore = createNavCore();
+
+		outputNormal.accept("As you come to, you find yourself in a room."
+				+ " You look around, and this is what you see: ");
+		outputNormal.accept("\t" + navCore.getRoomDescription());
+
+		outputNormal
+				.accept("\nYou see exits in the following directions: ");
+		outputNormal.accept("\t" + ListUtils
+				.collapseTokens(navCore.getAvailableDirections(), ", "));
+
+		return new NavigatorCommandMode(navCore, outputNormal,
+				outputError);
+	}
+
+	private static NavigatorCore createNavCore() {
 		Builder layoutBuilder = new Builder();
 
 		Map<String, IRoomArchetype> archetypeMap = new HashMap<>();
@@ -127,9 +144,7 @@ public class InitialCommandMode implements ICommandMode {
 		LayoutGenerator gen = new LayoutGenerator(layoutBuilder.build());
 
 		NavigatorCore navCore = new NavigatorCore(gen.buildDungeon());
-
-		return new NavigatorCommandMode(navCore, outputNormal,
-				outputError);
+		return navCore;
 	}
 
 	/**
@@ -146,7 +161,7 @@ public class InitialCommandMode implements ICommandMode {
 
 	@Override
 	public boolean canHandleCommand(String command) {
-		switch(command) {
+		switch (command) {
 			case "start":
 			case "stub-start":
 				return true;

@@ -40,7 +40,6 @@ public class ArchetypeStub implements IRoomArchetype {
 
 	@Override
 	public IRoomType getType(boolean hasEntrance) {
-		// TODO Auto-generated method stub
 		return new ComplexRoomType(cdesc, roomDescriber, hasEntrance,
 				false);
 	}

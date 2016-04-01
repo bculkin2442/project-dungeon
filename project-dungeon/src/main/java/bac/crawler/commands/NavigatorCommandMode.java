@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import bac.crawler.ICommandMode;
 import bac.crawler.api.util.Direction;
 import bac.crawler.navigator.NavigatorCore;
+import bjc.utils.funcutils.ListUtils;
 
 /**
  * A command mode to use when navigating around the map
@@ -23,18 +24,17 @@ public class NavigatorCommandMode implements ICommandMode {
 	 * 
 	 * @param navCore
 	 *            The navigator core to navigate with
-	 * @param outputNormal
+	 * @param outputNorml
 	 *            The function to use to output normal messages
-	 * @param outputError
+	 * @param outputErrr
 	 *            The function to use to output error messages
 	 */
 	public NavigatorCommandMode(NavigatorCore navCore,
-			Consumer<String> outputNormal, Consumer<String> outputError) {
+			Consumer<String> outputNorml, Consumer<String> outputErrr) {
 		core = navCore;
 
-		this.outputNormal = outputNormal;
-		// TODO Auto-generated constructor stub
-		this.outputError = outputError;
+		outputNormal = outputNorml;
+		outputError = outputErrr;
 	}
 
 	@Override
@@ -95,7 +95,9 @@ public class NavigatorCommandMode implements ICommandMode {
 				}
 
 				outputNormal.accept(
-						"\t" + core.getDescriptionInDirection(dir));
+						"\nYou see exits in the following directions: ");
+				outputNormal.accept("\t" + ListUtils.collapseTokens(
+						core.getAvailableDirections(), ", "));
 			} catch (IllegalArgumentException iaex) {
 				outputError.accept("I'm sorry, but " + args[0]
 						+ " is not a valid direction.");
@@ -134,10 +136,10 @@ public class NavigatorCommandMode implements ICommandMode {
 	public String getName() {
 		return "navigator";
 	}
-	
+
 	@Override
 	public boolean canHandleCommand(String command) {
-		switch(command) {
+		switch (command) {
 			case "look":
 			case "go":
 			case "move":

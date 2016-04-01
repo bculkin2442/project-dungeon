@@ -39,7 +39,9 @@ public class NavigatorCore {
 	 * @return A list of all possible directions to travel in
 	 */
 	public FunctionalList<String> getAvailableDirections() {
-		return currentRoom.getExitDirections().map(Direction::toString);
+		FunctionalList<Direction> directions = currentRoom.getExitDirections();
+		
+		return directions.map(Direction::toString);
 	}
 
 	/**
