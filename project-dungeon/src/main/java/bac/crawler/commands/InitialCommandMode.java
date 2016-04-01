@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import bac.crawler.ICommandMode;
 import bac.crawler.api.IDescriber;
 import bac.crawler.api.IDungeon;
+import bac.crawler.api.IRoom;
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.impl.parsers.RoomArchetypeState;
 import bac.crawler.api.stubs.ArchetypeStub;
@@ -87,7 +88,7 @@ public class InitialCommandMode implements ICommandMode {
 
 		ExitDescriberStub.stubOutGenerator();
 
-		NavigatorCore navCore = createNavCore();
+		NavigatorCore navCore = createStubNavigatorCore();
 
 		outputNormal.accept("As you come to, you find yourself in a room."
 				+ " You look around, and this is what you see: ");
@@ -102,7 +103,7 @@ public class InitialCommandMode implements ICommandMode {
 				outputError);
 	}
 
-	private static NavigatorCore createNavCore() {
+	private static NavigatorCore createStubNavigatorCore() {
 		Builder layoutBuilder = new Builder();
 
 		Map<String, IRoomArchetype> archetypeMap = new HashMap<>();
@@ -143,7 +144,13 @@ public class InitialCommandMode implements ICommandMode {
 
 		LayoutGenerator gen = new LayoutGenerator(layoutBuilder.build());
 
-		NavigatorCore navCore = new NavigatorCore(gen.buildDungeon());
+		IRoom candidateRoom = gen.buildDungeon();
+
+		while (candidateRoom.getExitDirections().getSize() < 1) {
+			candidateRoom = gen.buildDungeon();
+		}
+
+		NavigatorCore navCore = new NavigatorCore(candidateRoom);
 		return navCore;
 	}
 
