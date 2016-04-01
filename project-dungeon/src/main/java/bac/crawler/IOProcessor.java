@@ -19,6 +19,8 @@ public class IOProcessor extends CommandProcessor {
 	private ICommandMode	mode;
 	private boolean			exiting;
 
+	private boolean			wrapText	= false;
+
 	@Override
 	public void processCommand(String input) {
 		String[] tokens = input.split(" ");
@@ -79,11 +81,16 @@ public class IOProcessor extends CommandProcessor {
 		super.install(consle);
 
 		mode = new InitialCommandMode((strang) -> {
-			consle.append("\n" + WordUtils.wrap(strang, 75));
+			String wrappedStrang = wrapText ? WordUtils.wrap(strang, 75)
+					: strang;
+
+			consle.append("\n" + wrappedStrang);
 		}, strang -> {
+			String wrappedString = wrapText ? WordUtils.wrap(strang, 75)
+					: strang;
+
 			consle.append("&" + consle.getErrorColor() + "\n"
-					+ WordUtils.wrap(strang, 75) + "&"
-					+ consle.getDefaultColor());
+					+ wrappedString + "&" + consle.getDefaultColor());
 
 		});
 	}

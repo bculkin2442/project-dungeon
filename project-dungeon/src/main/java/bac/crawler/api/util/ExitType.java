@@ -52,4 +52,12 @@ public enum ExitType {
 	private ExitType(Directionality dr) {
 		d = dr;
 	}
+
+	@Override
+	public String toString() {
+		/*
+		 * Make sure the word is properly capitalized for english
+		 */
+		return super.toString().toLowerCase();
+	}
 }

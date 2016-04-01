@@ -22,6 +22,7 @@ public class NavigatorCore {
 	 */
 	public NavigatorCore(IRoom initialRoom) {
 		currentRoom = initialRoom;
+		currentRoom.visit();
 	}
 
 	/**
@@ -39,8 +40,9 @@ public class NavigatorCore {
 	 * @return A list of all possible directions to travel in
 	 */
 	public FunctionalList<String> getAvailableDirections() {
-		FunctionalList<Direction> directions = currentRoom.getExitDirections();
-		
+		FunctionalList<Direction> directions = currentRoom
+				.getExitDirections();
+
 		return directions.map(Direction::toString);
 	}
 
@@ -79,5 +81,18 @@ public class NavigatorCore {
 		} else {
 			return "You walk into the wall. Maybe try going a different direction?";
 		}
+	}
+
+	/**
+	 * Check if the room the navigator is in has been visited before
+	 * 
+	 * @return Whether or not the current room has been visited before.
+	 */
+	public boolean hasBeenVisitedBefore() {
+		boolean visitStatus = currentRoom.hasBeenVisited();
+
+		currentRoom.visit();
+
+		return visitStatus;
 	}
 }

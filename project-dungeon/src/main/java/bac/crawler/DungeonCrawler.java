@@ -1,6 +1,7 @@
 package bac.crawler;
 
 import java.awt.Dimension;
+import java.awt.Font;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -37,6 +38,9 @@ public class DungeonCrawler {
 			// Set neccessary properties on the frame itself
 			configureFrame(dcf);
 
+			// Set the font to something less ugly
+			console.setFont(Font.decode("Arial"));
+			
 			// Set the command processor on the console
 			console.setCommandProcessor(new IOProcessor());
 

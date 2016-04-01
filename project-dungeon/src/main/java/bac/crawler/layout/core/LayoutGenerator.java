@@ -94,7 +94,7 @@ public class LayoutGenerator implements IDungeon {
 			});
 		}
 
-		exits.put(entranceDirection,
+		exits.put(entranceDirection.opposing(),
 				new LazyExit(entranceDescriber::getDescription, () -> {
 					return entranceRoom.unwrap((s) -> s);
 				}));

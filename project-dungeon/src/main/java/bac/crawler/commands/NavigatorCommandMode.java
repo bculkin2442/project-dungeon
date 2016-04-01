@@ -92,12 +92,16 @@ public class NavigatorCommandMode implements ICommandMode {
 					outputNormal.accept(navigationResult);
 				} else {
 					outputNormal.accept(core.getRoomDescription());
-				}
 
-				outputNormal.accept(
-						"\nYou see exits in the following directions: ");
-				outputNormal.accept("\t" + ListUtils.collapseTokens(
-						core.getAvailableDirections(), ", "));
+					if (core.hasBeenVisitedBefore()) {
+						outputNormal.accept("This room seems familiar");
+					}
+
+					outputNormal.accept(
+							"\nYou see exits in the following directions: ");
+					outputNormal.accept("\t" + ListUtils.collapseTokens(
+							core.getAvailableDirections(), ", "));
+				}
 			} catch (IllegalArgumentException iaex) {
 				outputError.accept("I'm sorry, but " + args[0]
 						+ " is not a valid direction.");
