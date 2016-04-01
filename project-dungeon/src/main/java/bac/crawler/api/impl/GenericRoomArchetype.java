@@ -1,7 +1,6 @@
 package bac.crawler.api.impl;
 
-import java.util.function.Supplier;
-
+import java.util.function.Function;
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.IRoomType;
 import bjc.utils.components.ComponentDescription;
@@ -14,8 +13,13 @@ import bjc.utils.gen.WeightedRandom;
  *
  */
 public class GenericRoomArchetype implements IRoomArchetype {
-	private WeightedRandom<Supplier<IRoomType>>	roomTypes;
-	private ComponentDescription				cdesc;
+	/*
+	 * The reason this generates functions instead of suppliers is because
+	 * a room archetype can reference values from another room archetype,
+	 * and to do so requires the proper parameter
+	 */
+	private WeightedRandom<Function<Boolean, IRoomType>>	roomTypes;
+	private ComponentDescription							cdesc;
 
 	/**
 	 * Create a new room archetype
@@ -26,7 +30,7 @@ public class GenericRoomArchetype implements IRoomArchetype {
 	 *            The description of this archetype
 	 */
 	public GenericRoomArchetype(
-			WeightedRandom<Supplier<IRoomType>> roomTypes,
+			WeightedRandom<Function<Boolean, IRoomType>> roomTypes,
 			ComponentDescription cdesc) {
 		this.roomTypes = roomTypes;
 		this.cdesc = cdesc;
@@ -34,7 +38,7 @@ public class GenericRoomArchetype implements IRoomArchetype {
 
 	@Override
 	public IRoomType getType(boolean hasEntrance) {
-		IRoomType type = roomTypes.generateValue().get();
+		IRoomType type = roomTypes.generateValue().apply(hasEntrance);
 
 		if (hasEntrance && type instanceof ComplexRoomType) {
 			((ComplexRoomType) type).setHasEntrance(true);

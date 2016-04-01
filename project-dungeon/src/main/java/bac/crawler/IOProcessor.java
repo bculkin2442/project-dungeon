@@ -43,6 +43,7 @@ public class IOProcessor extends CommandProcessor {
 	public void install(DragonConsole consle) {
 		super.install(consle);
 
-		mode = new InitialCommandMode(consle);
+		mode = new InitialCommandMode(consle::append,
+				consle::appendErrorMessage);
 	}
 }

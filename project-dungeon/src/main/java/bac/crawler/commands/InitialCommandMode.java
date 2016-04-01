@@ -2,13 +2,20 @@ package bac.crawler.commands;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import com.eleet.dragonconsole.DragonConsole;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import bac.crawler.ICommandMode;
+import bac.crawler.api.IDescriber;
 import bac.crawler.api.IDungeon;
+import bac.crawler.api.IRoomArchetype;
+import bac.crawler.api.impl.parsers.RoomArchetypeState;
+import bac.crawler.api.stubs.ArchetypeStub;
 import bac.crawler.api.stubs.ExitDescriberStub;
 import bac.crawler.layout.core.GeneratorInitializer;
+import bac.crawler.layout.core.LayoutGenerator;
+import bac.crawler.layout.core.LayoutGeneratorArchetypes.Builder;
 import bac.crawler.navigator.NavigatorCore;
 
 /**
@@ -18,8 +25,32 @@ import bac.crawler.navigator.NavigatorCore;
  *
  */
 public class InitialCommandMode implements ICommandMode {
-	private DragonConsole	console;
-	private Path			dataDir;
+	private Consumer<String>	outputNormal;
+	private Consumer<String>	outputError;
+
+	private Path				dataDir;
+
+	/**
+	 * Create a new initial command mode
+	 * 
+	 * @param outputNorml
+	 *            The function to use to output normal messages
+	 * @param outputErrr
+	 *            The function to use to output error messages
+	 * 
+	 */
+	public InitialCommandMode(Consumer<String> outputNorml,
+			Consumer<String> outputErrr) {
+		outputNormal = outputNorml;
+		outputError = outputErrr;
+
+		dataDir = Paths.get("data", "core-layout");
+	}
+
+	private void listCommands() {
+		// TODO Auto-generated method stub
+
+	}
 
 	@Override
 	public ICommandMode processCommand(String command, String[] args) {
@@ -34,11 +65,10 @@ public class InitialCommandMode implements ICommandMode {
 
 			default:
 				if (args != null) {
-					console.appendErrorMessage(
-							"ERROR: Unrecognized command " + command
-									+ String.join(" ", args));
+					outputError.accept("ERROR: Unrecognized command "
+							+ command + String.join(" ", args));
 				} else {
-					console.appendErrorMessage(
+					outputError.accept(
 							"ERROR: Unrecognized command " + command);
 				}
 
@@ -49,28 +79,60 @@ public class InitialCommandMode implements ICommandMode {
 		return this;
 	}
 
-	private ICommandMode startStubbedNavigationMode() {
-		console.append(
-				"You are in a mazy of twisty little passages, all alike.\n");
-		
-		ExitDescriberStub.stubOutGenerator();
-
-		NavigatorCore navCore = null;
-
-		return new NavigatorCommandMode(navCore, console);
-	}
-
-	private void listCommands() {
-		// TODO Auto-generated method stub
-
-	}
-
 	private ICommandMode startNavigationMode() {
 		IDungeon dungeon = GeneratorInitializer.createGenerator(dataDir);
 
 		NavigatorCore navCore = new NavigatorCore(dungeon.buildDungeon());
 
-		return new NavigatorCommandMode(navCore, console);
+		return new NavigatorCommandMode(navCore, outputNormal,
+				outputError);
+	}
+
+	private ICommandMode startStubbedNavigationMode() {
+		outputNormal.accept(
+				"\nYou are in a mazy of twisty little passages, all alike.\n");
+
+		ExitDescriberStub.stubOutGenerator();
+
+		Builder layoutBuilder = new Builder();
+
+		Map<String, IRoomArchetype> archetypeMap = new HashMap<>();
+
+		IDescriber chamberDescriber = () -> {
+			return "A small square chamber, with four unmarked"
+					+ " smooth stone walls. Looks like all the others";
+		};
+
+		IDescriber passageDescriber = () -> {
+			return "A passage with smooth walls, hewn from the "
+					+ "surrounding rock. Looks like all the others";
+		};
+
+		ArchetypeStub chamberStub = new ArchetypeStub(chamberDescriber);
+
+		RoomArchetypeState doorBuilder = new RoomArchetypeState(null,
+				archetypeMap);
+
+		doorBuilder.addReference("passage", 2);
+		doorBuilder.addReference("chamber", 1);
+
+		RoomArchetypeState stairBuilder = new RoomArchetypeState(null,
+				archetypeMap);
+
+		stairBuilder.addReference("chamber", 2);
+		stairBuilder.addReference("passage", 1);
+
+		layoutBuilder.setInitialRooms(chamberStub).setChambers(chamberStub)
+				.setPassages(new ArchetypeStub(passageDescriber))
+				.setDoors(doorBuilder.getArchetype())
+				.setStairs(stairBuilder.getArchetype());
+
+		LayoutGenerator gen = new LayoutGenerator(layoutBuilder.build());
+
+		NavigatorCore navCore = new NavigatorCore(gen.buildDungeon());
+
+		return new NavigatorCommandMode(navCore, outputNormal,
+				outputError);
 	}
 
 	/**
@@ -83,17 +145,5 @@ public class InitialCommandMode implements ICommandMode {
 	 */
 	private void unrecognizedHelp(String command, String[] args) {
 		// TODO Auto-generated method stub
-	}
-
-	/**
-	 * Create a new initial command mode
-	 * 
-	 * @param cons
-	 *            The console to use for I/O
-	 */
-	public InitialCommandMode(DragonConsole cons) {
-		console = cons;
-
-		dataDir = Paths.get("data", "core-layout");
 	}
 }

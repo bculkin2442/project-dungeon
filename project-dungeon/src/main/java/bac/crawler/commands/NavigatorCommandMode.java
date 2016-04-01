@@ -1,6 +1,6 @@
 package bac.crawler.commands;
 
-import com.eleet.dragonconsole.DragonConsole;
+import java.util.function.Consumer;
 
 import bac.crawler.ICommandMode;
 import bac.crawler.api.util.Direction;
@@ -13,21 +13,26 @@ import bac.crawler.navigator.NavigatorCore;
  *
  */
 public class NavigatorCommandMode implements ICommandMode {
-	private NavigatorCore	core;
-	private DragonConsole	console;
+	private NavigatorCore		core;
+
+	private Consumer<String>	outputNormal;
+	private Consumer<String>	outputError;
 
 	/**
-	 * Create a new navigation command mode
+	 * Create a new navigator command mode
 	 * 
 	 * @param navCore
 	 *            The navigator core to navigate with
-	 * @param cons
-	 *            The console to do I/O with
+	 * @param outputNormal
+	 *            The function to use to output normal messages
+	 * @param outputError
+	 *            The function to use to output error messages
 	 */
 	public NavigatorCommandMode(NavigatorCore navCore,
-			DragonConsole cons) {
-		core = navCore;
-		console = cons;
+			Consumer<String> outputNormal, Consumer<String> outputError) {
+		this.outputNormal = outputNormal;
+		// TODO Auto-generated constructor stub
+		this.outputError = outputError;
 	}
 
 	@Override
@@ -43,11 +48,10 @@ public class NavigatorCommandMode implements ICommandMode {
 				break;
 			default:
 				if (args != null) {
-					console.appendErrorMessage(
-							"ERROR: Unrecognized command " + command
-									+ String.join(" ", args));
+					outputError.accept("ERROR: Unrecognized command "
+							+ command + String.join(" ", args));
 				} else {
-					console.appendErrorMessage(
+					outputError.accept(
 							"ERROR: Unrecognized command " + command);
 				}
 
@@ -72,28 +76,29 @@ public class NavigatorCommandMode implements ICommandMode {
 
 	private void handleMovementCommand(String[] args) {
 		if (args == null) {
-			console.append("Where?\n");
+			outputNormal.accept("Where?\n");
 		} else {
 			try {
 				Direction dir = Direction.properValueOf(args[0]);
 
-				console.append(
+				outputNormal.accept(
 						"You go " + dir + " and see the following: \n\t");
 
 				String navigationResult = core.navigateInDirection(dir);
 
 				if (!navigationResult.equals("")) {
-					console.append(navigationResult);
+					outputNormal.accept(navigationResult);
 				} else {
-					console.append(core.getRoomDescription());
+					outputNormal.accept(core.getRoomDescription());
 				}
 
-				console.append("\t" + core.getDescriptionInDirection(dir));
+				outputNormal.accept(
+						"\t" + core.getDescriptionInDirection(dir));
 			} catch (IllegalArgumentException iaex) {
-				console.appendErrorMessage("I'm sorry, but " + args[0]
+				outputError.accept("I'm sorry, but " + args[0]
 						+ " is not a valid direction.");
-				console.appendErrorMessage(
-						"\n\t Valid directions are the four cardinal directions"
+				outputError
+						.accept("\n\t Valid directions are the four cardinal directions"
 								+ " (north, east, south, west) and up or down");
 			}
 		}
@@ -101,21 +106,23 @@ public class NavigatorCommandMode implements ICommandMode {
 
 	private void handleLookCommand(String[] args) {
 		if (args == null) {
-			console.append("You look around and see the following: \n");
+			outputNormal
+					.accept("You look around and see the following: \n");
 
-			console.append("\t" + core.getRoomDescription());
+			outputNormal.accept("\t" + core.getRoomDescription());
 		} else {
 			try {
 				Direction dir = Direction.properValueOf(args[0]);
 
-				console.append(
+				outputNormal.accept(
 						"You look " + dir + " and see the following: \n");
-				console.append("\t" + core.getDescriptionInDirection(dir));
+				outputNormal.accept(
+						"\t" + core.getDescriptionInDirection(dir));
 			} catch (IllegalArgumentException iaex) {
-				console.appendErrorMessage("I'm sorry, but " + args[0]
+				outputError.accept("I'm sorry, but " + args[0]
 						+ " is not a valid direction.");
-				console.appendErrorMessage(
-						"\n\t Valid directions are the four cardinal directions"
+				outputError
+						.accept("\n\t Valid directions are the four cardinal directions"
 								+ " (north, east, south, west) and up or down");
 			}
 		}

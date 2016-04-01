@@ -5,8 +5,7 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Supplier;
-
+import java.util.function.Function;
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.IRoomType;
 import bac.crawler.api.impl.GenericRoomArchetype;
@@ -21,15 +20,15 @@ import bjc.utils.gen.WeightedRandom;
  *
  */
 public class RoomArchetypeState {
-	private Path								currentDirectory;
-	private Path								containingDirectory;
+	private Path											currentDirectory;
+	private Path											containingDirectory;
 
-	private ComponentDescription				cdesc;
+	private ComponentDescription							cdesc;
 
-	private WeightedRandom<Supplier<IRoomType>>	roomTypes;
+	private WeightedRandom<Function<Boolean, IRoomType>>	roomTypes;
 
-	private int									currentProbability;
-	private Map<String, IRoomArchetype>			archetypes;
+	private int												currentProbability;
+	private Map<String, IRoomArchetype>						archetypes;
 
 	/**
 	 * Create a new state for a room archetype
@@ -97,12 +96,16 @@ public class RoomArchetypeState {
 	 */
 	public void addType(Path typePath) {
 		if (containingDirectory != null) {
+			IRoomType type = RoomTypeFileParser
+					.readRoomType(containingDirectory.resolve(typePath));
+
 			roomTypes.addProbability(currentProbability,
-					() -> RoomTypeFileParser.readRoomType(
-							containingDirectory.resolve(typePath)));
+					(hasEntrance) -> type);
 		} else {
+			IRoomType type = RoomTypeFileParser.readRoomType(typePath);
+
 			roomTypes.addProbability(currentProbability,
-					() -> RoomTypeFileParser.readRoomType(typePath));
+					(hasEntrance) -> type);
 		}
 	}
 
@@ -118,7 +121,6 @@ public class RoomArchetypeState {
 					.fromStream(new FileInputStream(containingDirectory
 							.resolve(descPath).toFile()));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -132,7 +134,7 @@ public class RoomArchetypeState {
 	 *            The probability of referencing that archeetype
 	 */
 	public void addReference(String reference, int prob) {
-		roomTypes.addProbability(prob,
-				() -> archetypes.get(reference).getType());
+		roomTypes.addProbability(prob, (hasEntrance) -> archetypes
+				.get(reference).getType(hasEntrance));
 	}
 }

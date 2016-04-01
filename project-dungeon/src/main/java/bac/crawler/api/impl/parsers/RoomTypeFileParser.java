@@ -5,11 +5,11 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import bac.crawler.api.IDescriber;
 import bac.crawler.api.IRoomType;
 import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.ExitType;
 import bac.crawler.api.util.RelativeDirection;
+
 import bjc.utils.data.Pair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
 import bjc.utils.funcutils.ListUtils;
@@ -22,13 +22,7 @@ import bjc.utils.parserutils.RuleBasedConfigReader;
  *
  */
 public class RoomTypeFileParser {
-	private static RuleBasedConfigReader<RoomTypeState>	reader;
-
-	private static IDescriber							doorDescriber;
-	private static IDescriber							passageDescriber;
-	private static IDescriber							stairDescriber;
-	private static IDescriber							wellDescriber;
-	private static IDescriber							chamberDescriber;
+	private static RuleBasedConfigReader<RoomTypeState> reader;
 
 	static {
 		// The only continued rule is exits
@@ -66,28 +60,8 @@ public class RoomTypeFileParser {
 				.properValueOf(fst.nextToken());
 		ExitType eType = ExitType.properValueOf(fst.nextToken());
 
-		switch (eType) {
-			case DOOR:
-				stat.addExit(rdir, new ExitDesc(eType, doorDescriber));
-				break;
-			case PASSAGE:
-				stat.addExit(rdir, new ExitDesc(eType, passageDescriber));
-				break;
-			case STAIRS:
-				stat.addExit(rdir, new ExitDesc(eType, stairDescriber));
-				break;
-			case WELL:
-				stat.addExit(rdir, new ExitDesc(eType, wellDescriber));
-				break;
-			case CHAMBER:
-				stat.addExit(rdir, new ExitDesc(eType, chamberDescriber));
-				break;
-			default:
-				throw new IllegalStateException(
-						"Attempted to create an exit of an unknown type "
-								+ eType + ". WAT");
-
-		}
+		stat.addExit(rdir,
+				new ExitDesc(eType, new ExitTypeDescriber(eType)));
 	}
 
 	/**
@@ -111,57 +85,5 @@ public class RoomTypeFileParser {
 
 			return null;
 		}
-	}
-
-	/**
-	 * Set the describer to use for doors
-	 * 
-	 * @param doorExitDescriber
-	 *            The describer to use for doors
-	 */
-	public static void setDoorExitDescriber(IDescriber doorExitDescriber) {
-		RoomTypeFileParser.doorDescriber = doorExitDescriber;
-	}
-
-	/**
-	 * Set the describer to use for passages
-	 * 
-	 * @param passageExitDescriber
-	 *            The describer to use for passages
-	 */
-	public static void setPassageExitDescriber(
-			IDescriber passageExitDescriber) {
-		RoomTypeFileParser.passageDescriber = passageExitDescriber;
-	}
-
-	/**
-	 * Set the describer to use for describing stairs
-	 * 
-	 * @param stairExitDescriber
-	 *            The describer to use for stairs
-	 */
-	public static void setStairExitDescriber(
-			IDescriber stairExitDescriber) {
-		RoomTypeFileParser.stairDescriber = stairExitDescriber;
-	}
-
-	/**
-	 * Set the describer to use for describing wells
-	 * 
-	 * @param wellExitDescriber
-	 *            The describer for describing wells
-	 */
-	public static void setWellExitDescriber(IDescriber wellExitDescriber) {
-		RoomTypeFileParser.wellDescriber = wellExitDescriber;
-	}
-
-	/**
-	 * Set the describer to use for describing chambers
-	 * 
-	 * @param chamberDescriber
-	 *            The describer for describing chambers
-	 */
-	public static void setChamberDescriber(IDescriber chamberDescriber) {
-		RoomTypeFileParser.chamberDescriber = chamberDescriber;
 	}
 }

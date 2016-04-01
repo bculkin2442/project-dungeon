@@ -15,6 +15,7 @@ import bac.crawler.api.impl.GenericRoom;
 import bac.crawler.api.impl.LazyExit;
 import bac.crawler.api.util.Direction;
 import bac.crawler.api.util.ExitDesc;
+import bac.crawler.api.util.ExitType;
 import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.ComponentDescription;
 import bjc.utils.data.GenHolder;
@@ -81,69 +82,9 @@ public class LayoutGenerator implements IDungeon {
 			GenHolder<Supplier<IRoom>> roomSupplier = new GenHolder<>();
 
 			exitDescription.doWith((exitType, exitDescriber) -> {
-				double randomNumber;
 
-				switch (exitType) {
-					case DOOR:
-						roomSupplier.transform((r) -> () -> {
-							return buildConnectingRoom(roomHolder,
-									absoluteDir, doors.getType(true),
-									entranceDescriber);
-						});
-						break;
-					case PASSAGE:
-						randomNumber = rng.nextGaussian();
-
-						if (randomNumber > 2 || randomNumber < -2) {
-							// 10% chance of this being triggered by
-							// empirical rule
-							roomSupplier.transform((r) -> () -> {
-								return buildRoom(absoluteDir,
-										passages.getType(false));
-							});
-						} else {
-							roomSupplier.transform((r) -> () -> {
-								return buildConnectingRoom(roomHolder,
-										absoluteDir,
-										chambers.getType(true),
-										entranceDescriber);
-							});
-						}
-						break;
-					case STAIRS:
-						randomNumber = rng.nextGaussian();
-
-						if (randomNumber > 2 || randomNumber < -2) {
-							// 10% chance of this being triggered by
-							// empirical rule
-							roomSupplier.transform((r) -> () -> {
-								return buildRoom(absoluteDir,
-										stairs.getType(false));
-							});
-						} else {
-							roomSupplier.transform((r) -> () -> {
-								return buildConnectingRoom(roomHolder,
-										absoluteDir, stairs.getType(true),
-										entranceDescriber);
-							});
-						}
-						break;
-					case WELL:
-						roomSupplier.transform((r) -> () -> {
-							return buildInitialRoom(stairs.getType(false));
-						});
-						break;
-					case CHAMBER:
-						roomSupplier.transform((r) -> () -> {
-							return buildConnectingRoom(roomHolder,
-									absoluteDir, stairs.getType(true),
-									entranceDescriber);
-						});
-					default:
-						throw new IllegalArgumentException(
-								"Got an invalid exit type " + exitType
-										+ ". WAT");
-				}
+				buildRoomSupplier(roomHolder, absoluteDir, roomSupplier,
+						exitType, exitDescriber);
 
 				LazyExit lexit = new LazyExit(
 						exitDescriber::getDescription,
@@ -191,63 +132,9 @@ public class LayoutGenerator implements IDungeon {
 			GenHolder<Supplier<IRoom>> roomSupplier = new GenHolder<>();
 
 			exitDescription.doWith((exitType, exitDescriber) -> {
-				double randomNumber;
 
-				switch (exitType) {
-					case DOOR:
-						roomSupplier.transform((r) -> () -> {
-							return buildConnectingRoom(roomHolder,
-									absoluteDir, doors.getType(true),
-									exitDescriber);
-						});
-						break;
-					case PASSAGE:
-						randomNumber = rng.nextGaussian();
-
-						if (randomNumber > 2 || randomNumber < -2) {
-							// 10% chance of this being triggered by
-							// empirical rule
-							roomSupplier.transform((r) -> () -> {
-								return buildRoom(absoluteDir,
-										passages.getType(false));
-							});
-						} else {
-							roomSupplier.transform((r) -> () -> {
-								return buildConnectingRoom(roomHolder,
-										absoluteDir,
-										passages.getType(true),
-										exitDescriber);
-							});
-						}
-						break;
-					case STAIRS:
-						randomNumber = rng.nextGaussian();
-
-						if (randomNumber > 2 || randomNumber < -2) {
-							// 10% chance of this being triggered by
-							// empirical rule
-							roomSupplier.transform((r) -> () -> {
-								return buildRoom(absoluteDir,
-										stairs.getType(false));
-							});
-						} else {
-							roomSupplier.transform((r) -> () -> {
-								return buildConnectingRoom(roomHolder,
-										absoluteDir, stairs.getType(true),
-										exitDescriber);
-							});
-						}
-						break;
-					case WELL:
-						roomSupplier.transform((r) -> () -> {
-							return buildInitialRoom(stairs.getType(false));
-						});
-						break;
-					default:
-						throw new IllegalArgumentException(
-								"Got an invalid exit type " + exitType
-										+ ". WAT");
-				}
+				buildRoomSupplier(roomHolder, absoluteDir, roomSupplier,
+						exitType, exitDescriber);
 
 				LazyExit lexit = new LazyExit(
 						exitDescriber::getDescription,
@@ -263,6 +150,68 @@ public class LayoutGenerator implements IDungeon {
 		roomHolder.transform((r) -> gr);
 
 		return gr;
+	}
+
+	private void buildRoomSupplier(GenHolder<IRoom> roomHolder,
+			Direction absoluteDir, GenHolder<Supplier<IRoom>> roomSupplier,
+			ExitType exitType, IDescriber exitDescriber) {
+		double randomNumber;
+		switch (exitType) {
+			case DOOR:
+				roomSupplier.transform((r) -> () -> {
+					return buildConnectingRoom(roomHolder, absoluteDir,
+							doors.getType(true), exitDescriber);
+				});
+				break;
+			case PASSAGE:
+				randomNumber = rng.nextGaussian();
+
+				if (randomNumber > 2 || randomNumber < -2) {
+					// 10% chance of this being triggered by
+					// empirical rule
+					roomSupplier.transform((r) -> () -> {
+						return buildRoom(absoluteDir,
+								passages.getType(false));
+					});
+				} else {
+					roomSupplier.transform((r) -> () -> {
+						return buildConnectingRoom(roomHolder, absoluteDir,
+								passages.getType(true), exitDescriber);
+					});
+				}
+				break;
+			case STAIRS:
+				randomNumber = rng.nextGaussian();
+
+				if (randomNumber > 2 || randomNumber < -2) {
+					// 10% chance of this being triggered by
+					// empirical rule
+					roomSupplier.transform((r) -> () -> {
+						return buildRoom(absoluteDir,
+								stairs.getType(false));
+					});
+				} else {
+					roomSupplier.transform((r) -> () -> {
+						return buildConnectingRoom(roomHolder, absoluteDir,
+								stairs.getType(true), exitDescriber);
+					});
+				}
+				break;
+			case WELL:
+				roomSupplier.transform((r) -> () -> {
+					return buildInitialRoom(stairs.getType(false));
+				});
+				break;
+			case CHAMBER:
+				roomSupplier.transform((r) -> () -> {
+					return buildConnectingRoom(roomHolder, absoluteDir,
+							chambers.getType(true), exitDescriber);
+				});
+				break;
+			default:
+				throw new IllegalArgumentException(
+						"Got an invalid exit type " + exitType + ". WAT");
+		}
 	}
 
 	/*

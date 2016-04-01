@@ -1,7 +1,7 @@
 package bac.crawler.api.stubs;
 
 import bac.crawler.api.IDescriber;
-import bac.crawler.api.impl.parsers.RoomTypeFileParser;
+import bac.crawler.api.impl.parsers.ExitTypeDescriber;
 import bac.crawler.api.util.ExitType;
 
 /**
@@ -33,19 +33,19 @@ public class ExitDescriberStub implements IDescriber {
 	 * Set the describer members of the generator to proper stubs
 	 */
 	public static void stubOutGenerator() {
-		RoomTypeFileParser.setChamberDescriber(
+		ExitTypeDescriber.setChamberDescriber(
 				new ExitDescriberStub(ExitType.CHAMBER));
 
-		RoomTypeFileParser.setDoorExitDescriber(
+		ExitTypeDescriber.setDoorExitDescriber(
 				new ExitDescriberStub(ExitType.DOOR));
 
-		RoomTypeFileParser.setPassageExitDescriber(
+		ExitTypeDescriber.setPassageExitDescriber(
 				new ExitDescriberStub(ExitType.PASSAGE));
 
-		RoomTypeFileParser.setStairExitDescriber(
+		ExitTypeDescriber.setStairExitDescriber(
 				new ExitDescriberStub(ExitType.STAIRS));
 
-		RoomTypeFileParser.setWellExitDescriber(
+		ExitTypeDescriber.setWellExitDescriber(
 				new ExitDescriberStub(ExitType.WELL));
 	}
 }

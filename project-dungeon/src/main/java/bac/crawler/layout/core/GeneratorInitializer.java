@@ -9,8 +9,8 @@ import java.util.Map;
 import bac.crawler.api.IDungeon;
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.impl.parsers.DescriberFileParser;
+import bac.crawler.api.impl.parsers.ExitTypeDescriber;
 import bac.crawler.api.impl.parsers.RoomArchetypeFileParser;
-import bac.crawler.api.impl.parsers.RoomTypeFileParser;
 import bjc.utils.components.FileComponentRepository;
 
 /**
@@ -52,19 +52,19 @@ public class GeneratorInitializer {
 		Path describerPaths = dataDir.resolve("exits");
 
 		try {
-			RoomTypeFileParser.setDoorExitDescriber(DescriberFileParser
+			ExitTypeDescriber.setDoorExitDescriber(DescriberFileParser
 					.parseFile(new FileInputStream(describerPaths
 							.resolve("doors.desc").toFile())));
 
-			RoomTypeFileParser.setPassageExitDescriber(DescriberFileParser
+			ExitTypeDescriber.setPassageExitDescriber(DescriberFileParser
 					.parseFile(new FileInputStream(describerPaths
 							.resolve("passages.desc").toFile())));
 
-			RoomTypeFileParser.setStairExitDescriber(DescriberFileParser
+			ExitTypeDescriber.setStairExitDescriber(DescriberFileParser
 					.parseFile(new FileInputStream(describerPaths
 							.resolve("stairs.desc").toFile())));
 
-			RoomTypeFileParser.setWellExitDescriber(DescriberFileParser
+			ExitTypeDescriber.setWellExitDescriber(DescriberFileParser
 					.parseFile(new FileInputStream(describerPaths
 							.resolve("wells.desc").toFile())));
 		} catch (FileNotFoundException e) {
