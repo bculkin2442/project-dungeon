@@ -84,7 +84,7 @@ public class InitialCommandMode implements ICommandMode {
 
 	private ICommandMode startStubbedNavigationMode() {
 		outputNormal.accept(
-				"You are in a mazy of twisty little passages, all alike.");
+				"You are in a maze of twisty little passages, all alike.");
 
 		ExitDescriberStub.stubOutGenerator();
 
