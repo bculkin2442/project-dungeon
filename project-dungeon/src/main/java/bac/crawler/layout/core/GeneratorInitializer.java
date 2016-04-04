@@ -1,13 +1,16 @@
 package bac.crawler.layout.core;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 import bac.crawler.api.IDungeon;
 import bac.crawler.api.IRoomArchetype;
+import bac.crawler.api.impl.GenericDescriber;
 import bac.crawler.api.impl.parsers.DescriberFileParser;
 import bac.crawler.api.impl.parsers.ExitTypeDescriber;
 import bac.crawler.api.impl.parsers.RoomArchetypeFileParser;
@@ -33,16 +36,18 @@ public class GeneratorInitializer {
 
 		Map<String, IRoomArchetype> env = new HashMap<>();
 
-		FileComponentRepository<IRoomArchetype> archetypeRepo = new FileComponentRepository<>(
-				dataDir.toFile(), (inputPath) -> {
-					return RoomArchetypeFileParser
-							.parseFromStream(inputPath, env);
-				});
+		FileComponentRepository<IRoomArchetype> archetypeRepo =
+				new FileComponentRepository<>(dataDir.toFile(),
+						(inputPath) -> {
+							return RoomArchetypeFileParser
+									.parseFromStream(inputPath, env);
+						});
 
 		archetypeRepo.getComponents().forEach(env::put);
 
-		LayoutGeneratorArchetypes chosenArchetypes = LayoutGeneratorArchetypes
-				.fromRepository(archetypeRepo.getComponents());
+		LayoutGeneratorArchetypes chosenArchetypes =
+				LayoutGeneratorArchetypes
+						.fromRepository(archetypeRepo.getComponents());
 		LayoutGenerator lgen = new LayoutGenerator(chosenArchetypes);
 
 		return lgen;
@@ -52,23 +57,40 @@ public class GeneratorInitializer {
 		Path describerPaths = dataDir.resolve("exits");
 
 		try {
-			ExitTypeDescriber.setDoorExitDescriber(DescriberFileParser
-					.parseFile(new FileInputStream(describerPaths
-							.resolve("doors.desc").toFile())));
+			ExitTypeDescriber.setDoorExitDescriber(
+					readDescriberFromPath(describerPaths, "doors.desc"));
 
-			ExitTypeDescriber.setPassageExitDescriber(DescriberFileParser
-					.parseFile(new FileInputStream(describerPaths
-							.resolve("passages.desc").toFile())));
+			ExitTypeDescriber.setPassageExitDescriber(
+					readDescriberFromPath(describerPaths,
+							"passages.desc"));
 
-			ExitTypeDescriber.setStairExitDescriber(DescriberFileParser
-					.parseFile(new FileInputStream(describerPaths
-							.resolve("stairs.desc").toFile())));
+			ExitTypeDescriber.setStairExitDescriber(
+					readDescriberFromPath(describerPaths, "stairs.desc"));
 
-			ExitTypeDescriber.setWellExitDescriber(DescriberFileParser
-					.parseFile(new FileInputStream(describerPaths
-							.resolve("wells.desc").toFile())));
+			ExitTypeDescriber.setWellExitDescriber(
+					readDescriberFromPath(describerPaths, "wells.desc"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private static GenericDescriber
+			readDescriberFromPath(Path describerPaths, String path)
+					throws FileNotFoundException {
+		File inputSource = describerPaths.resolve(path).toFile();
+
+		FileInputStream inputStream = new FileInputStream(inputSource);
+
+		GenericDescriber describer =
+				DescriberFileParser.parseFile(inputStream);
+
+		try {
+			inputStream.close();
+		} catch (IOException e) {
+			throw new IllegalStateException(
+					"Got I/O exception attempting to close file.");
+		}
+
+		return describer;
 	}
 }

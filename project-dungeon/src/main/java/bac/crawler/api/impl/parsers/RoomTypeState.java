@@ -1,7 +1,9 @@
 package bac.crawler.api.impl.parsers;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +15,7 @@ import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.ComponentDescription;
 import bjc.utils.components.ComponentDescriptionFileParser;
+import bjc.utils.exceptions.PragmaFormatException;
 
 /**
  * State for room type parser
@@ -47,12 +50,20 @@ public class RoomTypeState {
 	 *            The path to the file that describes the describer
 	 */
 	public void setDescriber(Path describerPath) {
+		File sourceFile = currentDirectory.resolve(describerPath).toFile();
+
 		try {
-			roomDescriber = DescriberFileParser
-					.parseFile(new FileInputStream(currentDirectory
-							.resolve(describerPath).toFile()));
+			FileInputStream inputStream = new FileInputStream(sourceFile);
+
+			roomDescriber = DescriberFileParser.parseFile(inputStream);
+
+			inputStream.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw new PragmaFormatException(
+					"Could not read describer from file " + sourceFile);
+		} catch (IOException e) {
+			throw new IllegalStateException(
+					"Got I/O exception attempting to close file.");
 		}
 	}
 
@@ -83,13 +94,21 @@ public class RoomTypeState {
 	 * @param descPath
 	 */
 	public void setComponentDescription(Path descPath) {
+		File sourceFile = currentDirectory.resolve(descPath).toFile();
+
 		try {
-			cdesc = ComponentDescriptionFileParser
-					.fromStream(new FileInputStream(
-							currentDirectory.resolve(descPath).toFile()));
+			FileInputStream inputSource = new FileInputStream(sourceFile);
+
+			cdesc = ComponentDescriptionFileParser.fromStream(inputSource);
+
+			inputSource.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new PragmaFormatException(
+					"Could not read component description from file "
+							+ sourceFile);
+		} catch (IOException e) {
+			throw new IllegalStateException(
+					"Got I/O exception attempting to close file.");
 		}
 	}
 

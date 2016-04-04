@@ -3,6 +3,7 @@ package bac.crawler.api.impl.parsers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -85,10 +86,8 @@ public class RoomArchetypeFileParser {
 		try {
 			Path currentDir = inputFile.toPath().resolveSibling("");
 
-			return reader
-					.fromStream(new FileInputStream(inputFile),
-							new RoomArchetypeState(currentDir, archetypes))
-					.getArchetype();
+			return getArchetypeFromStream(inputFile, archetypes,
+					currentDir);
 		} catch (FileNotFoundException fnfex) {
 			System.err.println("Error loading an archetype from file "
 					+ inputFile.getAbsolutePath());
@@ -97,5 +96,25 @@ public class RoomArchetypeFileParser {
 
 			return null;
 		}
+	}
+
+	private static IRoomArchetype getArchetypeFromStream(File inputFile,
+			Map<String, IRoomArchetype> archetypes, Path currentDir)
+			throws FileNotFoundException {
+		FileInputStream inputStream = new FileInputStream(inputFile);
+		RoomArchetypeState initialState =
+				new RoomArchetypeState(currentDir, archetypes);
+
+		IRoomArchetype readArchetype = reader
+				.fromStream(inputStream, initialState).getArchetype();
+
+		try {
+			inputStream.close();
+		} catch (IOException e) {
+			throw new IllegalStateException(
+					"Got I/O exception attempting to close stream");
+		}
+
+		return readArchetype;
 	}
 }

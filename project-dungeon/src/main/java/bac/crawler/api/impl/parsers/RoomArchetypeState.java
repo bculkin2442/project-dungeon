@@ -1,7 +1,9 @@
 package bac.crawler.api.impl.parsers;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Random;
@@ -11,6 +13,7 @@ import bac.crawler.api.IRoomType;
 import bac.crawler.api.impl.GenericRoomArchetype;
 import bjc.utils.components.ComponentDescription;
 import bjc.utils.components.ComponentDescriptionFileParser;
+import bjc.utils.exceptions.PragmaFormatException;
 import bjc.utils.gen.WeightedRandom;
 
 /**
@@ -116,12 +119,21 @@ public class RoomArchetypeState {
 	 *            The path to the file with the description
 	 */
 	public void setComponentDescription(Path descPath) {
+		File sourceFile = containingDirectory.resolve(descPath).toFile();
+
 		try {
-			cdesc = ComponentDescriptionFileParser
-					.fromStream(new FileInputStream(containingDirectory
-							.resolve(descPath).toFile()));
+			FileInputStream inputSource = new FileInputStream(sourceFile);
+
+			cdesc = ComponentDescriptionFileParser.fromStream(inputSource);
+
+			inputSource.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			throw new PragmaFormatException(
+					"Could not read component description from file "
+							+ sourceFile);
+		} catch (IOException e) {
+			throw new IllegalStateException(
+					"Got I/O exception attempting to close file.");
 		}
 	}
 
@@ -131,7 +143,7 @@ public class RoomArchetypeState {
 	 * @param reference
 	 *            The name of the archetype to reference
 	 * @param prob
-	 *            The probability of referencing that archeetype
+	 *            The probability of referencing that archetype
 	 */
 	public void addReference(String reference, int prob) {
 		roomTypes.addProbability(prob, (hasEntrance) -> archetypes
