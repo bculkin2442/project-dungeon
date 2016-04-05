@@ -13,7 +13,7 @@ import bjc.utils.funcdata.FunctionalList;
  */
 public class NavigatorCore {
 	private IRoom currentRoom;
-
+	
 	/**
 	 * Create a new navigator core, starting in the provided room
 	 * 

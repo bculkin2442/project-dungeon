@@ -15,7 +15,7 @@ import bjc.utils.funcutils.ListUtils;
  */
 public class NavigatorCommandMode implements ICommandMode {
 	private NavigatorCore		core;
-
+	
 	private Consumer<String>	outputNormal;
 	private Consumer<String>	outputError;
 
@@ -35,6 +35,7 @@ public class NavigatorCommandMode implements ICommandMode {
 
 		outputNormal = outputNorml;
 		outputError = outputErrr;
+		
 	}
 
 	@Override
