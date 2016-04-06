@@ -2,7 +2,6 @@ package bac.crawler.commands;
 
 import java.util.function.Consumer;
 
-import bac.crawler.ICommandMode;
 import bac.crawler.api.util.Direction;
 import bac.crawler.navigator.NavigatorCore;
 import bjc.utils.funcutils.ListUtils;

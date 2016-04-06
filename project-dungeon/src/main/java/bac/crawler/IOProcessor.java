@@ -7,6 +7,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import com.eleet.dragonconsole.CommandProcessor;
 import com.eleet.dragonconsole.DragonConsole;
 
+import bac.crawler.commands.ICommandMode;
 import bac.crawler.commands.InitialCommandMode;
 
 /**
@@ -80,11 +81,14 @@ public class IOProcessor extends CommandProcessor {
 	public void install(DragonConsole consle) {
 		super.install(consle);
 
-		mode = new InitialCommandMode((strang) -> {
+		mode = InitialCommandMode.createMode((strang) -> {
 			String wrappedStrang = wrapText ? WordUtils.wrap(strang, 75)
 					: strang;
 
-			consle.append("\n" + wrappedStrang);
+			// This makes things simpler, but gives less power to the modes
+			// consle.append("\n" + wrappedStrang);
+
+			consle.append(wrappedStrang);
 		}, strang -> {
 			String wrappedString = wrapText ? WordUtils.wrap(strang, 75)
 					: strang;

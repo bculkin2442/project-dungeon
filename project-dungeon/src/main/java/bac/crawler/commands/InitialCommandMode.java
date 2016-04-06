@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import bac.crawler.ICommandMode;
 import bac.crawler.api.IDescriber;
 import bac.crawler.api.IDungeon;
 import bac.crawler.api.IRoom;
@@ -26,82 +25,8 @@ import bjc.utils.funcutils.ListUtils;
  * @author ben
  *
  */
-public class InitialCommandMode implements ICommandMode {
-	private Consumer<String>	outputNormal;
-	private Consumer<String>	outputError;
-
-	private Path				dataDir;
-
-	/**
-	 * Create a new initial command mode
-	 * 
-	 * @param outputNorml
-	 *            The function to use to output normal messages
-	 * @param outputErrr
-	 *            The function to use to output error messages
-	 * 
-	 */
-	public InitialCommandMode(Consumer<String> outputNorml,
-			Consumer<String> outputErrr) {
-		outputNormal = outputNorml;
-		outputError = outputErrr;
-
-		dataDir = Paths.get("data", "core-layout");
-	}
-
-	@Override
-	public ICommandMode processCommand(String command, String[] args) {
-		switch (command) {
-			case "start":
-				return startNavigationMode();
-			case "stub-start":
-				return startStubbedNavigationMode();
-
-			default:
-				if (args != null) {
-					outputError.accept("ERROR: Unrecognized command "
-							+ command + String.join(" ", args));
-				} else {
-					outputError.accept(
-							"ERROR: Unrecognized command " + command);
-				}
-
-				unrecognizedHelp(command, args);
-				break;
-		}
-
-		return this;
-	}
-
-	private ICommandMode startNavigationMode() {
-		IDungeon dungeon = GeneratorInitializer.createGenerator(dataDir);
-
-		NavigatorCore navCore = new NavigatorCore(dungeon.buildDungeon());
-
-		return new NavigatorCommandMode(navCore, outputNormal,
-				outputError);
-	}
-
-	private ICommandMode startStubbedNavigationMode() {
-		outputNormal.accept(
-				"You are in a maze of twisty little passages, all alike.");
-
-		ExitDescriberStub.stubOutGenerator();
-
-		NavigatorCore navCore = createStubNavigatorCore();
-
-		outputNormal.accept("As you come to, you find yourself in a room."
-				+ " You look around, and this is what you see: ");
-		outputNormal.accept("\t" + navCore.getRoomDescription());
-
-		outputNormal
-				.accept("\nYou see exits in the following directions: ");
-		outputNormal.accept("\t" + ListUtils
-				.collapseTokens(navCore.getAvailableDirections(), ", "));
-
-		return new NavigatorCommandMode(navCore, outputNormal,
-				outputError);
-	}
+public class InitialCommandMode {
+	private static Path dataDir = Paths.get("data", "core-layout");
 
 	private static NavigatorCore createStubNavigatorCore() {
 		Builder layoutBuilder = new Builder();
@@ -155,25 +80,73 @@ public class InitialCommandMode implements ICommandMode {
 	}
 
 	/**
-	 * Help the user to not repeat their command errors
+	 * Create an instance of this command mode
 	 * 
-	 * @param command
-	 *            The command that was unrecognized
-	 * @param args
-	 *            The arguments to that commands
+	 * @param normalOutput
+	 *            The function to use to output normal strings
+	 * @param errorOutput
+	 *            The function to use to output error strings
+	 * @return An instance of this command mode
 	 */
-	private void unrecognizedHelp(String command, String[] args) {
-		// TODO Auto-generated method stub
+	public static ICommandMode createMode(Consumer<String> normalOutput,
+			Consumer<String> errorOutput) {
+		GeneralCommandMode mode = new GeneralCommandMode(normalOutput,
+				errorOutput);
+
+		mode.addCommandHandler("stub-start", (args) -> {
+			return startStubbedNavigationMode(normalOutput, errorOutput);
+		});
+
+		mode.addCommandHandler("start", (args) -> {
+			return startNavigationMode(normalOutput, errorOutput);
+		});
+
+		mode.setUnknownCommandHandler((command, args) -> {
+			handleUnknownCommand(errorOutput, command, args);
+		});
+
+		return mode;
 	}
 
-	@Override
-	public boolean canHandleCommand(String command) {
-		switch (command) {
-			case "start":
-			case "stub-start":
-				return true;
-			default:
-				return false;
+	private static void handleUnknownCommand(Consumer<String> errorOutput,
+			String command, String[] args) {
+		if (args != null) {
+			errorOutput.accept("ERROR: Unrecognized command " + command
+					+ String.join(" ", args));
+		} else {
+			errorOutput.accept("ERROR: Unrecognized command " + command);
 		}
+	}
+
+	private static ICommandMode startNavigationMode(
+			Consumer<String> normalOutput, Consumer<String> errorOutput) {
+		IDungeon dungeon = GeneratorInitializer.createGenerator(dataDir);
+
+		NavigatorCore navCore = new NavigatorCore(dungeon.buildDungeon());
+
+		return new NavigatorCommandMode(navCore, normalOutput,
+				errorOutput);
+	}
+
+	private static ICommandMode startStubbedNavigationMode(
+			Consumer<String> normalOutput, Consumer<String> errorOutput) {
+		normalOutput.accept(
+				"You are in a maze of twisty little passages, all alike.");
+
+		ExitDescriberStub.stubOutGenerator();
+
+		NavigatorCore navCore = createStubNavigatorCore();
+
+		normalOutput.accept("As you come to, you find yourself in a room."
+				+ " You look around, and this is what you see: ");
+		normalOutput.accept("\t" + navCore.getRoomDescription());
+
+		normalOutput
+				.accept("\nYou see exits in the following directions: ");
+		normalOutput.accept("\t" + ListUtils
+				.collapseTokens(navCore.getAvailableDirections(), ", "));
+
+		return new NavigatorCommandMode(navCore, normalOutput,
+				errorOutput);
 	}
 }
