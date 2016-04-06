@@ -88,7 +88,8 @@ public class NavigatorCommandMode {
 					normalOutput.accept("\t" + ListUtils.collapseTokens(
 							core.getAvailableDirections(), ", "));
 				}
-			} catch (IllegalArgumentException iaex) {
+			} catch (@SuppressWarnings("unused") IllegalArgumentException iaex) {
+				// We don't care about specifics
 				errorOutput.accept(
 						"I'm sorry, but how am I supposed to go " + args[0]
 								+ "? That's not a valid direction.");
@@ -115,7 +116,8 @@ public class NavigatorCommandMode {
 						"You look " + dir + " and see the following: \n");
 				normalOutput.accept(
 						"\t" + core.getDescriptionInDirection(dir));
-			} catch (IllegalArgumentException iaex) {
+			} catch (@SuppressWarnings("unused") IllegalArgumentException iaex) {
+				// We don't care about specifics
 				errorOutput
 						.accept("I'm sorry, but how am I supposed to look "
 								+ args[0]

@@ -44,8 +44,8 @@ public class RoomTypeFileParser {
 		par.doWith((initString, stat) -> {
 			switch (initString) {
 				case "describer":
-					String describerPath =
-							ListUtils.collapseTokens(fst.toList((s) -> s));
+					String describerPath = ListUtils
+							.collapseTokens(fst.toList((s) -> s));
 
 					stat.setDescriber(Paths.get(describerPath, ""));
 					break;
@@ -57,8 +57,8 @@ public class RoomTypeFileParser {
 
 	private static void parseExit(FunctionalStringTokenizer fst,
 			RoomTypeState stat) {
-		RelativeDirection rdir =
-				RelativeDirection.properValueOf(fst.nextToken());
+		RelativeDirection rdir = RelativeDirection
+				.properValueOf(fst.nextToken());
 		ExitType eType = ExitType.properValueOf(fst.nextToken());
 
 		stat.addExit(rdir,
@@ -78,20 +78,29 @@ public class RoomTypeFileParser {
 		try {
 			RoomTypeState initState = new RoomTypeState(currentDir);
 
-			FileInputStream stream =
-					new FileInputStream(inputFile.toFile());
+			FileInputStream stream = new FileInputStream(
+					inputFile.toFile());
 
-			IRoomType type =
-					reader.fromStream(stream, initState).toRoomType();
+			IRoomType type = reader.fromStream(stream, initState)
+					.toRoomType();
 
 			stream.close();
 
 			return type;
-		} catch (FileNotFoundException e) {
-			throw new IllegalStateException("Could not read room type");
-		} catch (IOException e) {
-			throw new IllegalStateException(
+		} catch (FileNotFoundException fnfex) {
+			IllegalStateException isex = new IllegalStateException(
+					"Could not read room type");
+
+			isex.initCause(fnfex);
+
+			throw isex;
+		} catch (IOException ioex) {
+			IllegalStateException isex = new IllegalStateException(
 					"Got I/O exception attempting to close file.");
+
+			isex.initCause(ioex);
+
+			throw isex;
 		}
 	}
 }

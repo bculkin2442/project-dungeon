@@ -82,17 +82,17 @@ public enum Direction {
 			throw new IllegalArgumentException(
 					"Tried to do things with incorrect number of cardinal directions. Tried with "
 							+ nCardinals);
-		} else {
-			FunctionalList<Direction> cards = cardinals();
-
-			for (int i = 0; i <= 4 - nCardinals; i++) {
-				Direction rDir = cards.randItem(RNG);
-
-				cards.removeMatching(rDir);
-			}
-
-			cards.forEach(act);
 		}
+
+		FunctionalList<Direction> cards = cardinals();
+
+		for (int i = 0; i <= 4 - nCardinals; i++) {
+			Direction rDir = cards.randItem(RNG);
+
+			cards.removeMatching(rDir);
+		}
+
+		cards.forEach(act);
 	}
 
 	/**

@@ -7,8 +7,8 @@ import org.apache.commons.lang3.text.WordUtils;
 import com.eleet.dragonconsole.CommandProcessor;
 import com.eleet.dragonconsole.DragonConsole;
 
-import bac.crawler.commands.ICommandMode;
 import bac.crawler.commands.InitialCommandMode;
+import bjc.utils.cli.ICommandMode;
 
 /**
  * Handles input/output for the game
@@ -17,10 +17,53 @@ import bac.crawler.commands.InitialCommandMode;
  *
  */
 public class IOProcessor extends CommandProcessor {
-	private ICommandMode	mode;
 	private boolean			exiting;
+	private ICommandMode	mode;
 
 	private boolean			wrapText	= false;
+
+	private void doConsoleError(String strang) {
+		String wrappedString;
+
+		if (wrapText) {
+			wrappedString = WordUtils.wrap(strang, 75);
+		} else {
+			wrappedString = strang;
+		}
+
+		DragonConsole console = this.getConsole();
+
+		console.append("&" + console.getErrorColor() + "\n" + wrappedString
+				+ "&" + console.getDefaultColor());
+	}
+
+	private void doConsoleOutput(String strang) {
+		String wrappedStrang;
+
+		if (wrapText) {
+			wrappedStrang = WordUtils.wrap(strang, 75);
+		} else {
+			wrappedStrang = strang;
+		}
+
+		this.getConsole().append(wrappedStrang);
+	}
+
+	@Override
+	public void install(DragonConsole consle) {
+		super.install(consle);
+
+		mode = InitialCommandMode.createMode(this::doConsoleOutput,
+				this::doConsoleError);
+	}
+
+	private void printPrompt() {
+		if (mode.useCustomPrompt()) {
+			this.output("\n" + mode.getCustomPrompt());
+		} else {
+			this.output("\n" + mode.getName() + ">>");
+		}
+	}
 
 	@Override
 	public void processCommand(String input) {
@@ -49,7 +92,7 @@ public class IOProcessor extends CommandProcessor {
 			}
 
 			exiting = false;
-			this.output("\n" + mode.getName() + ">>");
+			printPrompt();
 			// This command's no good any longer
 			return;
 		}
@@ -68,34 +111,12 @@ public class IOProcessor extends CommandProcessor {
 			}
 
 			if (!exiting) {
-				this.output("\n" + mode.getName() + ">>");
+				printPrompt();
 			}
 		} else {
 			this.output("\n");
 			this.output("You entered: " + input + "\n");
 			this.output("crawler>>");
 		}
-	}
-
-	@Override
-	public void install(DragonConsole consle) {
-		super.install(consle);
-
-		mode = InitialCommandMode.createMode((strang) -> {
-			String wrappedStrang = wrapText ? WordUtils.wrap(strang, 75)
-					: strang;
-
-			// This makes things simpler, but gives less power to the modes
-			// consle.append("\n" + wrappedStrang);
-
-			consle.append(wrappedStrang);
-		}, strang -> {
-			String wrappedString = wrapText ? WordUtils.wrap(strang, 75)
-					: strang;
-
-			consle.append("&" + consle.getErrorColor() + "\n"
-					+ wrappedString + "&" + consle.getDefaultColor());
-
-		});
 	}
 }

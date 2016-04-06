@@ -55,11 +55,11 @@ public enum RelativeDirection {
 							"Attempted to make absolute a direction in a unknown way "
 									+ this);
 			}
-		} else {
-			// Since it isn't a cardinal direction, absolutize it against a
-			// random direction
-			return this.makeAbsolute(Direction.NORTH);
 		}
+
+		// Since it isn't a cardinal direction, absolutize it against a
+		// random direction
+		return this.makeAbsolute(Direction.NORTH);
 	}
 
 	/**
@@ -93,21 +93,21 @@ public enum RelativeDirection {
 			throw new IllegalArgumentException(
 					"Tried to do things with incorrect number of relative directions. Tried with "
 							+ nDirections);
-		} else {
-			FunctionalList<RelativeDirection> relativeDirs = new FunctionalList<>(
-					values());
-
-			if (ignoreBackwards) {
-				relativeDirs.removeMatching(BACKWARD);
-			}
-
-			for (int i = 0; i <= maxNDirections - nDirections; i++) {
-				RelativeDirection rDir = relativeDirs.randItem(RNG);
-
-				relativeDirs.removeMatching(rDir);
-			}
-
-			relativeDirs.forEach(action);
 		}
+
+		FunctionalList<RelativeDirection> relativeDirs = new FunctionalList<>(
+				values());
+
+		if (ignoreBackwards) {
+			relativeDirs.removeMatching(BACKWARD);
+		}
+
+		for (int i = 0; i <= maxNDirections - nDirections; i++) {
+			RelativeDirection rDir = relativeDirs.randItem(RNG);
+
+			relativeDirs.removeMatching(rDir);
+		}
+
+		relativeDirs.forEach(action);
 	}
 }

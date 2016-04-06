@@ -103,12 +103,12 @@ public class LayoutGeneratorArchetypes {
 
 		@Override
 		public LayoutGeneratorArchetypes build() {
-			if (isBuilderReady()) {
-				return building;
-			} else {
+			if (!isBuilderReady()) {
 				throw new IllegalStateException(
 						"All builder fields must be given a non-null value to build");
 			}
+
+			return building;
 		}
 
 		private boolean isBuilderReady() {

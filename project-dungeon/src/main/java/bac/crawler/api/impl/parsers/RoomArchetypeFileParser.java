@@ -110,9 +110,13 @@ public class RoomArchetypeFileParser {
 
 		try {
 			inputStream.close();
-		} catch (IOException e) {
-			throw new IllegalStateException(
+		} catch (IOException ioex) {
+			IllegalStateException isex = new IllegalStateException(
 					"Got I/O exception attempting to close stream");
+			
+			isex.initCause(ioex);
+			
+			throw isex;
 		}
 
 		return readArchetype;

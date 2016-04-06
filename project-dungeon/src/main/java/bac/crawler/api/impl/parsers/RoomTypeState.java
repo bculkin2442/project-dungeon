@@ -58,12 +58,20 @@ public class RoomTypeState {
 			roomDescriber = DescriberFileParser.parseFile(inputStream);
 
 			inputStream.close();
-		} catch (FileNotFoundException e) {
-			throw new PragmaFormatException(
+		} catch (FileNotFoundException fnfex) {
+			PragmaFormatException pfex = new PragmaFormatException(
 					"Could not read describer from file " + sourceFile);
-		} catch (IOException e) {
-			throw new IllegalStateException(
+
+			pfex.initCause(fnfex);
+
+			throw pfex;
+		} catch (IOException ioex) {
+			IllegalStateException isex = new IllegalStateException(
 					"Got I/O exception attempting to close file.");
+
+			isex.initCause(ioex);
+
+			throw isex;
 		}
 	}
 
@@ -102,13 +110,21 @@ public class RoomTypeState {
 			cdesc = ComponentDescriptionFileParser.fromStream(inputSource);
 
 			inputSource.close();
-		} catch (FileNotFoundException e) {
-			throw new PragmaFormatException(
+		} catch (FileNotFoundException fnfex) {
+			PragmaFormatException pfex = new PragmaFormatException(
 					"Could not read component description from file "
 							+ sourceFile);
-		} catch (IOException e) {
-			throw new IllegalStateException(
+
+			pfex.initCause(fnfex);
+
+			throw pfex;
+		} catch (IOException ioex) {
+			IllegalStateException isex = new IllegalStateException(
 					"Got I/O exception attempting to close file.");
+
+			isex.initCause(ioex);
+
+			throw isex;
 		}
 	}
 
