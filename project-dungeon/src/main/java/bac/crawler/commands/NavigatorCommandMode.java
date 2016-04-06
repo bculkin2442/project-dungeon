@@ -12,145 +12,107 @@ import bjc.utils.funcutils.ListUtils;
  * @author ben
  *
  */
-public class NavigatorCommandMode implements ICommandMode {
-	private NavigatorCore		core;
-	
-	private Consumer<String>	outputNormal;
-	private Consumer<String>	outputError;
-
+public class NavigatorCommandMode {
 	/**
-	 * Create a new navigator command mode
+	 * Create an instance of the navigator command mode
 	 * 
-	 * @param navCore
-	 *            The navigator core to navigate with
-	 * @param outputNorml
-	 *            The function to use to output normal messages
-	 * @param outputErrr
-	 *            The function to use to output error messages
+	 * @param normalOutput
+	 *            The function to use for normal output
+	 * @param errorOutput
+	 *            The function to use for error output
+	 * @param core
+	 *            The core to use for navigation
+	 * @return A new navigator command mode
 	 */
-	public NavigatorCommandMode(NavigatorCore navCore,
-			Consumer<String> outputNorml, Consumer<String> outputErrr) {
-		core = navCore;
+	public static ICommandMode createMode(Consumer<String> normalOutput,
+			Consumer<String> errorOutput, NavigatorCore core) {
+		GeneralCommandMode mode = new GeneralCommandMode(normalOutput,
+				errorOutput);
 
-		outputNormal = outputNorml;
-		outputError = outputErrr;
-		
+		mode.setModeName("navigator");
+
+		mode.addCommandHandler("look", (args) -> {
+			handleLookCommand(normalOutput, errorOutput, core, args);
+
+			return mode;
+		});
+
+		mode.addCommandHandler("go", (args) -> {
+			handleMovementCommand(normalOutput, errorOutput, core, args);
+
+			return mode;
+		});
+
+		mode.addCommandAlias("move", "go");
+		mode.addCommandAlias("walk", "go");
+
+		return mode;
 	}
 
-	@Override
-	public ICommandMode processCommand(String command, String[] args) {
-		switch (command) {
-			case "look":
-				handleLookCommand(args);
-				break;
-			case "go":
-			case "move":
-			case "walk":
-				handleMovementCommand(args);
-				break;
-			default:
-				if (args != null) {
-					outputError.accept("ERROR: Unrecognized command "
-							+ command + String.join(" ", args));
-				} else {
-					outputError.accept(
-							"ERROR: Unrecognized command " + command);
-				}
-
-				unrecognizedHelp(command, args);
-				break;
-		}
-
-		return this;
-	}
-
-	/**
-	 * Help the user to not repeat their command errors
-	 * 
-	 * @param command
-	 *            The command that was unrecognized
-	 * @param args
-	 *            The arguments to that commands
-	 */
-	private void unrecognizedHelp(String command, String[] args) {
-		// TODO Auto-generated method stub
-	}
-
-	private void handleMovementCommand(String[] args) {
+	private static void handleMovementCommand(
+			Consumer<String> normalOutput, Consumer<String> errorOutput,
+			NavigatorCore core, String[] args) {
 		if (args == null) {
-			outputNormal.accept("Where?\n");
+			normalOutput.accept("Where?\n");
 		} else {
 			try {
 				Direction dir = Direction.properValueOf(args[0]);
 
-				outputNormal.accept(
+				normalOutput.accept(
 						"You go " + dir + " and see the following: \n\t");
 
 				String navigationResult = core.navigateInDirection(dir);
 
 				if (!navigationResult.equals("")) {
-					outputNormal.accept(navigationResult);
+					normalOutput.accept(navigationResult);
 				} else {
-					outputNormal.accept(core.getRoomDescription());
+					normalOutput.accept(core.getRoomDescription());
 
 					if (core.hasBeenVisitedBefore()) {
-						outputNormal.accept("This room seems familiar");
+						normalOutput.accept("This room seems familiar");
 					}
 
-					outputNormal.accept(
+					normalOutput.accept(
 							"\nYou see exits in the following directions: ");
-					outputNormal.accept("\t" + ListUtils.collapseTokens(
+					normalOutput.accept("\t" + ListUtils.collapseTokens(
 							core.getAvailableDirections(), ", "));
 				}
 			} catch (IllegalArgumentException iaex) {
-				outputError.accept("I'm sorry, but " + args[0]
-						+ " is not a valid direction.");
-				outputError
+				errorOutput.accept(
+						"I'm sorry, but how am I supposed to go " + args[0]
+								+ "? That's not a valid direction.");
+				errorOutput
 						.accept("\n\t Valid directions are the four cardinal directions"
 								+ " (north, east, south, west) and up or down");
 			}
 		}
 	}
 
-	private void handleLookCommand(String[] args) {
+	private static void handleLookCommand(Consumer<String> normalOutput,
+			Consumer<String> errorOutput, NavigatorCore core,
+			String[] args) {
 		if (args == null) {
-			outputNormal
+			normalOutput
 					.accept("You look around and see the following: \n");
 
-			outputNormal.accept("\t" + core.getRoomDescription());
+			normalOutput.accept("\t" + core.getRoomDescription());
 		} else {
 			try {
 				Direction dir = Direction.properValueOf(args[0]);
 
-				outputNormal.accept(
+				normalOutput.accept(
 						"You look " + dir + " and see the following: \n");
-				outputNormal.accept(
+				normalOutput.accept(
 						"\t" + core.getDescriptionInDirection(dir));
 			} catch (IllegalArgumentException iaex) {
-				outputError.accept("I'm sorry, but " + args[0]
-						+ " is not a valid direction.");
-				outputError
+				errorOutput
+						.accept("I'm sorry, but how am I supposed to look "
+								+ args[0]
+								+ "? That's not a valid direction.");
+				errorOutput
 						.accept("\n\t Valid directions are the four cardinal directions"
 								+ " (north, east, south, west) and up or down");
 			}
-		}
-	}
-
-	@Override
-	public String getName() {
-		return "navigator";
-	}
-
-	@Override
-	public boolean canHandleCommand(String command) {
-		switch (command) {
-			case "look":
-			case "go":
-			case "move":
-			case "walk":
-				return true;
-			default:
-				return false;
 		}
 	}
 }

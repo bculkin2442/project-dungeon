@@ -27,6 +27,9 @@ import bjc.utils.data.GenHolder;
  *
  */
 public class LayoutGenerator implements IDungeon {
+	private static ComponentDescription	cdesc;
+
+	private static Random				rng	= new Random();
 	static {
 		String name = "Core Dungeon Generator";
 		String author = "Benjamin Culkin";
@@ -41,15 +44,41 @@ public class LayoutGenerator implements IDungeon {
 				version);
 	}
 
-	private static Random				rng	= new Random();
-	private static ComponentDescription	cdesc;
+	private static ExitType handleVerticalExits(
+			Map<Direction, IExit> exits, GenHolder<Direction> absoluteDir,
+			ExitType exitType) {
+		if (exitType == ExitType.WELL) {
+			if (!exits.containsKey(Direction.DOWN)) {
+				absoluteDir.transform((oldDir) -> Direction.DOWN);
+			} else {
+				exitType = ExitType.getRandomNonVerticalType();
+			}
+		} else if (exitType == ExitType.STAIRS) {
+			if (!exits.containsKey(Direction.DOWN)) {
+				if (!exits.containsKey(Direction.UP)) {
+					if (Math.random() > 0.5) {
+						absoluteDir.transform((oldDir) -> Direction.DOWN);
+					} else {
+						absoluteDir.transform((oldDir) -> Direction.UP);
+					}
+				} else {
+					absoluteDir.transform((oldDir) -> Direction.DOWN);
+				}
+			} else if (!exits.containsKey(Direction.UP)) {
+				absoluteDir.transform((oldDir) -> Direction.UP);
+			} else {
+				exitType = ExitType.getRandomNonVerticalType();
+			}
+		}
+		return exitType;
+	}
 
-	private IRoomArchetype				initialRooms;
+	private IRoomArchetype	chambers;
+	private IRoomArchetype	doors;
+	private IRoomArchetype	initialRooms;
+	private IRoomArchetype	passages;
 
-	private IRoomArchetype				chambers;
-	private IRoomArchetype				doors;
-	private IRoomArchetype				passages;
-	private IRoomArchetype				stairs;
+	private IRoomArchetype	stairs;
 
 	/**
 	 * Create a new core layout generator that uses rooms from the provided
@@ -74,23 +103,16 @@ public class LayoutGenerator implements IDungeon {
 
 		for (RelativeDirection relativeDirection : type.getExitDirections()
 				.toIterable()) {
-			Direction absoluteDir = relativeDirection
-					.makeAbsolute(entranceDirection);
+			GenHolder<Direction> absoluteDir = new GenHolder<>(
+					relativeDirection.makeAbsolute(entranceDirection));
 			ExitDesc exitDescription = type
 					.getExitInDirection(relativeDirection);
 
 			GenHolder<Supplier<IRoom>> roomSupplier = new GenHolder<>();
 
 			exitDescription.doWith((exitType, exitDescriber) -> {
-
-				buildRoomSupplier(roomHolder, absoluteDir, roomSupplier,
-						exitType, exitDescriber);
-
-				LazyExit lexit = new LazyExit(
-						exitDescriber::getDescription,
-						roomSupplier.unwrap((s) -> s));
-
-				exits.put(absoluteDir, lexit);
+				buildExitFromDescription(exits, roomHolder, absoluteDir,
+						roomSupplier, exitType, exitDescriber);
 			});
 		}
 
@@ -112,6 +134,21 @@ public class LayoutGenerator implements IDungeon {
 		return buildInitialRoom(initialRooms.getType(false));
 	}
 
+	private void buildExitFromDescription(Map<Direction, IExit> exits,
+			GenHolder<IRoom> roomHolder, GenHolder<Direction> absoluteDir,
+			GenHolder<Supplier<IRoom>> roomSupplier, ExitType exitType,
+			IDescriber exitDescriber) {
+		exitType = handleVerticalExits(exits, absoluteDir, exitType);
+
+		buildRoomSupplier(roomHolder, absoluteDir.unwrap((dir) -> dir),
+				roomSupplier, exitType, exitDescriber);
+
+		LazyExit lexit = new LazyExit(exitDescriber::getDescription,
+				roomSupplier.unwrap((s) -> s));
+
+		exits.put(absoluteDir.unwrap((dir) -> dir), lexit);
+	}
+
 	private IRoom buildInitialRoom(IRoomType type) {
 		// We need a direction to start from, so we'll just say the dungeon
 		// is always entered from the north side
@@ -124,23 +161,16 @@ public class LayoutGenerator implements IDungeon {
 
 		for (RelativeDirection relativeDirection : type.getExitDirections()
 				.toIterable()) {
-			Direction absoluteDir = relativeDirection
-					.makeAbsolute(entrance);
+			GenHolder<Direction> absoluteDir = new GenHolder<>(
+					relativeDirection.makeAbsolute(entrance));
 			ExitDesc exitDescription = type
 					.getExitInDirection(relativeDirection);
 
 			GenHolder<Supplier<IRoom>> roomSupplier = new GenHolder<>();
 
 			exitDescription.doWith((exitType, exitDescriber) -> {
-
-				buildRoomSupplier(roomHolder, absoluteDir, roomSupplier,
-						exitType, exitDescriber);
-
-				LazyExit lexit = new LazyExit(
-						exitDescriber::getDescription,
-						roomSupplier.unwrap((s) -> s));
-
-				exits.put(absoluteDir, lexit);
+				buildExitFromDescription(exits, roomHolder, absoluteDir,
+						roomSupplier, exitType, exitDescriber);
 			});
 		}
 

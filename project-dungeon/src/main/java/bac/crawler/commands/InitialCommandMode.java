@@ -110,12 +110,7 @@ public class InitialCommandMode {
 
 	private static void handleUnknownCommand(Consumer<String> errorOutput,
 			String command, String[] args) {
-		if (args != null) {
-			errorOutput.accept("ERROR: Unrecognized command " + command
-					+ String.join(" ", args));
-		} else {
-			errorOutput.accept("ERROR: Unrecognized command " + command);
-		}
+		// TODO implement me
 	}
 
 	private static ICommandMode startNavigationMode(
@@ -124,8 +119,8 @@ public class InitialCommandMode {
 
 		NavigatorCore navCore = new NavigatorCore(dungeon.buildDungeon());
 
-		return new NavigatorCommandMode(navCore, normalOutput,
-				errorOutput);
+		return NavigatorCommandMode.createMode(normalOutput, errorOutput,
+				navCore);
 	}
 
 	private static ICommandMode startStubbedNavigationMode(
@@ -146,7 +141,7 @@ public class InitialCommandMode {
 		normalOutput.accept("\t" + ListUtils
 				.collapseTokens(navCore.getAvailableDirections(), ", "));
 
-		return new NavigatorCommandMode(navCore, normalOutput,
-				errorOutput);
+		return NavigatorCommandMode.createMode(normalOutput, errorOutput,
+				navCore);
 	}
 }

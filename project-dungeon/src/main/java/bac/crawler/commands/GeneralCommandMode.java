@@ -8,20 +8,23 @@ import java.util.function.Consumer;
 /**
  * A general command mode, with a customizable set of commands
  * 
- * There is a small set of commands which is handled by default. Right now,
- * this is only 'list', which lists all the commands the user can input.
+ * There is a small set of commands which is handled by default. The first
+ * is 'list', which lists all the commands the user can input. The second
+ * is 'alias', which allows the user to bind a new name to a command
  * 
  * @author ben
  *
  */
 public class GeneralCommandMode implements ICommandMode {
 	private Map<String, ICommandHandler>	commandHandlers;
-	private BiConsumer<String, String[]>	unknownCommandHandler;
+	private Map<String, ICommandHandler>	defaultHandlers;
 
-	private Consumer<String>				normalOutput;
-	@SuppressWarnings("unused")
-	// In case I have reason to output errors at some time
 	private Consumer<String>				errorOutput;
+
+	private String							modeName;
+	private Consumer<String>				normalOutput;
+
+	private BiConsumer<String, String[]>	unknownCommandHandler;
 
 	/**
 	 * Create a new general command mode
@@ -37,36 +40,50 @@ public class GeneralCommandMode implements ICommandMode {
 		this.errorOutput = errorOutput;
 
 		commandHandlers = new HashMap<>();
+		defaultHandlers = new HashMap<>();
+
+		defaultHandlers.put("list", (args) -> {
+			listCommands();
+
+			return this;
+		});
+
+		defaultHandlers.put("alias", (args) -> {
+			aliasCommands(args);
+
+			return this;
+		});
 	}
 
-	@Override
-	public ICommandMode processCommand(String command, String[] args) {
-		if (command.equals("list")) {
-			normalOutput
-					.accept("\nThe available commands are as follows:\n");
-
-			commandHandlers.keySet().forEach((commandName) -> {
-				normalOutput.accept("\t" + commandName);
-			});
-
-			normalOutput.accept("\n");
-		} else if (commandHandlers.containsKey(command)) {
-			return commandHandlers.get(command).handle(args);
+	/**
+	 * Add an alias to an existing command
+	 * 
+	 * @param commandName
+	 *            The name of the command to add an alias for
+	 * @param aliasName
+	 *            The new alias for the command
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if the specified command doesn't have a bound handler,
+	 *             or if the alias name already has a bound value
+	 */
+	public void addCommandAlias(String commandName, String aliasName) {
+		if (commandName == null) {
+			throw new NullPointerException(
+					"Command name must not be null");
+		} else if (aliasName == null) {
+			throw new NullPointerException("Alias name must not be null");
+		} else if (!commandHandlers.containsKey(commandName)) {
+			throw new IllegalArgumentException(
+					"Cannot alias non-existant command '" + commandName
+							+ "'");
+		} else if (commandHandlers.containsKey(aliasName)) {
+			throw new IllegalArgumentException("Cannot bind alias '"
+					+ aliasName + "' to a command with a bound handler");
 		} else {
-			if (unknownCommandHandler == null) {
-				throw new UnsupportedOperationException(
-						"Command " + command + " is invalid.");
-			}
-
-			unknownCommandHandler.accept(command, args);
+			commandHandlers.put(aliasName,
+					commandHandlers.get(commandName));
 		}
-
-		return this;
-	}
-
-	@Override
-	public boolean canHandleCommand(String command) {
-		return commandHandlers.containsKey(command);
 	}
 
 	/**
@@ -93,6 +110,92 @@ public class GeneralCommandMode implements ICommandMode {
 		} else {
 			commandHandlers.put(command, handler);
 		}
+	}
+
+	private void aliasCommands(String[] args) {
+		if (args.length != 2) {
+			errorOutput.accept("ERROR: Alias requires two arguments. "
+					+ "The command name, and the alias for that command");
+		} else {
+			String commandName = args[0];
+			String aliasName = args[1];
+
+			if (!canHandleCommand(commandName)) {
+				errorOutput.accept("ERROR: '" + commandName
+						+ "' is not a valid command.");
+			} else if (canHandleCommand(aliasName)) {
+				errorOutput.accept("ERROR: Cannot overwrite command '"
+						+ aliasName + "'");
+			} else {
+				addCommandAlias(commandName, aliasName);
+			}
+		}
+	}
+
+	@Override
+	public boolean canHandleCommand(String command) {
+		return commandHandlers.containsKey(command)
+				|| defaultHandlers.containsKey(command);
+	}
+
+	@Override
+	public String getName() {
+		if (modeName == null) {
+			return ICommandMode.super.getName();
+		} else {
+			return modeName;
+		}
+	}
+
+	private void listCommands() {
+		normalOutput.accept(
+				"\nThe available commands for this mode are as follows:\n");
+
+		commandHandlers.keySet().forEach((commandName) -> {
+			normalOutput.accept("\t" + commandName);
+		});
+
+		normalOutput.accept(
+				"\nThe following commands are available in all modes:\n");
+
+		defaultHandlers.keySet().forEach((commandName) -> {
+			normalOutput.accept("\t" + commandName);
+		});
+
+		normalOutput.accept("\n");
+	}
+
+	@Override
+	public ICommandMode processCommand(String command, String[] args) {
+		if (commandHandlers.containsKey(command)) {
+			return commandHandlers.get(command).handle(args);
+		} else {
+			if (unknownCommandHandler == null) {
+				throw new UnsupportedOperationException(
+						"Command " + command + " is invalid.");
+			} else if (args != null) {
+				errorOutput.accept("ERROR: Unrecognized command " + command
+						+ String.join(" ", args));
+			} else {
+				errorOutput
+						.accept("ERROR: Unrecognized command " + command);
+			}
+
+			unknownCommandHandler.accept(command, args);
+		}
+
+		return this;
+	}
+
+	/**
+	 * Set the name of this mode
+	 * 
+	 * @param name
+	 *            The desired name of this mode, or null to use the default
+	 *            name
+	 */
+	public void setModeName(String name) {
+		modeName = name;
 	}
 
 	/**

@@ -40,10 +40,13 @@ public class DungeonCrawler {
 
 			// Set the font to something less ugly
 			console.setFont(Font.decode("Arial"));
-			
+
 			// Set the command processor on the console
 			console.setCommandProcessor(new IOProcessor());
 
+			// Print intro message
+			console.append(
+					"Enter list to see a list of available commands, or exit to exit the game");
 			// Print the initial console prompt
 			console.append("crawler>> ");
 

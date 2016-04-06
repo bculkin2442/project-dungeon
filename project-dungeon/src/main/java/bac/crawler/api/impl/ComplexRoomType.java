@@ -65,18 +65,18 @@ public class ComplexRoomType extends GenericRoomType {
 	 * @param desc
 	 *            The thing to use for generating descriptions of this room
 	 *            type
-	 * @param hasEntrnce
+	 * @param hasEntrance
 	 *            Whether or not this room type has an entrance
-	 * @param isLrge
+	 * @param isLarge
 	 *            Whether or not this room is considered "large" for exit
 	 *            generation purposes
 	 */
 	public ComplexRoomType(ComponentDescription cdesc, IDescriber desc,
-			boolean hasEntrnce, boolean isLrge) {
+			boolean hasEntrance, boolean isLarge) {
 		super(cdesc, desc, null);
 
-		isLarge = isLrge;
-		hasEntrance = hasEntrnce;
+		this.isLarge = isLarge;
+		this.hasEntrance = hasEntrance;
 	}
 
 	@Override
