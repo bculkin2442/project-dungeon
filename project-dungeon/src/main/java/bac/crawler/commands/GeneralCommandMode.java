@@ -104,7 +104,7 @@ public class GeneralCommandMode implements ICommandMode {
 			throw new NullPointerException("Command must not be null");
 		} else if (handler == null) {
 			throw new NullPointerException("Handler must not be null");
-		} else if (commandHandlers.containsKey(command)) {
+		} else if (canHandleCommand(command)) {
 			throw new IllegalArgumentException("Command " + command
 					+ " already has a handler registered");
 		} else {
@@ -149,7 +149,7 @@ public class GeneralCommandMode implements ICommandMode {
 
 	private void listCommands() {
 		normalOutput.accept(
-				"\nThe available commands for this mode are as follows:\n");
+				"The available commands for this mode are as follows:\n");
 
 		commandHandlers.keySet().forEach((commandName) -> {
 			normalOutput.accept("\t" + commandName);
@@ -167,7 +167,11 @@ public class GeneralCommandMode implements ICommandMode {
 
 	@Override
 	public ICommandMode processCommand(String command, String[] args) {
-		if (commandHandlers.containsKey(command)) {
+		normalOutput.accept("\n");
+
+		if (defaultHandlers.containsKey(command)) {
+			return defaultHandlers.get(command).handle(args);
+		} else if (commandHandlers.containsKey(command)) {
 			return commandHandlers.get(command).handle(args);
 		} else {
 			if (unknownCommandHandler == null) {

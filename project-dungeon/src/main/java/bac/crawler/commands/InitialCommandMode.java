@@ -94,11 +94,11 @@ public class InitialCommandMode {
 				errorOutput);
 
 		mode.addCommandHandler("stub-start", (args) -> {
-			return startStubbedNavigationMode(normalOutput, errorOutput);
+			return startStubbedNavigationMode(normalOutput, errorOutput, mode);
 		});
 
 		mode.addCommandHandler("start", (args) -> {
-			return startNavigationMode(normalOutput, errorOutput);
+			return startNavigationMode(normalOutput, errorOutput, mode);
 		});
 
 		mode.setUnknownCommandHandler((command, args) -> {
@@ -114,17 +114,17 @@ public class InitialCommandMode {
 	}
 
 	private static ICommandMode startNavigationMode(
-			Consumer<String> normalOutput, Consumer<String> errorOutput) {
+			Consumer<String> normalOutput, Consumer<String> errorOutput, ICommandMode returnTo) {
 		IDungeon dungeon = GeneratorInitializer.createGenerator(dataDir);
 
 		NavigatorCore navCore = new NavigatorCore(dungeon.buildDungeon());
 
 		return NavigatorCommandMode.createMode(normalOutput, errorOutput,
-				navCore);
+				navCore, returnTo);
 	}
 
 	private static ICommandMode startStubbedNavigationMode(
-			Consumer<String> normalOutput, Consumer<String> errorOutput) {
+			Consumer<String> normalOutput, Consumer<String> errorOutput, ICommandMode returnTo) {
 		normalOutput.accept(
 				"You are in a maze of twisty little passages, all alike.");
 
@@ -132,8 +132,9 @@ public class InitialCommandMode {
 
 		NavigatorCore navCore = createStubNavigatorCore();
 
-		normalOutput.accept("As you come to, you find yourself in a room."
-				+ " You look around, and this is what you see: ");
+		normalOutput
+				.accept("\nAs you come to, you find yourself in a room."
+						+ " You look around, and this is what you see: \n");
 		normalOutput.accept("\t" + navCore.getRoomDescription());
 
 		normalOutput
@@ -142,6 +143,6 @@ public class InitialCommandMode {
 				.collapseTokens(navCore.getAvailableDirections(), ", "));
 
 		return NavigatorCommandMode.createMode(normalOutput, errorOutput,
-				navCore);
+				navCore, returnTo);
 	}
 }

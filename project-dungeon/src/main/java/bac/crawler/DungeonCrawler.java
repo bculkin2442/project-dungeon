@@ -46,7 +46,7 @@ public class DungeonCrawler {
 
 			// Print intro message
 			console.append(
-					"Enter list to see a list of available commands, or exit to exit the game");
+					"Enter list to see a list of available commands, or exit to exit the game\n");
 			// Print the initial console prompt
 			console.append("crawler>> ");
 

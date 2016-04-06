@@ -22,10 +22,12 @@ public class NavigatorCommandMode {
 	 *            The function to use for error output
 	 * @param core
 	 *            The core to use for navigation
+	 * @param returnMode
 	 * @return A new navigator command mode
 	 */
 	public static ICommandMode createMode(Consumer<String> normalOutput,
-			Consumer<String> errorOutput, NavigatorCore core) {
+			Consumer<String> errorOutput, NavigatorCore core,
+			ICommandMode returnMode) {
 		GeneralCommandMode mode = new GeneralCommandMode(normalOutput,
 				errorOutput);
 
@@ -43,8 +45,15 @@ public class NavigatorCommandMode {
 			return mode;
 		});
 
-		mode.addCommandAlias("move", "go");
-		mode.addCommandAlias("walk", "go");
+		mode.addCommandAlias("go", "move");
+		mode.addCommandAlias("go", "walk");
+
+		mode.addCommandHandler("die", (args) -> {
+			normalOutput.accept("Well, if you say so.");
+			normalOutput.accept("\n YOU HAVE DIED. GAME OVER");
+
+			return returnMode;
+		});
 
 		return mode;
 	}
