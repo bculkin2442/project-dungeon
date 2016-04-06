@@ -17,6 +17,8 @@ import bac.crawler.layout.core.GeneratorInitializer;
 import bac.crawler.layout.core.LayoutGenerator;
 import bac.crawler.layout.core.LayoutGeneratorArchetypes.Builder;
 import bac.crawler.navigator.NavigatorCore;
+import bjc.utils.cli.GeneralCommandMode;
+import bjc.utils.cli.ICommandMode;
 import bjc.utils.funcutils.ListUtils;
 
 /**

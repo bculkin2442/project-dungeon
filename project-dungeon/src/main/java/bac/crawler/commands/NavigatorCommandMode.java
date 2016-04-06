@@ -4,6 +4,8 @@ import java.util.function.Consumer;
 
 import bac.crawler.api.util.Direction;
 import bac.crawler.navigator.NavigatorCore;
+import bjc.utils.cli.GeneralCommandMode;
+import bjc.utils.cli.ICommandMode;
 import bjc.utils.funcutils.ListUtils;
 
 /**
