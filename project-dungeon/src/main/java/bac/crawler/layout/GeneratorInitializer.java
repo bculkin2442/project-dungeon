@@ -1,4 +1,4 @@
-package bac.crawler.layout.core;
+package bac.crawler.layout;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,16 +53,18 @@ public class GeneratorInitializer {
 		return lgen;
 	}
 
-	private static void loadExitDescribers(Path dataDir) {
+	/**
+	 * Load exit descriptions from the provided data directory
+	 * 
+	 * @param dataDir
+	 *            The directory to load exit describers from
+	 */
+	public static void loadExitDescribers(Path dataDir) {
 		Path describerPaths = dataDir.resolve("exits");
 
 		try {
 			ExitTypeDescriber.setDoorExitDescriber(
 					readDescriberFromPath(describerPaths, "doors.desc"));
-
-			ExitTypeDescriber.setPassageExitDescriber(
-					readDescriberFromPath(describerPaths,
-							"passages.desc"));
 
 			ExitTypeDescriber.setStairExitDescriber(
 					readDescriberFromPath(describerPaths, "stairs.desc"));
@@ -74,9 +76,9 @@ public class GeneratorInitializer {
 		}
 	}
 
-	private static GenericDescriber
-			readDescriberFromPath(Path describerPaths, String path)
-					throws FileNotFoundException {
+	private static GenericDescriber readDescriberFromPath(
+			Path describerPaths, String path)
+			throws FileNotFoundException {
 		File inputSource = describerPaths.resolve(path).toFile();
 
 		FileInputStream inputStream = new FileInputStream(inputSource);
@@ -89,9 +91,9 @@ public class GeneratorInitializer {
 		} catch (IOException ioex) {
 			IllegalStateException isex = new IllegalStateException(
 					"Got I/O exception attempting to close file.");
-			
+
 			isex.initCause(ioex);
-			
+
 			throw isex;
 		}
 

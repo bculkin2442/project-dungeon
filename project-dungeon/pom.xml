@@ -32,5 +32,10 @@
   		<artifactId>jfontchooser</artifactId>
   		<version>1.0.5</version>
   	</dependency>
+  	<dependency>
+  		<groupId>dice-lang</groupId>
+  		<artifactId>dice-lang</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
   </dependencies>
 </project>

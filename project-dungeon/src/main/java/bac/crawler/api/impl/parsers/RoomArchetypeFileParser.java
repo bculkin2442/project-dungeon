@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import bac.crawler.api.IRoomArchetype;
-import bjc.utils.data.Pair;
+import bjc.utils.data.IPair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
 import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;
@@ -52,7 +52,7 @@ public class RoomArchetypeFileParser {
 	}
 
 	private static void startArchetypes(FunctionalStringTokenizer fst,
-			Pair<String, RoomArchetypeState> par) {
+			IPair<String, RoomArchetypeState> par) {
 		par.doWith((initString, stat) -> {
 			stat.setCurrentProbability(Integer.parseInt(fst.nextToken()));
 
@@ -113,9 +113,9 @@ public class RoomArchetypeFileParser {
 		} catch (IOException ioex) {
 			IllegalStateException isex = new IllegalStateException(
 					"Got I/O exception attempting to close stream");
-			
+
 			isex.initCause(ioex);
-			
+
 			throw isex;
 		}
 

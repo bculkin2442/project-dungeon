@@ -12,12 +12,12 @@ import bac.crawler.api.IRoom;
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.impl.parsers.RoomArchetypeState;
 import bac.crawler.api.stubs.ArchetypeStub;
-import bac.crawler.api.stubs.ExitDescriberStub;
-import bac.crawler.layout.core.GeneratorInitializer;
-import bac.crawler.layout.core.LayoutGenerator;
-import bac.crawler.layout.core.LayoutGeneratorArchetypes.Builder;
+import bac.crawler.layout.GeneratorInitializer;
+import bac.crawler.layout.LayoutGenerator;
+import bac.crawler.layout.LayoutGeneratorArchetypes.Builder;
 import bac.crawler.navigator.NavigatorCore;
 import bjc.utils.cli.GeneralCommandMode;
+import bjc.utils.cli.GenericCommand;
 import bjc.utils.cli.ICommandMode;
 import bjc.utils.funcutils.ListUtils;
 
@@ -95,28 +95,28 @@ public class InitialCommandMode {
 		GeneralCommandMode mode = new GeneralCommandMode(normalOutput,
 				errorOutput);
 
-		mode.addCommandHandler("stub-start", (args) -> {
-			return startStubbedNavigationMode(normalOutput, errorOutput, mode);
-		});
+		mode.addCommandHandler("stub-start", new GenericCommand((args) -> {
+			return startStubbedNavigationMode(normalOutput, errorOutput,
+					mode);
+		}, "stub-start\tStart shortened game",
+				"stub-start starts the game in stub content mode. This mode will generally"
+						+ " result in a less immersive experience, but will start faster and"
+						+ " generally end quicker"));
 
-		mode.addCommandHandler("start", (args) -> {
+		mode.addCommandHandler("start", new GenericCommand((args) -> {
 			return startNavigationMode(normalOutput, errorOutput, mode);
-		});
-
-		mode.setUnknownCommandHandler((command, args) -> {
-			handleUnknownCommand(errorOutput, command, args);
-		});
+		}, "start\tStart the game",
+				"start starts the game in normal content mode."
+						+ " This mode is more immersive, but the content for"
+						+ " it isn't completely written yet, and as a result it"
+						+ " doesn't work yet"));
 
 		return mode;
 	}
 
-	private static void handleUnknownCommand(Consumer<String> errorOutput,
-			String command, String[] args) {
-		// TODO implement me
-	}
-
 	private static ICommandMode startNavigationMode(
-			Consumer<String> normalOutput, Consumer<String> errorOutput, ICommandMode returnTo) {
+			Consumer<String> normalOutput, Consumer<String> errorOutput,
+			ICommandMode returnTo) {
 		IDungeon dungeon = GeneratorInitializer.createGenerator(dataDir);
 
 		NavigatorCore navCore = new NavigatorCore(dungeon.buildDungeon());
@@ -126,11 +126,12 @@ public class InitialCommandMode {
 	}
 
 	private static ICommandMode startStubbedNavigationMode(
-			Consumer<String> normalOutput, Consumer<String> errorOutput, ICommandMode returnTo) {
+			Consumer<String> normalOutput, Consumer<String> errorOutput,
+			ICommandMode returnTo) {
 		normalOutput.accept(
 				"You are in a maze of twisty little passages, all alike.");
 
-		ExitDescriberStub.stubOutGenerator();
+		GeneratorInitializer.loadExitDescribers(dataDir);
 
 		NavigatorCore navCore = createStubNavigatorCore();
 

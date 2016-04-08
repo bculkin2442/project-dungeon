@@ -4,6 +4,7 @@ import bac.crawler.api.IExit;
 import bac.crawler.api.IRoom;
 import bac.crawler.api.util.Direction;
 import bjc.utils.funcdata.FunctionalList;
+import bjc.utils.funcdata.IFunctionalList;
 
 /**
  * Core system of navigation engine
@@ -12,8 +13,10 @@ import bjc.utils.funcdata.FunctionalList;
  *
  */
 public class NavigatorCore {
-	private IRoom currentRoom;
-	
+	private IRoom	currentRoom;
+
+	private int		exitCounter;
+
 	/**
 	 * Create a new navigator core, starting in the provided room
 	 * 
@@ -21,6 +24,9 @@ public class NavigatorCore {
 	 *            The room for the navigator to start in
 	 */
 	public NavigatorCore(IRoom initialRoom) {
+		// FIXME pick a more appropriate value for this
+		exitCounter = 50;
+
 		currentRoom = initialRoom;
 		currentRoom.visit();
 	}
@@ -39,7 +45,7 @@ public class NavigatorCore {
 	 * 
 	 * @return A list of all possible directions to travel in
 	 */
-	public FunctionalList<String> getAvailableDirections() {
+	public IFunctionalList<String> getAvailableDirections() {
 		FunctionalList<Direction> directions = currentRoom
 				.getExitDirections();
 
@@ -59,10 +65,10 @@ public class NavigatorCore {
 
 		if (exit != null) {
 			return exit.getDescription();
-		} else {
-			return "You stare at the wall for a while, but you get the feeling"
-					+ " you have other things you should be doing";
 		}
+
+		return "You stare at the wall for a while, but you get the feeling"
+				+ " you have other things you should be doing";
 	}
 
 	/**
@@ -77,10 +83,15 @@ public class NavigatorCore {
 
 		if (exit != null) {
 			currentRoom = exit.getDestination();
+
+			if (exitCounter > 0) {
+				exitCounter -= Math.random() * 10;
+			}
+
 			return "";
-		} else {
-			return "You walk into the wall. Maybe try going a different direction?";
 		}
+
+		return "You walk into the wall. Maybe try going a different direction?";
 	}
 
 	/**
@@ -94,5 +105,23 @@ public class NavigatorCore {
 		currentRoom.visit();
 
 		return visitStatus;
+	}
+
+	/**
+	 * Check if the current room is the exit
+	 * 
+	 * @return Whether or not the current room is the exit
+	 */
+	public boolean isExit() {
+		if (exitCounter > 0) {
+			return false;
+		}
+
+		return currentRoom.getExitDirections().contains(Direction.UP);
+	}
+	
+	// Debugging command
+	public int getExitChance() {
+		return exitCounter;
 	}
 }

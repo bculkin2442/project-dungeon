@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import bac.crawler.api.util.Direction;
 import bac.crawler.navigator.NavigatorCore;
 import bjc.utils.cli.GeneralCommandMode;
+import bjc.utils.cli.GenericCommand;
 import bjc.utils.cli.ICommandMode;
 import bjc.utils.funcutils.ListUtils;
 
@@ -35,32 +36,54 @@ public class NavigatorCommandMode {
 
 		mode.setModeName("navigator");
 
-		mode.addCommandHandler("look", (args) -> {
+		mode.addCommandHandler("look", new GenericCommand((args) -> {
 			handleLookCommand(normalOutput, errorOutput, core, args);
 
 			return mode;
-		});
+		}, "look\tLook around you",
+				"look describes your surroundings, and can"
+						+ " be invoked two ways. Invoking it with no arguments will describe the room"
+						+ " you are currently in. Invoking it with a valid direction (check 'help directions')"
+						+ " will describe whatever lies in that direction.."));
 
-		mode.addCommandHandler("go", (args) -> {
-			handleMovementCommand(normalOutput, errorOutput, core, args);
+		mode.addCommandHandler("go", new GenericCommand((args) -> {
+			boolean foundExit = handleMovementCommand(normalOutput,
+					errorOutput, core, args);
+
+			if (foundExit) {
+				normalOutput.accept(
+						"You have escaped. Congratulations, you win :)");
+				return returnMode;
+			}
 
 			return mode;
-		});
+		}, "go\tHead in a given direction",
+				"go will move you in a specified direction"
+						+ " (check 'help directions')."));
 
 		mode.addCommandAlias("go", "move");
 		mode.addCommandAlias("go", "walk");
 
-		mode.addCommandHandler("die", (args) -> {
+		mode.addCommandHandler("die", new GenericCommand((args) -> {
 			normalOutput.accept("Well, if you say so.");
 			normalOutput.accept("\n YOU HAVE DIED. GAME OVER");
 
 			return returnMode;
-		});
+		}, "die\tEnd the game",
+				"die will cause you to spontaneously stop existing, ending the game."));
 
+		mode.addCommandHandler("debug-check",
+				new GenericCommand((args) -> {
+					normalOutput.accept(
+							"Exit counter: " + core.getExitChance());
+
+					return mode;
+				}, "debug-check\tDEBUG COMMAND: check the exit countdown",
+						"debug-check prints the internal value of the exit countdown"));
 		return mode;
 	}
 
-	private static void handleMovementCommand(
+	private static boolean handleMovementCommand(
 			Consumer<String> normalOutput, Consumer<String> errorOutput,
 			NavigatorCore core, String[] args) {
 		if (args == null) {
@@ -68,6 +91,10 @@ public class NavigatorCommandMode {
 		} else {
 			try {
 				Direction dir = Direction.properValueOf(args[0]);
+
+				if (dir == Direction.UP && core.isExit()) {
+					return true;
+				}
 
 				normalOutput.accept(
 						"You go " + dir + " and see the following: \n\t");
@@ -80,13 +107,19 @@ public class NavigatorCommandMode {
 					normalOutput.accept(core.getRoomDescription());
 
 					if (core.hasBeenVisitedBefore()) {
-						normalOutput.accept("This room seems familiar");
+						normalOutput.accept("\nThis room seems familiar");
 					}
 
 					normalOutput.accept(
 							"\nYou see exits in the following directions: ");
 					normalOutput.accept("\t" + ListUtils.collapseTokens(
 							core.getAvailableDirections(), ", "));
+
+					if (core.isExit()) {
+						normalOutput
+								.accept("You think you see a faint gleam of daylight"
+										+ " coming from the exit leading up");
+					}
 				}
 			} catch (@SuppressWarnings("unused") IllegalArgumentException iaex) {
 				// We don't care about specifics
@@ -98,6 +131,8 @@ public class NavigatorCommandMode {
 								+ " (north, east, south, west) and up or down");
 			}
 		}
+
+		return false;
 	}
 
 	private static void handleLookCommand(Consumer<String> normalOutput,

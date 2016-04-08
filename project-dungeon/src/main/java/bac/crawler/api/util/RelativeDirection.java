@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.function.Consumer;
 
 import bjc.utils.funcdata.FunctionalList;
+import bjc.utils.funcdata.IFunctionalList;
 
 /**
  * Represents a direction that is relative to another direction
@@ -95,7 +96,7 @@ public enum RelativeDirection {
 							+ nDirections);
 		}
 
-		FunctionalList<RelativeDirection> relativeDirs = new FunctionalList<>(
+		IFunctionalList<RelativeDirection> relativeDirs = new FunctionalList<>(
 				values());
 
 		if (ignoreBackwards) {

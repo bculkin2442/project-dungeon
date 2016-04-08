@@ -1,4 +1,4 @@
-package bac.crawler.layout.core;
+package bac.crawler.layout;
 
 import java.util.HashMap;
 import java.util.Map;

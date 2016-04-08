@@ -12,16 +12,18 @@ import bac.crawler.api.util.ExitType;
  */
 public class ExitTypeDescriber implements IDescriber {
 	private static IDescriber	doorDescriber;
-	private static IDescriber	passageDescriber;
 	private static IDescriber	stairDescriber;
 	private static IDescriber	wellDescriber;
-	private static IDescriber	chamberDescriber;
+	// TODO not sure if this is needed
+	// private static IDescriber chamberDescriber;
 
 	private ExitType			type;
 
 	/**
 	 * Create a new exit type describer for the given exit type
-	 * @param eType The exit type to use
+	 * 
+	 * @param eType
+	 *            The exit type to use
 	 */
 	public ExitTypeDescriber(ExitType eType) {
 		type = eType;
@@ -31,11 +33,11 @@ public class ExitTypeDescriber implements IDescriber {
 	public String getDescription() {
 		switch (type) {
 			case CHAMBER:
-				return chamberDescriber.getDescription();
+				// TODO Not sure if chamber needs a seperate describer
+				// return chamberDescriber.getDescription();
+			case PASSAGE:
 			case DOOR:
 				return doorDescriber.getDescription();
-			case PASSAGE:
-				return passageDescriber.getDescription();
 			case STAIRS:
 				return stairDescriber.getDescription();
 			case WELL:
@@ -53,17 +55,6 @@ public class ExitTypeDescriber implements IDescriber {
 	 */
 	public static void setDoorExitDescriber(IDescriber doorExitDescriber) {
 		ExitTypeDescriber.doorDescriber = doorExitDescriber;
-	}
-
-	/**
-	 * Set the describer to use for passages
-	 * 
-	 * @param passageExitDescriber
-	 *            The describer to use for passages
-	 */
-	public static void setPassageExitDescriber(
-			IDescriber passageExitDescriber) {
-		ExitTypeDescriber.passageDescriber = passageExitDescriber;
 	}
 
 	/**
@@ -94,6 +85,7 @@ public class ExitTypeDescriber implements IDescriber {
 	 *            The describer for describing chambers
 	 */
 	public static void setChamberDescriber(IDescriber chamberDescriber) {
-		ExitTypeDescriber.chamberDescriber = chamberDescriber;
+		// TODO not sure if this is needed
+		// ExitTypeDescriber.chamberDescriber = chamberDescriber;
 	}
 }

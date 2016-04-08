@@ -107,7 +107,11 @@ public class IOProcessor extends CommandProcessor {
 					this.getConsole().clearConsole();
 					break;
 				default:
-					mode = mode.processCommand(tokens[0], args);
+					try {
+						mode = mode.processCommand(tokens[0], args);
+					} catch (@SuppressWarnings("unused") UnsupportedOperationException usex) {
+						// We've already notified the user about it
+					}
 			}
 
 			if (!exiting) {

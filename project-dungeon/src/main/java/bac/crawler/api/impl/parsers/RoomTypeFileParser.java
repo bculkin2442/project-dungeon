@@ -10,8 +10,7 @@ import bac.crawler.api.IRoomType;
 import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.ExitType;
 import bac.crawler.api.util.RelativeDirection;
-
-import bjc.utils.data.Pair;
+import bjc.utils.data.IPair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
 import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;
@@ -40,12 +39,12 @@ public class RoomTypeFileParser {
 	}
 
 	private static void beginRule(FunctionalStringTokenizer fst,
-			Pair<String, RoomTypeState> par) {
+			IPair<String, RoomTypeState> par) {
 		par.doWith((initString, stat) -> {
 			switch (initString) {
 				case "describer":
-					String describerPath = ListUtils
-							.collapseTokens(fst.toList((s) -> s));
+					String describerPath =
+							ListUtils.collapseTokens(fst.toList((s) -> s));
 
 					stat.setDescriber(Paths.get(describerPath, ""));
 					break;
@@ -57,8 +56,8 @@ public class RoomTypeFileParser {
 
 	private static void parseExit(FunctionalStringTokenizer fst,
 			RoomTypeState stat) {
-		RelativeDirection rdir = RelativeDirection
-				.properValueOf(fst.nextToken());
+		RelativeDirection rdir =
+				RelativeDirection.properValueOf(fst.nextToken());
 		ExitType eType = ExitType.properValueOf(fst.nextToken());
 
 		stat.addExit(rdir,
@@ -78,18 +77,18 @@ public class RoomTypeFileParser {
 		try {
 			RoomTypeState initState = new RoomTypeState(currentDir);
 
-			FileInputStream stream = new FileInputStream(
-					inputFile.toFile());
+			FileInputStream stream =
+					new FileInputStream(inputFile.toFile());
 
-			IRoomType type = reader.fromStream(stream, initState)
-					.toRoomType();
+			IRoomType type =
+					reader.fromStream(stream, initState).toRoomType();
 
 			stream.close();
 
 			return type;
 		} catch (FileNotFoundException fnfex) {
-			IllegalStateException isex = new IllegalStateException(
-					"Could not read room type");
+			IllegalStateException isex =
+					new IllegalStateException("Could not read room type");
 
 			isex.initCause(fnfex);
 

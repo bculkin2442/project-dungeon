@@ -10,7 +10,7 @@ import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.ExitType;
 import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.ComponentDescription;
-import bjc.utils.funcdata.FunctionalList;
+import bjc.utils.funcdata.IFunctionalList;
 import bjc.utils.gen.WeightedRandom;
 
 /**
@@ -80,7 +80,7 @@ public class ComplexRoomType extends GenericRoomType {
 	}
 
 	@Override
-	public FunctionalList<RelativeDirection> getExitDirections() {
+	public IFunctionalList<RelativeDirection> getExitDirections() {
 		exits = generateExits();
 
 		return super.getExitDirections();

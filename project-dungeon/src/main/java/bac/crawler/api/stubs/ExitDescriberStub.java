@@ -39,9 +39,6 @@ public class ExitDescriberStub implements IDescriber {
 		ExitTypeDescriber.setDoorExitDescriber(
 				new ExitDescriberStub(ExitType.DOOR));
 
-		ExitTypeDescriber.setPassageExitDescriber(
-				new ExitDescriberStub(ExitType.PASSAGE));
-
 		ExitTypeDescriber.setStairExitDescriber(
 				new ExitDescriberStub(ExitType.STAIRS));
 

@@ -8,6 +8,7 @@ import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.ComponentDescription;
 import bjc.utils.funcdata.FunctionalList;
+import bjc.utils.funcdata.IFunctionalList;
 
 /**
  * A generic implementation of a room type
@@ -45,7 +46,7 @@ public class GenericRoomType implements IRoomType {
 	}
 
 	@Override
-	public FunctionalList<RelativeDirection> getExitDirections() {
+	public IFunctionalList<RelativeDirection> getExitDirections() {
 		RelativeDirection[] da = new RelativeDirection[0];
 
 		return new FunctionalList<>(exits.keySet().toArray(da));

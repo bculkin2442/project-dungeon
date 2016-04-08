@@ -4,8 +4,9 @@ import java.io.InputStream;
 
 import bac.crawler.api.IDescriber;
 import bac.crawler.api.impl.GenericDescriber;
-import bjc.utils.data.Pair;
+import bjc.utils.data.IPair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
+import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;
 
 /**
@@ -41,8 +42,7 @@ public class DescriberFileParser {
 	 */
 	private static void continueDescription(FunctionalStringTokenizer fst,
 			DescriberState stat) {
-		String desc = fst.toList((s) -> s).reduceAux("", (t, u) -> t + u,
-				t -> t);
+		String desc = ListUtils.collapseTokens(fst.toList(), " ");
 
 		stat.continueDesc(desc);
 	}
@@ -79,14 +79,16 @@ public class DescriberFileParser {
 	 *            A pair of the initial token and reader state
 	 */
 	private static void startDescription(FunctionalStringTokenizer fst,
-			Pair<String, DescriberState> par) {
-		int prob = Integer.parseInt(par.merge((left, right) -> left));
+			IPair<String, DescriberState> par) {
+		String probabilityString = par
+				.merge((initialString, state) -> initialString);
 
-		String desc = fst.toList((s) -> s).reduceAux("", (t, u) -> t + u,
-				t -> t);
+		int prob = Integer.parseInt(probabilityString);
 
-		par.doWith((left, right) -> {
-			right.startDesc(prob, desc);
+		String desc = ListUtils.collapseTokens(fst.toList(), " ");
+
+		par.doWith((initialString, state) -> {
+			state.startDesc(prob, desc);
 		});
 	}
 }

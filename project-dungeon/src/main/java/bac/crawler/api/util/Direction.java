@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import org.apache.commons.lang3.text.WordUtils;
 
 import bjc.utils.funcdata.FunctionalList;
+import bjc.utils.funcdata.IFunctionalList;
 
 /**
  * A set of cardinal directions
@@ -52,7 +53,7 @@ public enum Direction {
 	 * 
 	 * @return A list of all the cardinal directions
 	 */
-	public static FunctionalList<Direction> cardinals() {
+	public static IFunctionalList<Direction> cardinals() {
 		return new FunctionalList<>(NORTH, SOUTH, EAST, WEST);
 	}
 
@@ -84,7 +85,7 @@ public enum Direction {
 							+ nCardinals);
 		}
 
-		FunctionalList<Direction> cards = cardinals();
+		IFunctionalList<Direction> cards = cardinals();
 
 		for (int i = 0; i <= 4 - nCardinals; i++) {
 			Direction rDir = cards.randItem(RNG);
