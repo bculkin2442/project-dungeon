@@ -46,8 +46,8 @@ public class NavigatorCore {
 	 * @return A list of all possible directions to travel in
 	 */
 	public IFunctionalList<String> getAvailableDirections() {
-		FunctionalList<Direction> directions = currentRoom
-				.getExitDirections();
+		FunctionalList<Direction> directions =
+				currentRoom.getExitDirections();
 
 		return directions.map(Direction::toString);
 	}
@@ -119,7 +119,12 @@ public class NavigatorCore {
 
 		return currentRoom.getExitDirections().contains(Direction.UP);
 	}
-	
+
+	/**
+	 * Get the counter until the exit is generate
+	 * 
+	 * @return the count until the exit is generated
+	 */
 	// Debugging command
 	public int getExitChance() {
 		return exitCounter;

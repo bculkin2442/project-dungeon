@@ -36,18 +36,16 @@ public class GeneratorInitializer {
 
 		Map<String, IRoomArchetype> env = new HashMap<>();
 
-		FileComponentRepository<IRoomArchetype> archetypeRepo =
-				new FileComponentRepository<>(dataDir.toFile(),
-						(inputPath) -> {
-							return RoomArchetypeFileParser
-									.parseFromStream(inputPath, env);
-						});
+		FileComponentRepository<IRoomArchetype> archetypeRepo = new FileComponentRepository<>(
+				dataDir.toFile(), (inputPath) -> {
+					return RoomArchetypeFileParser
+							.parseFromStream(inputPath, env);
+				});
 
 		archetypeRepo.getComponents().forEach(env::put);
 
-		LayoutGeneratorArchetypes chosenArchetypes =
-				LayoutGeneratorArchetypes
-						.fromRepository(archetypeRepo.getComponents());
+		LayoutGeneratorArchetypes chosenArchetypes = LayoutGeneratorArchetypes
+				.fromRepository(archetypeRepo.getComponents());
 		LayoutGenerator lgen = new LayoutGenerator(chosenArchetypes);
 
 		return lgen;
@@ -81,10 +79,13 @@ public class GeneratorInitializer {
 			throws FileNotFoundException {
 		File inputSource = describerPaths.resolve(path).toFile();
 
+		System.err.println("Attempting to read descriptor from "
+				+ inputSource.getAbsolutePath());
+
 		FileInputStream inputStream = new FileInputStream(inputSource);
 
-		GenericDescriber describer =
-				DescriberFileParser.parseFile(inputStream);
+		GenericDescriber describer = DescriberFileParser
+				.parseFile(inputStream);
 
 		try {
 			inputStream.close();

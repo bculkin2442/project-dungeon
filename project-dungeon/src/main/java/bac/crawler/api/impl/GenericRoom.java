@@ -63,4 +63,13 @@ public class GenericRoom implements IRoom {
 	public void visit() {
 		visited = true;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "GenericRoom [description=" + description + ", exits="
+				+ exits + ", visited=" + visited + "]";
+	}
 }
