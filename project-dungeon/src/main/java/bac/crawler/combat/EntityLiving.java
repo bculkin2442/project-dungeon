@@ -69,4 +69,12 @@ public abstract class EntityLiving implements IEntity {
 	public int getSpeed() {
 		return stats.getAgility();
 	}
+
+	/**
+	 * Get the stats of the entity
+	 * @return The stats of the entity
+	 */
+	public EntityStats getStats() {
+		return stats;
+	}
 }

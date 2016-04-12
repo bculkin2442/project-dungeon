@@ -1,13 +1,22 @@
 package bac.crawler.commands;
 
+import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.function.Consumer;
 
+import javax.swing.JFrame;
+
+import bac.crawler.StatWindow;
 import bac.crawler.api.util.Direction;
+import bac.crawler.combat.EntityPlayer;
 import bac.crawler.navigator.NavigatorCore;
 import bjc.utils.cli.GenericCommandMode;
 import bjc.utils.cli.GenericHelp;
 import bjc.utils.cli.GenericCommand;
 import bjc.utils.cli.ICommandMode;
+import bjc.utils.data.experimental.IHolder;
+import bjc.utils.data.experimental.Identity;
 import bjc.utils.funcutils.ListUtils;
 
 /**
@@ -26,12 +35,16 @@ public class NavigatorCommandMode {
 	 *            The function to use for error output
 	 * @param core
 	 *            The core to use for navigation
+	 * @param player
+	 *            The player who will navigate the game
 	 * @param returnMode
 	 * @return A new navigator command mode
 	 */
 	public static ICommandMode createMode(Consumer<String> normalOutput,
 			Consumer<String> errorOutput, NavigatorCore core,
-			ICommandMode returnMode) {
+			IHolder<EntityPlayer> player, ICommandMode returnMode) {
+		IHolder<StatWindow> windowHolder = new Identity<>();
+
 		GenericCommandMode mode = new GenericCommandMode(normalOutput,
 				errorOutput);
 
@@ -58,9 +71,9 @@ public class NavigatorCommandMode {
 			}
 
 			return mode;
-		}, "go\tHead in a given direction",
+		}, "go (can also use move or walk)\tHead in a given direction",
 				"go will move you in a specified direction"
-						+ " (check 'help directions')."));
+						+ " (check 'help directions'). Go is also aliased to move and walk"));
 
 		mode.addCommandAlias("go", "move");
 		mode.addCommandAlias("go", "walk");
@@ -84,14 +97,50 @@ public class NavigatorCommandMode {
 
 		mode.addCommandHandler("debug-exitChance",
 				new GenericCommand((args) -> {
+					core.setExitChance(Integer.parseInt(args[0]));
 					return mode;
 				}, "debug-exitChance\tDEBUG COMMAND: set the exit countdown",
 						"debug-exit sets the countdown until exits can generate"));
+
+		mode.addCommandHandler("stats", new GenericCommand((args) -> {
+			normalOutput.accept(player.getValue().toString());
+
+			return mode;
+		}, "stats\tDisplay the players stats",
+				"stats will display the player's current status"));
+
+		mode.addCommandHandler("stats-window",
+				new GenericCommand((args) -> {
+					StatWindow statWindw = new StatWindow(
+							player.getValue());
+
+					statWindw.setDefaultCloseOperation(
+							JFrame.DISPOSE_ON_CLOSE);
+
+					Dimension windowSize = new Dimension(640, 480);
+
+					statWindw.setPreferredSize(windowSize);
+					statWindw.setSize(windowSize);
+
+					statWindw.setVisible(true);
+
+					statWindw.addWindowListener(new WindowAdapter() {
+						@Override
+						public void windowClosed(WindowEvent wev) {
+							windowHolder.replace(null);
+						}
+					});
+
+					windowHolder.replace(statWindw);
+					return mode;
+				}, "stats-window\tDisplay the players stats in a window",
+						"stats will display the player's current status in a window"));
 
 		mode.addHelpTopic("directions", new GenericHelp(
 				"directions\tInformations on directions for navigation",
 				"The valid directions for navigation are the four cardinal directions,"
 						+ " (north, south, east, west) plus up and down."));
+
 		return mode;
 	}
 
@@ -129,7 +178,7 @@ public class NavigatorCommandMode {
 
 					if (core.isExit()) {
 						normalOutput
-								.accept("You think you see a faint gleam of daylight"
+								.accept("\nYou think you see a faint gleam of daylight"
 										+ " coming from the exit leading up");
 					}
 				}
@@ -163,6 +212,10 @@ public class NavigatorCommandMode {
 						"You look " + dir + " and see the following: \n");
 				normalOutput.accept(
 						"\t" + core.getDescriptionInDirection(dir));
+
+				if (core.hasGoneDirection(dir)) {
+					normalOutput.accept("\nThis way looks familiar");
+				}
 			} catch (@SuppressWarnings("unused") IllegalArgumentException iaex) {
 				// We don't care about specifics
 				errorOutput

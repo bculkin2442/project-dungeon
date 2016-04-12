@@ -23,8 +23,8 @@ public class EntityPlayer extends EntityLiving {
 	}
 
 	private void calculateHealth() {
-		currentHealth = stats.getConstitution() * 2;
-		currentVitality = currentHealth * 2;
+		currentHealth = getMaxHealth();
+		currentVitality = getMaxVitality();
 	}
 
 	/*
@@ -55,5 +55,103 @@ public class EntityPlayer extends EntityLiving {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Get the health of this player
+	 * 
+	 * @return The health of this player
+	 */
+	public int getHealth() {
+		return currentHealth;
+	}
+
+	/**
+	 * Get the players vitality
+	 * 
+	 * @return The vitality of the player
+	 */
+	public int getVitality() {
+		return currentVitality;
+	}
+
+	/**
+	 * Get the maximum health of this player
+	 * 
+	 * @return The maximum health of this player
+	 */
+	public int getMaxHealth() {
+		return stats.getConstitution() * 2;
+	}
+
+	/**
+	 * Get the maximum vitality of this player
+	 * 
+	 * @return The maximum vitality of this player
+	 */
+	public int getMaxVitality() {
+		return getMaxHealth() * 2;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("\nPlayer Base Stats:");
+
+		sb.append("\n\tOffensive Stats");
+
+		sb.append("\n\t\tStrength: ");
+		sb.append(stats.getStrength());
+		sb.append("\tDexterity: ");
+		sb.append(stats.getDexterity());
+
+		sb.append("\n\tDefensive Stats");
+
+		sb.append("\n\t\tFortitude: ");
+		sb.append(stats.getFortitude());
+		sb.append("\tReflexes: ");
+		sb.append(stats.getReflexes());
+
+		sb.append("\n\tMisc. Stats");
+
+		sb.append("\n\t\tConstitution: ");
+		sb.append(stats.getConstitution());
+		sb.append("\t\tAgility: ");
+		sb.append(stats.getAgility());
+
+		sb.append("\n\tHealth");
+
+		sb.append("\n\t\tCurrent Health: ");
+		sb.append(getHealth());
+		sb.append("\tMaximum Health: ");
+		sb.append(getMaxHealth());
+
+		sb.append("\n\t\tCurrent Vitality: ");
+		sb.append(getVitality());
+		sb.append("\tMaximum Vitality: ");
+		sb.append(getMaxVitality());
+
+		return sb.toString();
+	}
+
+	/**
+	 * Create a default player instance
+	 * 
+	 * @return A default player with default stats
+	 */
+	public static EntityPlayer makeDefaultPlayer() {
+		EntityStats.Builder statBuilder = new EntityStats.Builder();
+
+		statBuilder.setStrength(10);
+		statBuilder.setDexterity(10);
+
+		statBuilder.setFortitude(10);
+		statBuilder.setReflexes(10);
+
+		statBuilder.setConstitution(10);
+		statBuilder.setAgility(10);
+
+		return new EntityPlayer(statBuilder.build());
 	}
 }

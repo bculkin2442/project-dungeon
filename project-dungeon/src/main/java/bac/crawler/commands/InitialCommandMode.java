@@ -12,6 +12,7 @@ import bac.crawler.api.IRoom;
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.impl.parsers.RoomArchetypeState;
 import bac.crawler.api.stubs.ArchetypeStub;
+import bac.crawler.combat.EntityPlayer;
 import bac.crawler.layout.GeneratorInitializer;
 import bac.crawler.layout.LayoutGenerator;
 import bac.crawler.layout.LayoutGeneratorArchetypes.Builder;
@@ -19,6 +20,8 @@ import bac.crawler.navigator.NavigatorCore;
 import bjc.utils.cli.GenericCommandMode;
 import bjc.utils.cli.GenericCommand;
 import bjc.utils.cli.ICommandMode;
+import bjc.utils.data.experimental.IHolder;
+import bjc.utils.data.experimental.Lazy;
 import bjc.utils.funcutils.ListUtils;
 
 /**
@@ -105,7 +108,7 @@ public class InitialCommandMode {
 
 		mode.addCommandHandler("start", new GenericCommand((args) -> {
 			return startNavigationMode(normalOutput, errorOutput, mode);
-		}, "start\tStart the game",
+		}, "start\tStart the game (Not Yet Implemented)",
 				"start starts the game in normal content mode."
 						+ " This mode is more immersive, but the content for"
 						+ " it isn't completely written yet, and as a result it"
@@ -121,20 +124,50 @@ public class InitialCommandMode {
 
 		NavigatorCore navCore = new NavigatorCore(dungeon.buildDungeon());
 
-		return NavigatorCommandMode.createMode(normalOutput, errorOutput,
-				navCore, returnTo);
+		IHolder<EntityPlayer> player = new Lazy<>(
+				EntityPlayer.makeDefaultPlayer());
+
+		ICommandMode navMode = NavigatorCommandMode.createMode(
+				normalOutput, errorOutput, navCore, player, returnTo);
+
+		CharacterCreationMode createMode = new CharacterCreationMode(
+				normalOutput, errorOutput, navMode, player,
+				(normalOutpt) -> {
+					printInitialText(normalOutpt, navCore);
+				});
+
+		return createMode;
 	}
 
 	private static ICommandMode startStubbedNavigationMode(
 			Consumer<String> normalOutput, Consumer<String> errorOutput,
 			ICommandMode returnTo) {
-		normalOutput.accept(
-				"You are in a maze of twisty little passages, all alike.");
 
 		GeneratorInitializer.loadExitDescribers(dataDir);
 
 		NavigatorCore navCore = createStubNavigatorCore();
 
+		Consumer<Consumer<String>> initialOutput = (normalOutpt) -> {
+			normalOutput.accept(
+					"You are in a maze of twisty little passages, all alike.");
+
+			printInitialText(normalOutput, navCore);
+		};
+
+		IHolder<EntityPlayer> player = new Lazy<>(
+				EntityPlayer.makeDefaultPlayer());
+
+		ICommandMode navMode = NavigatorCommandMode.createMode(
+				normalOutput, errorOutput, navCore, player, returnTo);
+
+		CharacterCreationMode createMode = new CharacterCreationMode(
+				normalOutput, errorOutput, navMode, player, initialOutput);
+
+		return createMode;
+	}
+
+	private static void printInitialText(Consumer<String> normalOutput,
+			NavigatorCore navCore) {
 		normalOutput
 				.accept("\nAs you come to, you find yourself in a room."
 						+ " You look around, and this is what you see: \n");
@@ -144,8 +177,5 @@ public class InitialCommandMode {
 				.accept("\nYou see exits in the following directions: ");
 		normalOutput.accept("\t" + ListUtils
 				.collapseTokens(navCore.getAvailableDirections(), ", "));
-
-		return NavigatorCommandMode.createMode(normalOutput, errorOutput,
-				navCore, returnTo);
 	}
 }

@@ -46,8 +46,8 @@ public class NavigatorCore {
 	 * @return A list of all possible directions to travel in
 	 */
 	public IFunctionalList<String> getAvailableDirections() {
-		FunctionalList<Direction> directions =
-				currentRoom.getExitDirections();
+		FunctionalList<Direction> directions = currentRoom
+				.getExitDirections();
 
 		return directions.map(Direction::toString);
 	}
@@ -108,6 +108,23 @@ public class NavigatorCore {
 	}
 
 	/**
+	 * Check if the player has gone in a specific direction
+	 * 
+	 * @param d
+	 *            The direction to check if the player has gone before
+	 * @return Whether or not the player has gone the specified direction
+	 *         before
+	 */
+	public boolean hasGoneDirection(Direction d) {
+		if (currentRoom.getExitDirections().contains(d)) {
+			return currentRoom.getExitInDirection(d).getDestination()
+					.hasBeenVisited();
+		}
+		
+		return false;
+	}
+
+	/**
 	 * Check if the current room is the exit
 	 * 
 	 * @return Whether or not the current room is the exit
@@ -120,13 +137,15 @@ public class NavigatorCore {
 		return currentRoom.getExitDirections().contains(Direction.UP);
 	}
 
-	/**
-	 * Get the counter until the exit is generate
-	 * 
-	 * @return the count until the exit is generated
-	 */
 	// Debugging command
+	@SuppressWarnings("javadoc")
 	public int getExitChance() {
 		return exitCounter;
+	}
+
+	// Debugging command
+	@SuppressWarnings("javadoc")
+	public void setExitChance(int chance) {
+		exitCounter = chance;
 	}
 }

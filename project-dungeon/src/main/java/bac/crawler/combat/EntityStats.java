@@ -22,8 +22,7 @@ public class EntityStats {
 		 * Create a new builder
 		 */
 		public Builder() {
-			throw new UnsupportedOperationException(
-					"Building of entity stats not supported yet.");
+			building = new EntityStats();
 		}
 
 		/**

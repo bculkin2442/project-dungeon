@@ -3,6 +3,7 @@ package bac.crawler;
 import java.awt.Dimension;
 import java.awt.Font;
 
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -48,7 +49,7 @@ public class DungeonCrawler {
 			console.append(
 					"Enter list to see a list of available commands, help for command help, "
 							+ "or exit to exit the game\n");
-			
+
 			// Print the initial console prompt
 			console.append("crawler>> ");
 
@@ -69,6 +70,8 @@ public class DungeonCrawler {
 		dcf.setResizable(true);
 
 		dcf.setTitle("Project: Dungeon Crawler Pre-alpha Version");
+
+		dcf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	/**
@@ -76,7 +79,7 @@ public class DungeonCrawler {
 	 * 
 	 * @param dcf
 	 *            The frame to build a menu for
-	 * @return
+	 * @return A menubar for the specified frame
 	 */
 	private static JMenuBar createMenubar(DragonConsoleFrame dcf) {
 		JMenuBar menuBar = new JMenuBar();

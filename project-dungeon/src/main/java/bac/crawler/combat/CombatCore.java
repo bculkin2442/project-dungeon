@@ -22,7 +22,7 @@ public class CombatCore {
 
 	private boolean			isPlayerTurn;
 
-	private EntityPlayer	player;
+	private EntityLiving	player;
 
 	/**
 	 * Create a new combat core
@@ -36,7 +36,7 @@ public class CombatCore {
 	 * @param errorOutput
 	 *            The function to use for errors
 	 */
-	public CombatCore(EntityPlayer player, EntityMob enemy,
+	public CombatCore(EntityLiving player, EntityMob enemy,
 			Consumer<String> normalOutput, Consumer<String> errorOutput) {
 		this.player = player;
 		this.enemy = enemy;

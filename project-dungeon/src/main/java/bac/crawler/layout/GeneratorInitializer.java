@@ -79,9 +79,6 @@ public class GeneratorInitializer {
 			throws FileNotFoundException {
 		File inputSource = describerPaths.resolve(path).toFile();
 
-		System.err.println("Attempting to read descriptor from "
-				+ inputSource.getAbsolutePath());
-
 		FileInputStream inputStream = new FileInputStream(inputSource);
 
 		GenericDescriber describer = DescriberFileParser
