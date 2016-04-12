@@ -8,6 +8,7 @@ import com.eleet.dragonconsole.CommandProcessor;
 import com.eleet.dragonconsole.DragonConsole;
 
 import bac.crawler.commands.InitialCommandMode;
+import bjc.utils.cli.GenericCommandMode;
 import bjc.utils.cli.ICommandMode;
 
 /**

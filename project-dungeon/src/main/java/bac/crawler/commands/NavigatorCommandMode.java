@@ -4,7 +4,8 @@ import java.util.function.Consumer;
 
 import bac.crawler.api.util.Direction;
 import bac.crawler.navigator.NavigatorCore;
-import bjc.utils.cli.GeneralCommandMode;
+import bjc.utils.cli.GenericCommandMode;
+import bjc.utils.cli.GenericHelp;
 import bjc.utils.cli.GenericCommand;
 import bjc.utils.cli.ICommandMode;
 import bjc.utils.funcutils.ListUtils;
@@ -31,7 +32,7 @@ public class NavigatorCommandMode {
 	public static ICommandMode createMode(Consumer<String> normalOutput,
 			Consumer<String> errorOutput, NavigatorCore core,
 			ICommandMode returnMode) {
-		GeneralCommandMode mode = new GeneralCommandMode(normalOutput,
+		GenericCommandMode mode = new GenericCommandMode(normalOutput,
 				errorOutput);
 
 		mode.setModeName("navigator");
@@ -80,6 +81,17 @@ public class NavigatorCommandMode {
 					return mode;
 				}, "debug-check\tDEBUG COMMAND: check the exit countdown",
 						"debug-check prints the internal value of the exit countdown"));
+
+		mode.addCommandHandler("debug-exitChance",
+				new GenericCommand((args) -> {
+					return mode;
+				}, "debug-exitChance\tDEBUG COMMAND: set the exit countdown",
+						"debug-exit sets the countdown until exits can generate"));
+
+		mode.addHelpTopic("directions", new GenericHelp(
+				"directions\tInformations on directions for navigation",
+				"The valid directions for navigation are the four cardinal directions,"
+						+ " (north, south, east, west) plus up and down."));
 		return mode;
 	}
 

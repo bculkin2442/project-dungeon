@@ -16,7 +16,7 @@ import bac.crawler.layout.GeneratorInitializer;
 import bac.crawler.layout.LayoutGenerator;
 import bac.crawler.layout.LayoutGeneratorArchetypes.Builder;
 import bac.crawler.navigator.NavigatorCore;
-import bjc.utils.cli.GeneralCommandMode;
+import bjc.utils.cli.GenericCommandMode;
 import bjc.utils.cli.GenericCommand;
 import bjc.utils.cli.ICommandMode;
 import bjc.utils.funcutils.ListUtils;
@@ -92,7 +92,7 @@ public class InitialCommandMode {
 	 */
 	public static ICommandMode createMode(Consumer<String> normalOutput,
 			Consumer<String> errorOutput) {
-		GeneralCommandMode mode = new GeneralCommandMode(normalOutput,
+		GenericCommandMode mode = new GenericCommandMode(normalOutput,
 				errorOutput);
 
 		mode.addCommandHandler("stub-start", new GenericCommand((args) -> {

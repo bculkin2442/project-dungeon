@@ -3,7 +3,7 @@ package bac.crawler.commands;
 import java.util.function.Consumer;
 
 import bac.crawler.combat.CombatCore;
-import bjc.utils.cli.GeneralCommandMode;
+import bjc.utils.cli.GenericCommandMode;
 import bjc.utils.cli.ICommandMode;
 
 /**
@@ -33,7 +33,7 @@ public class CombatCommandMode {
 	public static ICommandMode createMode(Consumer<String> normalOutput,
 			Consumer<String> errorOutput, CombatCore core,
 			ICommandMode winMode, ICommandMode loseMode) {
-		GeneralCommandMode mode = new GeneralCommandMode(normalOutput,
+		GenericCommandMode mode = new GenericCommandMode(normalOutput,
 				errorOutput);
 
 		return mode;
