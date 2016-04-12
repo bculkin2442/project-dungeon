@@ -120,7 +120,7 @@ public class NavigatorCore {
 			return currentRoom.getExitInDirection(d).getDestination()
 					.hasBeenVisited();
 		}
-		
+
 		return false;
 	}
 
@@ -134,7 +134,8 @@ public class NavigatorCore {
 			return false;
 		}
 
-		return currentRoom.getExitDirections().contains(Direction.UP);
+		return currentRoom.getExitDirections().contains(Direction.UP)
+				&& !hasGoneDirection(Direction.UP);
 	}
 
 	// Debugging command
