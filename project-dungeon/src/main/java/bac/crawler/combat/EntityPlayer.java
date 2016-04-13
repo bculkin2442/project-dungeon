@@ -15,9 +15,11 @@ public class EntityPlayer extends EntityLiving {
 	 * 
 	 * @param stats
 	 *            The set of stats for this player to use
+	 * @param name
+	 *            The name of the player
 	 */
-	public EntityPlayer(EntityStats stats) {
-		super(stats);
+	public EntityPlayer(EntityStats stats, String name) {
+		super(stats, name);
 
 		calculateHealth();
 	}
@@ -97,7 +99,7 @@ public class EntityPlayer extends EntityLiving {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append("\nPlayer Base Stats:");
+		sb.append("\nBase Stats for " + getName() + ":");
 
 		sb.append("\n\tOffensive Stats");
 
@@ -152,6 +154,12 @@ public class EntityPlayer extends EntityLiving {
 		statBuilder.setConstitution(10);
 		statBuilder.setAgility(10);
 
-		return new EntityPlayer(statBuilder.build());
+		return new EntityPlayer(statBuilder.build(),
+				"Sir Henry 'Didn't Pick A Name' Jones the IVth");
+	}
+
+	@Override
+	public boolean isAlive() {
+		return currentVitality > 0;
 	}
 }

@@ -1,12 +1,14 @@
 package bac.crawler.commands;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import bac.crawler.combat.ActionType;
 import bac.crawler.combat.EntityPlayer;
 import bac.crawler.combat.EntityStats;
 import bjc.utils.cli.ICommandMode;
 import bjc.utils.data.experimental.IHolder;
+import bjc.utils.gen.WeightedRandom;
 
 /**
  * A command mode for creating a character
@@ -15,22 +17,25 @@ import bjc.utils.data.experimental.IHolder;
  *
  */
 public class CharacterCreationMode implements ICommandMode {
-	private Consumer<String>			normalOutput;
-	private Consumer<String>			errorOutput;
+	private Consumer<String>					normalOutput;
+	private Consumer<String>					errorOutput;
 
-	private ICommandMode				returnMode;
+	private ICommandMode						returnMode;
 
-	private IHolder<EntityPlayer>		playerHolder;
+	private IHolder<EntityPlayer>				playerHolder;
 
-	private CreationStage				currentStage;
+	private CreationStage						currentStage;
 
-	private ActionType					offensePreference;
-	private ActionType					defensePreference;
-	private ActionType					miscPreference;
+	private ActionType							offensePreference;
+	private ActionType							defensePreference;
+	private ActionType							miscPreference;
 
-	private int							statBase;
+	private int									statBase;
 
-	private Consumer<Consumer<String>>	initialOutput;
+	private String								playerName;
+
+	private Consumer<Consumer<String>>			initialOutput;
+	private WeightedRandom<Supplier<String>>	defaultNames;
 
 	/**
 	 * Create a mode that will create a character
@@ -44,16 +49,21 @@ public class CharacterCreationMode implements ICommandMode {
 	 * @param playerHolder
 	 *            The blank to fill in with a player
 	 * @param initialOutput
+	 *            The text to output after a character is created
+	 * @param defaultNames
+	 *            The default name for the player
 	 */
 	public CharacterCreationMode(Consumer<String> normalOutput,
 			Consumer<String> errorOutput, ICommandMode returnMode,
 			IHolder<EntityPlayer> playerHolder,
-			Consumer<Consumer<String>> initialOutput) {
+			Consumer<Consumer<String>> initialOutput,
+			WeightedRandom<Supplier<String>> defaultNames) {
 		this.normalOutput = normalOutput;
 		this.errorOutput = errorOutput;
 		this.returnMode = returnMode;
 		this.playerHolder = playerHolder;
 		this.initialOutput = initialOutput;
+		this.defaultNames = defaultNames;
 
 		currentStage = CreationStage.getInitialStage();
 	}
@@ -74,7 +84,6 @@ public class CharacterCreationMode implements ICommandMode {
 				break;
 			case MISC:
 				handleMisc(command);
-
 				break;
 			case OFFENSIVE:
 				handleOffensive(command);
@@ -82,12 +91,25 @@ public class CharacterCreationMode implements ICommandMode {
 			case DIFFICULTY:
 				handleDifficulty(command);
 				break;
+			case NAME:
+				handleName(command, args);
+				break;
 			default:
 				throw new IllegalStateException(
 						"Reached a unknown stage of character creation");
 		}
 
 		return this;
+	}
+
+	private void handleName(String command, String[] args) {
+		if (command == "") {
+			playerName = defaultNames.generateValue().get();
+		} else {
+			playerName = command + " " + String.join(" ", args);
+		}
+
+		currentStage = currentStage.nextStage();
 	}
 
 	private void handleDifficulty(String command) {
@@ -216,7 +238,7 @@ public class CharacterCreationMode implements ICommandMode {
 				.setConstitution(statBase + constitutionMod)
 				.setAgility(statBase + agilityMod).build();
 
-		return new EntityPlayer(playerStats);
+		return new EntityPlayer(playerStats, playerName);
 	}
 
 	private void handleDefensive(String command) {
@@ -280,6 +302,9 @@ public class CharacterCreationMode implements ICommandMode {
 			case DIFFICULTY:
 				return "How difficult do you want the game to be?\n"
 						+ "\tEnter easy, medium or hard to pick: ";
+			case NAME:
+				return "What name do you want to be referred to as?\n"
+						+ "\tEnter a name, or enter nothing to be assigned a name: ";
 			default:
 				throw new IllegalStateException(
 						"Reached a unknown stage of character creation");

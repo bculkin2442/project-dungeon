@@ -24,5 +24,48 @@ public enum ActionType {
 	 * 
 	 * Uses Dexterity for attack and Reflexes for defense
 	 */
-	FINESSE
+	FINESSE;
+
+	/**
+	 * Get the multiplier for the effectiveness of this action type against
+	 * another
+	 * 
+	 * @param opposing
+	 *            The action type this is being used against
+	 * @return The effectiveness of this action type against the specified
+	 *         one.
+	 */
+	public double getMultiplier(ActionType opposing) {
+		switch (this) {
+			case FINESSE:
+				switch (opposing) {
+					case FINESSE:
+						return 0.5;
+					case FORCE:
+						return 2.0;
+					case NEUTRAL:
+						return 1.0;
+					default:
+						throw new IllegalStateException(
+								"Got unknown action type " + this);
+				}
+			case FORCE:
+				switch (opposing) {
+					case FINESSE:
+						return 2.0;
+					case FORCE:
+						return 0.5;
+					case NEUTRAL:
+						return 1.0;
+					default:
+						throw new IllegalStateException(
+								"Got unknown action type " + this);
+				}
+			case NEUTRAL:
+				return 1.0;
+			default:
+				throw new IllegalStateException(
+						"Got unknown action type " + this);
+		}
+	}
 }

@@ -1,6 +1,6 @@
 package bac.crawler.api;
 
-import bjc.utils.data.IPair;
+import bjc.utils.data.experimental.IPair;
 
 /**
  * Descriptive type for a exit that leads to a room with an attached

@@ -165,22 +165,7 @@ public class NavigatorCommandMode {
 				if (!navigationResult.equals("")) {
 					normalOutput.accept(navigationResult);
 				} else {
-					normalOutput.accept(core.getRoomDescription());
-
-					if (core.hasBeenVisitedBefore()) {
-						normalOutput.accept("\nThis room seems familiar");
-					}
-
-					normalOutput.accept(
-							"\nYou see exits in the following directions: ");
-					normalOutput.accept("\t" + ListUtils.collapseTokens(
-							core.getAvailableDirections(), ", "));
-
-					if (core.isExit()) {
-						normalOutput
-								.accept("\nYou think you see a faint gleam of daylight"
-										+ " coming from the exit leading up");
-					}
+					describeCurrentRoom(normalOutput, core);
 				}
 			} catch (@SuppressWarnings("unused") IllegalArgumentException iaex) {
 				// We don't care about specifics
@@ -196,6 +181,26 @@ public class NavigatorCommandMode {
 		return false;
 	}
 
+	private static void describeCurrentRoom(Consumer<String> normalOutput,
+			NavigatorCore core) {
+		normalOutput.accept(core.getRoomDescription());
+
+		if (core.hasBeenVisitedBefore()) {
+			normalOutput.accept("\nThis room seems familiar");
+		}
+
+		normalOutput
+				.accept("\nYou see exits in the following directions: ");
+		normalOutput.accept("\t" + ListUtils
+				.collapseTokens(core.getAvailableDirections(), ", "));
+
+		if (core.isExit()) {
+			normalOutput
+					.accept("\nYou think you see a faint gleam of daylight"
+							+ " coming from the exit leading up");
+		}
+	}
+
 	private static void handleLookCommand(Consumer<String> normalOutput,
 			Consumer<String> errorOutput, NavigatorCore core,
 			String[] args) {
@@ -203,7 +208,7 @@ public class NavigatorCommandMode {
 			normalOutput
 					.accept("You look around and see the following: \n");
 
-			normalOutput.accept("\t" + core.getRoomDescription());
+			describeCurrentRoom(normalOutput, core);
 		} else {
 			try {
 				Direction dir = Direction.properValueOf(args[0]);

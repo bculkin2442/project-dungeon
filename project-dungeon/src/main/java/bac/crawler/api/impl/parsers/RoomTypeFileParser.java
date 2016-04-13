@@ -10,7 +10,7 @@ import bac.crawler.api.IRoomType;
 import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.ExitType;
 import bac.crawler.api.util.RelativeDirection;
-import bjc.utils.data.IPair;
+import bjc.utils.data.experimental.IPair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
 import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;

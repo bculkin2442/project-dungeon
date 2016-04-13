@@ -8,21 +8,29 @@ package bac.crawler.combat;
  *
  */
 public class EntityMob extends EntityLiving {
-	private int			currentHealth;
+	private int currentHealth;
 
 	/**
 	 * Create a new mob with the specified stas
 	 * 
 	 * @param stats
+	 *            The stats of the entity
+	 * @param name
+	 *            The name of the entity
 	 */
-	public EntityMob(EntityStats stats) {
-		super(stats);
+	public EntityMob(EntityStats stats, String name) {
+		super(stats, name);
 	}
 
 	@Override
 	public boolean takeDamage(DamageCount damage) {
 		currentHealth -= damage.getGeneralAmount();
 
+		return currentHealth > 0;
+	}
+
+	@Override
+	public boolean isAlive() {
 		return currentHealth > 0;
 	}
 }

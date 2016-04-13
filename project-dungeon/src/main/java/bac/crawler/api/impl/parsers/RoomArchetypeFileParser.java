@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import bac.crawler.api.IRoomArchetype;
-import bjc.utils.data.IPair;
+import bjc.utils.data.experimental.IPair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
 import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;

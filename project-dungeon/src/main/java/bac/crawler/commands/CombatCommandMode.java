@@ -2,7 +2,9 @@ package bac.crawler.commands;
 
 import java.util.function.Consumer;
 
+import bac.crawler.combat.ActionType;
 import bac.crawler.combat.CombatCore;
+import bjc.utils.cli.GenericCommand;
 import bjc.utils.cli.GenericCommandMode;
 import bjc.utils.cli.ICommandMode;
 
@@ -13,7 +15,19 @@ import bjc.utils.cli.ICommandMode;
  * @author ben
  *
  */
-public class CombatCommandMode {
+public class CombatCommandMode implements ICommandMode {
+
+	private Consumer<String>	normalOutput;
+	private Consumer<String>	errorOutput;
+
+	private CombatCore			core;
+
+	private ICommandMode		offenseMode;
+	private ICommandMode		defenseMode;
+
+	private ICommandMode		winMode;
+	private ICommandMode		loseMode;
+
 	/**
 	 * Create a combat command mode
 	 * 
@@ -27,15 +41,117 @@ public class CombatCommandMode {
 	 *            The mode to return to after a win
 	 * @param loseMode
 	 *            The mode to return to after a loss
-	 * 
-	 * @return A new combat command mode
 	 */
-	public static ICommandMode createMode(Consumer<String> normalOutput,
+	public CombatCommandMode(Consumer<String> normalOutput,
 			Consumer<String> errorOutput, CombatCore core,
 			ICommandMode winMode, ICommandMode loseMode) {
-		GenericCommandMode mode = new GenericCommandMode(normalOutput,
-				errorOutput);
+		this.normalOutput = normalOutput;
+		this.errorOutput = errorOutput;
+		this.core = core;
 
-		return mode;
+		this.winMode = winMode;
+		this.loseMode = loseMode;
+
+		initializeCommandModes();
+	}
+
+	private void initializeCommandModes() {
+		GenericCommandMode pendingOffense = new GenericCommandMode(
+				normalOutput, errorOutput);
+		GenericCommandMode pendingDefense = new GenericCommandMode(
+				normalOutput, errorOutput);
+
+		pendingOffense.addCommandHandler("stab",
+				new GenericCommand((args) -> {
+					core.doPlayerAction(ActionType.FORCE);
+
+					// This is fine, because we ignore these
+					return null;
+				}, "stab\tA brute force assault on the enemy",
+						"stab is a brute force assault on the enemy."));
+		pendingOffense.addCommandHandler("slash",
+				new GenericCommand((args) -> {
+					core.doPlayerAction(ActionType.FINESSE);
+
+					// This is fine, because we ignore these
+					return null;
+				}, "slash\tA quick slash around the enemies guard",
+						"slash is a quick slash around the enemies guard."));
+		pendingOffense.addCommandHandler("attack",
+				new GenericCommand((args) -> {
+					core.doPlayerAction(ActionType.NEUTRAL);
+
+					// This is fine, because we ignore these
+					return null;
+				}, "attack\tA basic attack on the enemy",
+						"attack is a basic attack on the enemy."));
+
+		pendingOffense.addCommandHandler("brace",
+				new GenericCommand((args) -> {
+					core.doPlayerAction(ActionType.FORCE);
+
+					// This is fine, because we ignore these
+					return null;
+				}, "brace\tDig yourself in and brace yourself against the enemies blows",
+						"brace means you dig yourself in and brace yourself against"
+								+ " the enemies blows"));
+		pendingDefense.addCommandHandler("evade",
+				new GenericCommand((args) -> {
+					core.doPlayerAction(ActionType.FINESSE);
+
+					// This is fine, because we ignore these
+					return null;
+				}, "evade\tPrepare yourself to dodge incoming attacks",
+						"evade means you prepare yourself to dodge incoming attacks"));
+		pendingDefense.addCommandHandler("block",
+				new GenericCommand((args) -> {
+					core.doPlayerAction(ActionType.NEUTRAL);
+
+					// This is fine, because we ignore these
+					return null;
+				}, "block\tRaise your shield and prepare to roll with oncoming attacks",
+						"block means you raise your shield and prepare to roll"
+								+ " with oncoming attacks."));
+	}
+
+	@Override
+	public ICommandMode processCommand(String command, String[] args) {
+		if (core.isPlayerAttacking()) {
+			offenseMode.processCommand(command, args);
+		} else {
+			defenseMode.processCommand(command, args);
+		}
+
+		switch (core.getPlayerStatus()) {
+			case CONTINUE:
+				return this;
+			case LOSE:
+				normalOutput.accept("The " + core.getEnemyName()
+						+ " has defeated you.");
+				return loseMode;
+			case WIN:
+				normalOutput.accept(
+						"You have defeated the " + core.getEnemyName());
+				return winMode;
+			default:
+				throw new IllegalStateException(
+						"Got illegal player status "
+								+ core.getPlayerStatus());
+
+		}
+	}
+
+	@Override
+	public boolean canHandleCommand(String command) {
+		if (core.isPlayerAttacking()) {
+			return offenseMode.canHandleCommand(command);
+		}
+
+		return defenseMode.canHandleCommand(command);
+	}
+
+	@Override
+	public String getName() {
+		return "combat";
 	}
 }

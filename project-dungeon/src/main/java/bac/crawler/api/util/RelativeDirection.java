@@ -104,7 +104,7 @@ public enum RelativeDirection {
 		}
 
 		for (int i = 0; i <= maxNDirections - nDirections; i++) {
-			RelativeDirection rDir = relativeDirs.randItem(RNG);
+			RelativeDirection rDir = relativeDirs.randItem(RNG::nextInt);
 
 			relativeDirs.removeMatching(rDir);
 		}

@@ -1,7 +1,7 @@
 package bac.crawler.api.util;
 
 import bac.crawler.api.IDescriber;
-import bjc.utils.data.Pair;
+import bjc.utils.data.experimental.Pair;
 
 /**
  * Implementation of a description of an exit from a room

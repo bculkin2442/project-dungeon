@@ -8,6 +8,10 @@ package bac.crawler.commands;
  */
 public enum CreationStage {
 	/**
+	 * Represents picking the player's name
+	 */
+	NAME,
+	/**
 	 * Represents picking a difficulty setting for the game
 	 */
 	DIFFICULTY,
@@ -31,6 +35,8 @@ public enum CreationStage {
 	 */
 	public CreationStage nextStage() {
 		switch (this) {
+			case NAME:
+				return DIFFICULTY;
 			case DEFENSIVE:
 				return MISC;
 			case MISC:
@@ -50,6 +56,6 @@ public enum CreationStage {
 	 * @return The initial stage in character creation
 	 */
 	public static CreationStage getInitialStage() {
-		return DIFFICULTY;
+		return NAME;
 	}
 }

@@ -12,17 +12,20 @@ import bjc.utils.funcutils.EnumUtils;
  * 
  * @author ben
  *
+ *         TODO make sure this is how I want things to work
  */
 public class CombatCore {
 	private static int addMod(int modifier, int scaleFactor) {
 		return (int) (Math.log(modifier * scaleFactor) / Math.log(2));
 	}
 
-	private EntityMob		enemy;
+	private EntityLiving		enemy;
 
-	private boolean			isPlayerTurn;
+	private boolean				isPlayerTurn;
 
-	private EntityLiving	player;
+	private EntityLiving		player;
+
+	private Consumer<String>	normalOutput;
 
 	/**
 	 * Create a new combat core
@@ -36,11 +39,12 @@ public class CombatCore {
 	 * @param errorOutput
 	 *            The function to use for errors
 	 */
-	public CombatCore(EntityLiving player, EntityMob enemy,
+	public CombatCore(EntityLiving player, EntityLiving enemy,
 			Consumer<String> normalOutput, Consumer<String> errorOutput) {
 		this.player = player;
 		this.enemy = enemy;
 
+		this.normalOutput = normalOutput;
 		calculateInitiative();
 	}
 
@@ -65,9 +69,12 @@ public class CombatCore {
 	 */
 	public CombatResult doPlayerAction(ActionType action) {
 		if (isPlayerTurn) {
+			isPlayerTurn = false;
+
 			return doPlayerAttack(action);
 		}
 
+		isPlayerTurn = true;
 		return doPlayerDefend(action);
 	}
 
@@ -76,20 +83,26 @@ public class CombatCore {
 		ActionType enemyAction = EnumUtils.getRandomValue(ActionType.class,
 				new Random());
 
-		printEnemyAction(enemyAction);
-		
-		int playerRoll = d20().roll()
-				+ addMod(player.getOffensiveMod(playerAction), 2);
-		int enemyRoll = d20().roll()
-				+ addMod(enemy.getDefensiveMod(playerAction), 2);
+		if (doCombatAction(player, enemy, playerAction,
+				enemyAction) == CombatResult.CONTINUE) {
+			return CombatResult.CONTINUE;
+		}
 
-		
-		return null;
+		return CombatResult.WIN;
 	}
 
-	private void printEnemyAction(ActionType enemyAction) {
-		// TODO Auto-generated method stub
-		
+	private CombatResult doDamage(EntityLiving attacker,
+			EntityLiving defender) {
+		int damage = d6().roll();
+
+		normalOutput.accept(attacker.getName() + " did " + damage
+				+ " damage to " + defender);
+
+		if (defender.takeDamage(new DamageCount(damage))) {
+			return CombatResult.CONTINUE;
+		}
+
+		return CombatResult.WIN;
 	}
 
 	private CombatResult doPlayerDefend(ActionType playerAction) {
@@ -97,12 +110,45 @@ public class CombatCore {
 		ActionType enemyAction = EnumUtils.getRandomValue(ActionType.class,
 				new Random());
 
-		int playerRoll = d20().roll()
-				+ addMod(player.getDefensiveMod(playerAction), 2);
-		int enemyRoll = d20().roll()
-				+ addMod(enemy.getOffensiveMod(playerAction), 2);
+		if (doCombatAction(enemy, player, enemyAction,
+				playerAction) == CombatResult.CONTINUE) {
+			return CombatResult.CONTINUE;
+		}
 
-		return null;
+		return CombatResult.LOSE;
+	}
+
+	private CombatResult doCombatAction(EntityLiving attacker,
+			EntityLiving defender, ActionType attackerAction,
+			ActionType defenderAction) {
+		double attackerTypeMod = attackerAction
+				.getMultiplier(defenderAction);
+		double defenderTypeMod = defenderAction
+				.getMultiplier(attackerAction);
+
+		int attackerRoll = doAttackRoll(attacker, attackerAction,
+				attackerTypeMod);
+		int defenderRoll = doAttackRoll(defender, defenderAction,
+				defenderTypeMod);
+
+		if (attackerRoll > defenderRoll) {
+			normalOutput.accept(
+					attacker.getName() + " hit the " + defender.getName());
+
+			return doDamage(attacker, defender);
+		}
+
+		normalOutput.accept(
+				attacker.getName() + " missed the " + defender.getName());
+
+		return CombatResult.CONTINUE;
+	}
+
+	private static int doAttackRoll(EntityLiving roller, ActionType action,
+			double actionTypeMod) {
+		return (int) (d20().roll()
+				+ addMod(roller.getDefensiveMod(action), 2)
+						* actionTypeMod);
 	}
 
 	/**
@@ -114,4 +160,29 @@ public class CombatCore {
 		return isPlayerTurn;
 	}
 
+	/**
+	 * Get the status of the player in this combat
+	 * 
+	 * @return The status of the player in this combat
+	 */
+	public CombatResult getPlayerStatus() {
+		if (player.isAlive()) {
+			if (enemy.isAlive()) {
+				return CombatResult.CONTINUE;
+			}
+
+			return CombatResult.WIN;
+		}
+
+		return CombatResult.LOSE;
+	}
+
+	/**
+	 * Get the name of the enemy
+	 * 
+	 * @return The name of the enemy
+	 */
+	public String getEnemyName() {
+		return enemy.getName();
+	}
 }

@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 import bac.crawler.api.IDescriber;
 import bac.crawler.api.impl.GenericDescriber;
-import bjc.utils.data.IPair;
+import bjc.utils.data.experimental.IPair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
 import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;

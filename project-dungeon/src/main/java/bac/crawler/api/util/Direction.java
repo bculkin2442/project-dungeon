@@ -88,7 +88,7 @@ public enum Direction {
 		IFunctionalList<Direction> cards = cardinals();
 
 		for (int i = 0; i <= 4 - nCardinals; i++) {
-			Direction rDir = cards.randItem(RNG);
+			Direction rDir = cards.randItem(RNG::nextInt);
 
 			cards.removeMatching(rDir);
 		}

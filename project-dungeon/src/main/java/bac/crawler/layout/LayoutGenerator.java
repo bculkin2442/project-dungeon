@@ -18,7 +18,8 @@ import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.ExitType;
 import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.ComponentDescription;
-import bjc.utils.data.GenHolder;
+import bjc.utils.data.experimental.IHolder;
+import bjc.utils.data.experimental.Identity;
 
 /**
  * Core generator class for basic dungeon layout
@@ -45,11 +46,11 @@ public class LayoutGenerator implements IDungeon {
 	}
 
 	private static ExitType handleVerticalExits(
-			Map<Direction, IExit> exits, GenHolder<Direction> absoluteDir,
+			Map<Direction, IExit> exits, IHolder<Direction> absoluteDir,
 			ExitType exitType) {
 		if (exitType == ExitType.WELL) {
 			if (!exits.containsKey(Direction.DOWN)) {
-				absoluteDir.transform((oldDir) -> Direction.DOWN);
+				absoluteDir.replace(Direction.DOWN);
 			} else {
 				exitType = ExitType.getRandomNonVerticalType();
 			}
@@ -57,15 +58,15 @@ public class LayoutGenerator implements IDungeon {
 			if (!exits.containsKey(Direction.DOWN)) {
 				if (!exits.containsKey(Direction.UP)) {
 					if (Math.random() > 0.5) {
-						absoluteDir.transform((oldDir) -> Direction.DOWN);
+						absoluteDir.replace(Direction.DOWN);
 					} else {
-						absoluteDir.transform((oldDir) -> Direction.UP);
+						absoluteDir.replace(Direction.UP);
 					}
 				} else {
-					absoluteDir.transform((oldDir) -> Direction.DOWN);
+					absoluteDir.replace(Direction.DOWN);
 				}
 			} else if (!exits.containsKey(Direction.UP)) {
-				absoluteDir.transform((oldDir) -> Direction.UP);
+				absoluteDir.replace(Direction.UP);
 			} else {
 				exitType = ExitType.getRandomNonVerticalType();
 			}
@@ -95,20 +96,20 @@ public class LayoutGenerator implements IDungeon {
 		this.chambers = archetypes.getChambers();
 	}
 
-	private IRoom buildConnectingRoom(GenHolder<IRoom> entranceRoom,
+	private IRoom buildConnectingRoom(IHolder<IRoom> entranceRoom,
 			Direction entranceDirection, IRoomType type,
 			IDescriber entranceDescriber) {
 		Map<Direction, IExit> exits = new HashMap<>();
-		GenHolder<IRoom> roomHolder = new GenHolder<>();
+		IHolder<IRoom> roomHolder = new Identity<>();
 
 		for (RelativeDirection relativeDirection : type.getExitDirections()
 				.toIterable()) {
-			GenHolder<Direction> absoluteDir = new GenHolder<>(
+			IHolder<Direction> absoluteDir = new Identity<>(
 					relativeDirection.makeAbsolute(entranceDirection));
 			ExitDesc exitDescription = type
 					.getExitInDirection(relativeDirection);
 
-			GenHolder<Supplier<IRoom>> roomSupplier = new GenHolder<>();
+			IHolder<Supplier<IRoom>> roomSupplier = new Identity<>();
 
 			exitDescription.doWith((exitType, exitDescriber) -> {
 				buildExitFromDescription(exits, roomHolder, absoluteDir,
@@ -118,13 +119,13 @@ public class LayoutGenerator implements IDungeon {
 
 		exits.put(entranceDirection.opposing(),
 				new LazyExit(entranceDescriber::getDescription, () -> {
-					return entranceRoom.unwrap((s) -> s);
+					return entranceRoom.getValue();
 				}));
 
 		GenericRoom gr = new GenericRoom(
 				type.getDescriber().getDescription(), exits);
 
-		roomHolder.transform((r) -> gr);
+		roomHolder.replace(gr);
 
 		return gr;
 	}
@@ -135,18 +136,18 @@ public class LayoutGenerator implements IDungeon {
 	}
 
 	private void buildExitFromDescription(Map<Direction, IExit> exits,
-			GenHolder<IRoom> roomHolder, GenHolder<Direction> absoluteDir,
-			GenHolder<Supplier<IRoom>> roomSupplier, ExitType exitType,
+			IHolder<IRoom> roomHolder, IHolder<Direction> absoluteDir,
+			IHolder<Supplier<IRoom>> roomSupplier, ExitType exitType,
 			IDescriber exitDescriber) {
 		exitType = handleVerticalExits(exits, absoluteDir, exitType);
 
-		buildRoomSupplier(roomHolder, absoluteDir.unwrap((dir) -> dir),
-				roomSupplier, exitType, exitDescriber);
+		buildRoomSupplier(roomHolder, absoluteDir.getValue(), roomSupplier,
+				exitType, exitDescriber);
 
 		LazyExit lexit = new LazyExit(exitDescriber::getDescription,
-				roomSupplier.unwrap((s) -> s));
+				roomSupplier.getValue());
 
-		exits.put(absoluteDir.unwrap((dir) -> dir), lexit);
+		exits.put(absoluteDir.getValue(), lexit);
 	}
 
 	private IRoom buildInitialRoom(IRoomType type) {
@@ -157,16 +158,16 @@ public class LayoutGenerator implements IDungeon {
 
 	private IRoom buildRoom(Direction entrance, IRoomType type) {
 		Map<Direction, IExit> exits = new HashMap<>();
-		GenHolder<IRoom> roomHolder = new GenHolder<>();
+		IHolder<IRoom> roomHolder = new Identity<>();
 
 		for (RelativeDirection relativeDirection : type.getExitDirections()
 				.toIterable()) {
-			GenHolder<Direction> absoluteDir = new GenHolder<>(
+			IHolder<Direction> absoluteDir = new Identity<>(
 					relativeDirection.makeAbsolute(entrance));
 			ExitDesc exitDescription = type
 					.getExitInDirection(relativeDirection);
 
-			GenHolder<Supplier<IRoom>> roomSupplier = new GenHolder<>();
+			IHolder<Supplier<IRoom>> roomSupplier = new Identity<>();
 
 			exitDescription.doWith((exitType, exitDescriber) -> {
 				buildExitFromDescription(exits, roomHolder, absoluteDir,
@@ -177,18 +178,19 @@ public class LayoutGenerator implements IDungeon {
 		GenericRoom gr = new GenericRoom(
 				type.getDescriber().getDescription(), exits);
 
-		roomHolder.transform((r) -> gr);
+		roomHolder.replace(gr);
 
 		return gr;
 	}
 
-	private void buildRoomSupplier(GenHolder<IRoom> roomHolder,
-			Direction absoluteDir, GenHolder<Supplier<IRoom>> roomSupplier,
+	private void buildRoomSupplier(IHolder<IRoom> roomHolder,
+			Direction absoluteDir, IHolder<Supplier<IRoom>> roomSupplier,
 			ExitType exitType, IDescriber exitDescriber) {
 		double randomNumber;
+
 		switch (exitType) {
 			case DOOR:
-				roomSupplier.transform((r) -> () -> {
+				roomSupplier.replace(() -> {
 					return buildConnectingRoom(roomHolder, absoluteDir,
 							doors.getType(true), exitDescriber);
 				});
@@ -199,12 +201,12 @@ public class LayoutGenerator implements IDungeon {
 				if (randomNumber > 2 || randomNumber < -2) {
 					// 10% chance of this being triggered by
 					// empirical rule
-					roomSupplier.transform((r) -> () -> {
+					roomSupplier.replace(() -> {
 						return buildRoom(absoluteDir,
 								passages.getType(false));
 					});
 				} else {
-					roomSupplier.transform((r) -> () -> {
+					roomSupplier.replace(() -> {
 						return buildConnectingRoom(roomHolder, absoluteDir,
 								passages.getType(true), exitDescriber);
 					});
@@ -216,24 +218,24 @@ public class LayoutGenerator implements IDungeon {
 				if (randomNumber > 2 || randomNumber < -2) {
 					// 10% chance of this being triggered by
 					// empirical rule
-					roomSupplier.transform((r) -> () -> {
+					roomSupplier.replace(() -> {
 						return buildRoom(absoluteDir,
 								stairs.getType(false));
 					});
 				} else {
-					roomSupplier.transform((r) -> () -> {
+					roomSupplier.replace(() -> {
 						return buildConnectingRoom(roomHolder, absoluteDir,
 								stairs.getType(true), exitDescriber);
 					});
 				}
 				break;
 			case WELL:
-				roomSupplier.transform((r) -> () -> {
+				roomSupplier.replace(() -> {
 					return buildInitialRoom(stairs.getType(false));
 				});
 				break;
 			case CHAMBER:
-				roomSupplier.transform((r) -> () -> {
+				roomSupplier.replace(() -> {
 					return buildConnectingRoom(roomHolder, absoluteDir,
 							chambers.getType(true), exitDescriber);
 				});

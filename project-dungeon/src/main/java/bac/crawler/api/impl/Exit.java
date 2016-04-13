@@ -2,7 +2,7 @@ package bac.crawler.api.impl;
 
 import bac.crawler.api.IExit;
 import bac.crawler.api.IRoom;
-import bjc.utils.data.Pair;
+import bjc.utils.data.experimental.Pair;
 
 /**
  * Represents an exit from a room
@@ -13,12 +13,11 @@ import bjc.utils.data.Pair;
 public class Exit extends Pair<String, IRoom> implements IExit {
 	@Override
 	public String getDescription() {
-		return leftValue;
+		return getLeft();
 	}
 
 	@Override
 	public IRoom getDestination() {
-		return rightValue;
+		return getRight();
 	}
-
 }

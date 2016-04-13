@@ -4,9 +4,7 @@ import java.util.function.Supplier;
 
 import bac.crawler.api.IExit;
 import bac.crawler.api.IRoom;
-import bjc.utils.data.Pair;
-import bjc.utils.data.lazy.LazyHolder;
-import bjc.utils.data.lazy.LazyPair;
+import bjc.utils.data.experimental.LazyPair;
 
 /**
  * Represents a lazy exit from a room, where the destination room may not
@@ -20,13 +18,14 @@ public class LazyExit extends LazyPair<String, IRoom> implements IExit {
 	/**
 	 * Create a new lazy exit with the set data
 	 * 
-	 * @param dsc
+	 * @param roomDescriber
 	 *            The source to use for obtaining a room description
-	 * @param dst
+	 * @param roomSource
 	 *            The source to use for obtaining a destination room
 	 */
-	public LazyExit(Supplier<String> dsc, Supplier<IRoom> dst) {
-		delegatePair = new LazyHolder<>(() -> new Pair<>(dsc.get(), dst.get()));
+	public LazyExit(Supplier<String> roomDescriber,
+			Supplier<IRoom> roomSource) {
+		super(roomDescriber, roomSource);
 	}
 
 	@Override
