@@ -5,8 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.EnumMap;
 
 import bac.crawler.api.IDescriber;
 import bac.crawler.api.IRoomType;
@@ -16,6 +15,8 @@ import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.ComponentDescription;
 import bjc.utils.components.ComponentDescriptionFileParser;
 import bjc.utils.exceptions.PragmaFormatException;
+import bjc.utils.funcdata.FunctionalMap;
+import bjc.utils.funcdata.IFunctionalMap;
 
 /**
  * State for room type parser
@@ -24,12 +25,12 @@ import bjc.utils.exceptions.PragmaFormatException;
  *
  */
 public class RoomTypeState {
-	private Path								currentDirectory;
+	private Path										currentDirectory;
 
-	private IDescriber							roomDescriber;
-	private Map<RelativeDirection, ExitDesc>	exits;
+	private IDescriber									roomDescriber;
+	private IFunctionalMap<RelativeDirection, ExitDesc>	exits;
 
-	private ComponentDescription				cdesc;
+	private ComponentDescription						cdesc;
 
 	/**
 	 * Create a new room type parsing state
@@ -40,7 +41,52 @@ public class RoomTypeState {
 	public RoomTypeState(Path currentDir) {
 		currentDirectory = currentDir;
 
-		exits = new HashMap<>();
+		exits = new FunctionalMap<>(
+				new EnumMap<>(RelativeDirection.class));
+	}
+
+	/**
+	 * Add an exit to this room type
+	 * 
+	 * @param relativeDir
+	 *            The direction this exit is from the entrance
+	 * @param desc
+	 *            The description of the exit there
+	 */
+	public void addExit(RelativeDirection relativeDir, ExitDesc desc) {
+		exits.put(relativeDir, desc);
+	}
+
+	/**
+	 * Set the description of this
+	 * 
+	 * @param descPath
+	 */
+	public void setComponentDescription(Path descPath) {
+		File sourceFile = currentDirectory.resolve(descPath).toFile();
+
+		try {
+			FileInputStream inputSource = new FileInputStream(sourceFile);
+
+			cdesc = ComponentDescriptionFileParser.fromStream(inputSource);
+
+			inputSource.close();
+		} catch (FileNotFoundException fnfex) {
+			PragmaFormatException pfex = new PragmaFormatException(
+					"Could not read component description from file "
+							+ sourceFile);
+
+			pfex.initCause(fnfex);
+
+			throw pfex;
+		} catch (IOException ioex) {
+			IllegalStateException isex = new IllegalStateException(
+					"Got I/O exception attempting to close file.");
+
+			isex.initCause(ioex);
+
+			throw isex;
+		}
 	}
 
 	/**
@@ -76,18 +122,6 @@ public class RoomTypeState {
 	}
 
 	/**
-	 * Add an exit to this room type
-	 * 
-	 * @param rdir
-	 *            The direction this exit is from the entrance
-	 * @param d
-	 *            The description of the exit there
-	 */
-	public void addExit(RelativeDirection rdir, ExitDesc d) {
-		exits.put(rdir, d);
-	}
-
-	/**
 	 * Convert this state into the room type it represents
 	 * 
 	 * @return The room type this state represents
@@ -95,37 +129,4 @@ public class RoomTypeState {
 	public IRoomType toRoomType() {
 		return new GenericRoomType(cdesc, roomDescriber, exits);
 	}
-
-	/**
-	 * Set the description of this
-	 * 
-	 * @param descPath
-	 */
-	public void setComponentDescription(Path descPath) {
-		File sourceFile = currentDirectory.resolve(descPath).toFile();
-
-		try {
-			FileInputStream inputSource = new FileInputStream(sourceFile);
-
-			cdesc = ComponentDescriptionFileParser.fromStream(inputSource);
-
-			inputSource.close();
-		} catch (FileNotFoundException fnfex) {
-			PragmaFormatException pfex = new PragmaFormatException(
-					"Could not read component description from file "
-							+ sourceFile);
-
-			pfex.initCause(fnfex);
-
-			throw pfex;
-		} catch (IOException ioex) {
-			IllegalStateException isex = new IllegalStateException(
-					"Got I/O exception attempting to close file.");
-
-			isex.initCause(ioex);
-
-			throw isex;
-		}
-	}
-
 }

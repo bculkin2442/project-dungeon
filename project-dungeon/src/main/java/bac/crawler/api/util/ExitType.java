@@ -36,12 +36,12 @@ public enum ExitType {
 	/**
 	 * Create a value of the enumeration from a string
 	 * 
-	 * @param val
+	 * @param value
 	 *            The string to turn into a value
 	 * @return The direction corresponding to the given value
 	 */
-	public static ExitType properValueOf(String val) {
-		return valueOf(val.toUpperCase());
+	public static ExitType properValueOf(String value) {
+		return valueOf(value.toUpperCase());
 	}
 
 	/**
@@ -49,8 +49,8 @@ public enum ExitType {
 	 */
 	public final Directionality d;
 
-	private ExitType(Directionality dr) {
-		d = dr;
+	private ExitType(Directionality dir) {
+		d = dir;
 	}
 
 	@Override

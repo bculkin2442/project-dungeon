@@ -13,20 +13,20 @@ public class GenericDescriber implements IDescriber {
 	/**
 	 * The source for random descriptions
 	 */
-	private WeightedRandom<String> descs;
+	private WeightedRandom<String> descriptions;
 
 	/**
 	 * Create a new generic describer
 	 * 
-	 * @param dscs
+	 * @param descs
 	 *            The source for random descriptions
 	 */
-	public GenericDescriber(WeightedRandom<String> dscs) {
-		descs = dscs;
+	public GenericDescriber(WeightedRandom<String> descs) {
+		descriptions = descs;
 	}
 
 	@Override
 	public String getDescription() {
-		return descs.generateValue();
+		return descriptions.generateValue();
 	}
 }

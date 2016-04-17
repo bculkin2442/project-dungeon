@@ -4,7 +4,7 @@ import java.io.InputStream;
 
 import bac.crawler.api.IDescriber;
 import bac.crawler.api.impl.GenericDescriber;
-import bjc.utils.data.experimental.IPair;
+import bjc.utils.data.IPair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
 import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;
@@ -35,60 +35,63 @@ public class DescriberFileParser {
 	/**
 	 * Continue reading a description
 	 * 
-	 * @param fst
+	 * @param tokenizer
 	 *            The string tokenizer with the rest of the description
-	 * @param stat
+	 * @param currentState
 	 *            The current parser states
 	 */
-	private static void continueDescription(FunctionalStringTokenizer fst,
-			DescriberState stat) {
-		String desc = ListUtils.collapseTokens(fst.toList(), " ");
+	private static void continueDescription(
+			FunctionalStringTokenizer tokenizer,
+			DescriberState currentState) {
+		String descriptionPart =
+				ListUtils.collapseTokens(tokenizer.toList(), " ");
 
-		stat.continueDesc(desc);
+		currentState.continueDesc(descriptionPart);
 	}
 
 	/**
 	 * End parsing a description
 	 * 
-	 * @param stat
+	 * @param currentState
 	 *            The current state of the parser
 	 */
-	private static void endDesc(DescriberState stat) {
-		stat.endDesc();
+	private static void endDesc(DescriberState currentState) {
+		currentState.endDesc();
 	}
 
 	/**
 	 * Parse a describer from a provided stream
 	 * 
-	 * @param is
+	 * @param inputSource
 	 *            The stream to parse from
 	 * @return A describer generated from the provided stream
 	 */
-	public static GenericDescriber parseFile(InputStream is) {
-		return new GenericDescriber(
-				reader.fromStream(is, new DescriberState()).getResults());
+	public static GenericDescriber parseFile(InputStream inputSource) {
+		DescriberState readState =
+				reader.fromStream(inputSource, new DescriberState());
+
+		return new GenericDescriber(readState.getResults());
 	}
 
 	/**
 	 * Start parsing a description
 	 * 
-	 * @param fst
+	 * @param tokenizer
 	 *            The string tokenizer with the rest of the description
 	 *            tokens
-	 * @param par
+	 * @param initPair
 	 *            A pair of the initial token and reader state
 	 */
-	private static void startDescription(FunctionalStringTokenizer fst,
-			IPair<String, DescriberState> par) {
-		String probabilityString = par
-				.merge((initialString, state) -> initialString);
+	private static void startDescription(
+			FunctionalStringTokenizer tokenizer,
+			IPair<String, DescriberState> initPair) {
+		String probabilityString = initPair.getLeft();
 
 		int prob = Integer.parseInt(probabilityString);
 
-		String desc = ListUtils.collapseTokens(fst.toList(), " ");
+		String descriptionPart =
+				ListUtils.collapseTokens(tokenizer.toList(), " ");
 
-		par.doWith((initialString, state) -> {
-			state.startDesc(prob, desc);
-		});
+		initPair.getRight().startDesc(prob, descriptionPart);
 	}
 }

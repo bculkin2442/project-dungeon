@@ -22,96 +22,63 @@ import say.swing.JFontChooser;
  */
 public class DungeonCrawler {
 	/**
-	 * Main method for launching application
-	 * 
-	 * @param args
-	 *            Unused CLI args
-	 */
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(() -> {
-			// Uncomment this to use unified menubar on OSX
-			// System.setProperty("apple.laf.useScreenMenuBar", "true");
-
-			// Create our console
-			DragonConsoleFrame dcf = new DragonConsoleFrame();
-			DragonConsole console = dcf.getConsole();
-
-			// Set neccessary properties on the frame itself
-			configureFrame(dcf);
-
-			// Set the font to something less ugly
-			console.setFont(Font.decode("Arial"));
-
-			// Set the command processor on the console
-			console.setCommandProcessor(new IOProcessor());
-
-			// Print intro message
-			console.append(
-					"Enter list to see a list of available commands, help for command help, "
-							+ "or exit to exit the game\n");
-
-			// Print the initial console prompt
-			console.append("crawler>> ");
-
-			dcf.setVisible(true);
-		});
-	}
-
-	/**
 	 * Configure necessary windowing settings on the frame
 	 * 
-	 * @param dcf
+	 * @param consoleFrame
 	 *            The frame to do windowing on
 	 */
-	private static void configureFrame(DragonConsoleFrame dcf) {
-		dcf.setPreferredSize(new Dimension(640, 480));
+	private static void configureFrame(DragonConsoleFrame consoleFrame) {
+		consoleFrame.setPreferredSize(new Dimension(640, 480));
 
-		dcf.setJMenuBar(createMenubar(dcf));
-		dcf.setResizable(true);
+		consoleFrame.setJMenuBar(createMenubar(consoleFrame));
+		consoleFrame.setResizable(true);
 
-		dcf.setTitle("Project: Dungeon Crawler Pre-alpha Version");
+		consoleFrame.setTitle("Project: Dungeon Crawler - Alpha Version");
 
-		dcf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		consoleFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	/**
 	 * Build the menu bar for the frame
 	 * 
-	 * @param dcf
+	 * @param consoleFrame
 	 *            The frame to build a menu for
 	 * @return A menubar for the specified frame
 	 */
-	private static JMenuBar createMenubar(DragonConsoleFrame dcf) {
+	private static JMenuBar
+			createMenubar(DragonConsoleFrame consoleFrame) {
 		JMenuBar menuBar = new JMenuBar();
 
+		DragonConsole console = consoleFrame.getConsole();
 		// The menu for handling the console style
 		JMenu styleMenu = new JMenu("Style");
 
 		// Default style is grey text on a black background
 		JMenuItem defaultStyle = new JMenuItem("Default Style");
 		defaultStyle.addActionListener((ev) -> {
-			dcf.getConsole().setDefaultStyle();
+			console.setDefaultStyle();
 
 			// This is because setting the style clears the console
-			dcf.getConsole().append("crawler>>");
+			console.append("crawler>>");
 		});
 
 		// OSX style is black text on white background
 		JMenuItem osxStyle = new JMenuItem("OSX Style");
 		osxStyle.addActionListener((ev) -> {
-			dcf.getConsole().setMacStyle();
+			console.setMacStyle();
 
 			// This is because setting the style clears the console
-			dcf.getConsole().append("crawler>>");
+			console.append("crawler>>");
 		});
 
 		JMenuItem setFont = new JMenuItem("Set Font...");
 		setFont.addActionListener((ev) -> {
 			JFontChooser fontPicker = new JFontChooser();
 
-			if (fontPicker.showDialog(dcf) == JFontChooser.OK_OPTION) {
-				dcf.getConsole()
-						.setConsoleFont(fontPicker.getSelectedFont());
+			int dialogChoice = fontPicker.showDialog(consoleFrame);
+
+			if (dialogChoice == JFontChooser.OK_OPTION) {
+				console.setConsoleFont(fontPicker.getSelectedFont());
 			}
 		});
 
@@ -122,5 +89,46 @@ public class DungeonCrawler {
 
 		menuBar.add(styleMenu);
 		return menuBar;
+	}
+
+	/**
+	 * Main method for launching application
+	 * 
+	 * @param args
+	 *            Unused CLI args
+	 */
+	public static void main(String[] args) {
+		SwingUtilities.invokeLater(() -> {
+			startGame(false);
+		});
+	}
+
+	private static void startGame(boolean useUnifiedMenubar) {
+		if (useUnifiedMenubar) {
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+		}
+
+		// Create our console
+		DragonConsoleFrame consoleFrame = new DragonConsoleFrame();
+		DragonConsole console = consoleFrame.getConsole();
+
+		// Set neccessary properties on the frame itself
+		configureFrame(consoleFrame);
+
+		// Set the font to something less ugly
+		console.setFont(Font.decode("Arial"));
+
+		// Set the command processor on the console
+		console.setCommandProcessor(new IOProcessor());
+
+		// Print intro message
+		console.append(
+				"Enter list to see a list of available commands, help for command help, "
+						+ "or exit to exit the game\n");
+
+		// Print the initial console prompt
+		console.append("crawler>> ");
+
+		consoleFrame.setVisible(true);
 	}
 }

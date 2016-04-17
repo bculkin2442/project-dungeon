@@ -10,7 +10,7 @@ import bac.crawler.api.IRoomType;
 import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.ExitType;
 import bac.crawler.api.util.RelativeDirection;
-import bjc.utils.data.experimental.IPair;
+import bjc.utils.data.IPair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
 import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;
@@ -31,37 +31,41 @@ public class RoomTypeFileParser {
 					// No need to do anything on rule end
 				});
 
-		reader.addPragma("component-description", (fst, stat) -> {
-			String path = ListUtils.collapseTokens(fst.toList((s) -> s));
+		reader.addPragma("component-description",
+				(tokenizer, currentState) -> {
+					String path =
+							ListUtils.collapseTokens(tokenizer.toList());
 
-			stat.setComponentDescription(Paths.get(path, ""));
-		});
+					currentState
+							.setComponentDescription(Paths.get(path, ""));
+				});
 	}
 
-	private static void beginRule(FunctionalStringTokenizer fst,
-			IPair<String, RoomTypeState> par) {
-		par.doWith((initString, stat) -> {
-			switch (initString) {
+	private static void beginRule(FunctionalStringTokenizer tokenizer,
+			IPair<String, RoomTypeState> initPair) {
+		initPair.doWith((initialString, currentState) -> {
+			switch (initialString) {
 				case "describer":
 					String describerPath =
-							ListUtils.collapseTokens(fst.toList((s) -> s));
+							ListUtils.collapseTokens(tokenizer.toList());
 
-					stat.setDescriber(Paths.get(describerPath, ""));
+					currentState
+							.setDescriber(Paths.get(describerPath, ""));
 					break;
 				case "exits":
-					parseExit(fst, stat);
+					parseExit(tokenizer, currentState);
 			}
 		});
 	}
 
-	private static void parseExit(FunctionalStringTokenizer fst,
-			RoomTypeState stat) {
-		RelativeDirection rdir =
-				RelativeDirection.properValueOf(fst.nextToken());
-		ExitType eType = ExitType.properValueOf(fst.nextToken());
+	private static void parseExit(FunctionalStringTokenizer tokenizer,
+			RoomTypeState currentState) {
+		RelativeDirection relativeDir =
+				RelativeDirection.properValueOf(tokenizer.nextToken());
+		ExitType exType = ExitType.properValueOf(tokenizer.nextToken());
 
-		stat.addExit(rdir,
-				new ExitDesc(eType, new ExitTypeDescriber(eType)));
+		currentState.addExit(relativeDir,
+				new ExitDesc(exType, new ExitTypeDescriber(exType)));
 	}
 
 	/**
@@ -72,10 +76,10 @@ public class RoomTypeFileParser {
 	 * @return The room type read from the file
 	 */
 	public static IRoomType readRoomType(Path inputFile) {
-		Path currentDir = inputFile.resolveSibling("");
+		Path currentDirectory = inputFile.resolveSibling("");
 
 		try {
-			RoomTypeState initState = new RoomTypeState(currentDir);
+			RoomTypeState initState = new RoomTypeState(currentDirectory);
 
 			FileInputStream stream =
 					new FileInputStream(inputFile.toFile());

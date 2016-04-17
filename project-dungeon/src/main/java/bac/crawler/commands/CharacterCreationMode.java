@@ -7,7 +7,7 @@ import bac.crawler.combat.ActionType;
 import bac.crawler.combat.EntityPlayer;
 import bac.crawler.combat.EntityStats;
 import bjc.utils.cli.ICommandMode;
-import bjc.utils.data.experimental.IHolder;
+import bjc.utils.data.IHolder;
 import bjc.utils.gen.WeightedRandom;
 
 /**

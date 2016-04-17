@@ -22,21 +22,17 @@ public class StatWindow extends JFrame {
 
 	private EntityPlayer		player;
 
-	private JLabel				vitalityStatLabel;
-
-	private JLabel				healthStatLabel;
-
-	private JLabel				constitutionStatLabel;
-
-	private JLabel				agilityStatPanel;
+	private JLabel				strengthStatLabel;
+	private JLabel				dexterityStatLabel;
 
 	private JLabel				fortitudeStatLabel;
-
 	private JLabel				reflexesStatLabel;
 
-	private JLabel				strengthStatLabel;
+	private JLabel				constitutionStatLabel;
+	private JLabel				agilityStatPanel;
 
-	private JLabel				dexterityStatLabel;
+	private JLabel				healthStatLabel;
+	private JLabel				vitalityStatLabel;
 
 	/**
 	 * Create a new stat window that displays the stats of the specified
@@ -62,8 +58,8 @@ public class StatWindow extends JFrame {
 		offensiveStatsPanel.setLayout(new HLayout(2));
 
 		strengthStatLabel = new JLabel("Strength: " + stats.getStrength());
-		dexterityStatLabel = new JLabel(
-				"Dexterity: " + stats.getDexterity());
+		dexterityStatLabel =
+				new JLabel("Dexterity: " + stats.getDexterity());
 
 		offensiveStatsPanel.add(strengthStatLabel);
 		offensiveStatsPanel.add(dexterityStatLabel);
@@ -73,8 +69,8 @@ public class StatWindow extends JFrame {
 		JPanel defensiveStatsPanel = new JPanel();
 		defensiveStatsPanel.setLayout(new HLayout(2));
 
-		fortitudeStatLabel = new JLabel(
-				"Fortitude: " + stats.getFortitude());
+		fortitudeStatLabel =
+				new JLabel("Fortitude: " + stats.getFortitude());
 		reflexesStatLabel = new JLabel("Reflexes: " + stats.getReflexes());
 
 		defensiveStatsPanel.add(fortitudeStatLabel);
@@ -85,8 +81,8 @@ public class StatWindow extends JFrame {
 		JPanel miscStatsPanel = new JPanel();
 		miscStatsPanel.setLayout(new HLayout(2));
 
-		constitutionStatLabel = new JLabel(
-				"Constitution: " + stats.getConstitution());
+		constitutionStatLabel =
+				new JLabel("Constitution: " + stats.getConstitution());
 		agilityStatPanel = new JLabel("Agility: " + stats.getAgility());
 
 		miscStatsPanel.add(constitutionStatLabel);
@@ -97,11 +93,11 @@ public class StatWindow extends JFrame {
 		JPanel healthStatsPanel = new JPanel();
 		healthStatsPanel.setLayout(new VLayout(2));
 
-		healthStatLabel = new JLabel(
-				"Current Health: " + player.getHealth() + "\tMax Health: "
-						+ player.getMaxHealth());
-		vitalityStatLabel = new JLabel(
-				"Current Vitality: " + player.getVitality()
+		healthStatLabel =
+				new JLabel("Current Health: " + player.getHealth()
+						+ "\tMax Health: " + player.getMaxHealth());
+		vitalityStatLabel =
+				new JLabel("Current Vitality: " + player.getVitality()
 						+ "\tMax Vitality: " + player.getMaxVitality());
 
 		healthStatsPanel.add(healthStatLabel);

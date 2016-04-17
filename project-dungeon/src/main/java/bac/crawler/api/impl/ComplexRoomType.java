@@ -1,7 +1,5 @@
 package bac.crawler.api.impl;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import bac.crawler.api.IDescriber;
@@ -10,7 +8,9 @@ import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.ExitType;
 import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.ComponentDescription;
+import bjc.utils.funcdata.FunctionalMap;
 import bjc.utils.funcdata.IFunctionalList;
+import bjc.utils.funcdata.IFunctionalMap;
 import bjc.utils.gen.WeightedRandom;
 
 /**
@@ -86,8 +86,9 @@ public class ComplexRoomType extends GenericRoomType {
 		return super.getExitDirections();
 	}
 
-	private Map<RelativeDirection, ExitDesc> generateExits() {
-		Map<RelativeDirection, ExitDesc> newExits = new HashMap<>();
+	private IFunctionalMap<RelativeDirection, ExitDesc> generateExits() {
+		IFunctionalMap<RelativeDirection, ExitDesc> newExits =
+				new FunctionalMap<>();
 
 		int numExits;
 

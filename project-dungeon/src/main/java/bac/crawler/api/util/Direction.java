@@ -99,12 +99,12 @@ public enum Direction {
 	/**
 	 * Create a value of the enumeration from a string
 	 * 
-	 * @param val
+	 * @param value
 	 *            The string to turn into a value
 	 * @return The direction corresponding to the given value
 	 */
-	public static Direction properValueOf(String val) {
-		return valueOf(val.toUpperCase());
+	public static Direction properValueOf(String value) {
+		return valueOf(value.toUpperCase());
 	}
 
 	/**

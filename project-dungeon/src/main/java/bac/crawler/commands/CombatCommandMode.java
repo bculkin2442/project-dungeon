@@ -16,7 +16,6 @@ import bjc.utils.cli.ICommandMode;
  *
  */
 public class CombatCommandMode implements ICommandMode {
-
 	private Consumer<String>	normalOutput;
 	private Consumer<String>	errorOutput;
 
@@ -55,63 +54,103 @@ public class CombatCommandMode implements ICommandMode {
 		initializeCommandModes();
 	}
 
+	private GenericCommand buildAttackHandler() {
+		return new GenericCommand((args) -> {
+			core.doPlayerAction(ActionType.NEUTRAL);
+
+			// This is fine, because we ignore these
+			return null;
+		}, "attack\tA basic attack on the enemy",
+				"attack is a basic attack on the enemy.");
+	}
+
+	private GenericCommand buildBlockHandler() {
+		return new GenericCommand((args) -> {
+			core.doPlayerAction(ActionType.NEUTRAL);
+
+			// This is fine, because we ignore these
+			return null;
+		}, "block\tRaise your shield and prepare to roll with oncoming attacks",
+				"block means you raise your shield and prepare to roll"
+						+ " with oncoming attacks.");
+	}
+
+	private GenericCommand buildBraceHandler() {
+		return new GenericCommand((args) -> {
+			core.doPlayerAction(ActionType.FORCE);
+
+			// This is fine, because we ignore these
+			return null;
+		}, "brace\tDig yourself in and brace yourself against the enemies blows",
+				"brace means you dig yourself in and brace yourself against"
+						+ " the enemies blows");
+	}
+
+	private void buildDefendHandlers(GenericCommandMode pendingDefense) {
+		pendingDefense.addCommandHandler("brace", buildBraceHandler());
+		pendingDefense.addCommandHandler("evade", buildEvadeHandler());
+		pendingDefense.addCommandHandler("block", buildBlockHandler());
+	}
+
+	private GenericCommand buildEvadeHandler() {
+		return new GenericCommand((args) -> {
+			core.doPlayerAction(ActionType.FINESSE);
+
+			// This is fine, because we ignore these
+			return null;
+		}, "evade\tPrepare yourself to dodge incoming attacks",
+				"evade means you prepare yourself to dodge incoming attacks");
+	}
+
+	private void buildOffenseHandlers(GenericCommandMode pendingOffense) {
+		pendingOffense.addCommandHandler("stab", buildStabHandler());
+		pendingOffense.addCommandHandler("slash", buildSlashHandler());
+		pendingOffense.addCommandHandler("attack", buildAttackHandler());
+	}
+
+	private GenericCommand buildSlashHandler() {
+		return new GenericCommand((args) -> {
+			core.doPlayerAction(ActionType.FINESSE);
+
+			// This is fine, because we ignore these
+			return null;
+		}, "slash\tA quick slash around the enemies guard",
+				"slash is a quick slash around the enemies guard.");
+	}
+
+	private GenericCommand buildStabHandler() {
+		return new GenericCommand((args) -> {
+			core.doPlayerAction(ActionType.FORCE);
+
+			// This is fine, because we ignore these
+			return null;
+		}, "stab\tA brute force assault on the enemy",
+				"stab is a brute force assault on the enemy.");
+	}
+
+	@Override
+	public boolean canHandleCommand(String command) {
+		if (core.isPlayerAttacking()) {
+			return offenseMode.canHandleCommand(command);
+		}
+
+		return defenseMode.canHandleCommand(command);
+	}
+
+	@Override
+	public String getName() {
+		return "combat";
+	}
+
 	private void initializeCommandModes() {
-		GenericCommandMode pendingOffense = new GenericCommandMode(
-				normalOutput, errorOutput);
-		GenericCommandMode pendingDefense = new GenericCommandMode(
-				normalOutput, errorOutput);
+		GenericCommandMode pendingOffense =
+				new GenericCommandMode(normalOutput, errorOutput);
+		GenericCommandMode pendingDefense =
+				new GenericCommandMode(normalOutput, errorOutput);
 
-		pendingOffense.addCommandHandler("stab",
-				new GenericCommand((args) -> {
-					core.doPlayerAction(ActionType.FORCE);
+		buildOffenseHandlers(pendingOffense);
 
-					// This is fine, because we ignore these
-					return null;
-				}, "stab\tA brute force assault on the enemy",
-						"stab is a brute force assault on the enemy."));
-		pendingOffense.addCommandHandler("slash",
-				new GenericCommand((args) -> {
-					core.doPlayerAction(ActionType.FINESSE);
-
-					// This is fine, because we ignore these
-					return null;
-				}, "slash\tA quick slash around the enemies guard",
-						"slash is a quick slash around the enemies guard."));
-		pendingOffense.addCommandHandler("attack",
-				new GenericCommand((args) -> {
-					core.doPlayerAction(ActionType.NEUTRAL);
-
-					// This is fine, because we ignore these
-					return null;
-				}, "attack\tA basic attack on the enemy",
-						"attack is a basic attack on the enemy."));
-
-		pendingOffense.addCommandHandler("brace",
-				new GenericCommand((args) -> {
-					core.doPlayerAction(ActionType.FORCE);
-
-					// This is fine, because we ignore these
-					return null;
-				}, "brace\tDig yourself in and brace yourself against the enemies blows",
-						"brace means you dig yourself in and brace yourself against"
-								+ " the enemies blows"));
-		pendingDefense.addCommandHandler("evade",
-				new GenericCommand((args) -> {
-					core.doPlayerAction(ActionType.FINESSE);
-
-					// This is fine, because we ignore these
-					return null;
-				}, "evade\tPrepare yourself to dodge incoming attacks",
-						"evade means you prepare yourself to dodge incoming attacks"));
-		pendingDefense.addCommandHandler("block",
-				new GenericCommand((args) -> {
-					core.doPlayerAction(ActionType.NEUTRAL);
-
-					// This is fine, because we ignore these
-					return null;
-				}, "block\tRaise your shield and prepare to roll with oncoming attacks",
-						"block means you raise your shield and prepare to roll"
-								+ " with oncoming attacks."));
+		buildDefendHandlers(pendingDefense);
 	}
 
 	@Override
@@ -139,19 +178,5 @@ public class CombatCommandMode implements ICommandMode {
 								+ core.getPlayerStatus());
 
 		}
-	}
-
-	@Override
-	public boolean canHandleCommand(String command) {
-		if (core.isPlayerAttacking()) {
-			return offenseMode.canHandleCommand(command);
-		}
-
-		return defenseMode.canHandleCommand(command);
-	}
-
-	@Override
-	public String getName() {
-		return "combat";
 	}
 }

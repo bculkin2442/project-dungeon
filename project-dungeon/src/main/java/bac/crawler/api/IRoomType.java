@@ -39,9 +39,9 @@ public interface IRoomType extends IDescribedComponent {
 	 * N.B: Calling {@link IRoomType#getExitDirections()} may cause the
 	 * results this method returns to change
 	 * 
-	 * @param d
+	 * @param relativeDir
 	 *            The direction to retrieve an exit description for
 	 * @return A description of the exit in the given description
 	 */
-	public ExitDesc getExitInDirection(RelativeDirection d);
+	public ExitDesc getExitInDirection(RelativeDirection relativeDir);
 }

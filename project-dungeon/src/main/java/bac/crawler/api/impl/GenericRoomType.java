@@ -1,14 +1,12 @@
 package bac.crawler.api.impl;
 
-import java.util.Map;
-
 import bac.crawler.api.IDescriber;
 import bac.crawler.api.IRoomType;
 import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.ComponentDescription;
-import bjc.utils.funcdata.FunctionalList;
 import bjc.utils.funcdata.IFunctionalList;
+import bjc.utils.funcdata.IFunctionalMap;
 
 /**
  * A generic implementation of a room type
@@ -17,11 +15,11 @@ import bjc.utils.funcdata.IFunctionalList;
  *
  */
 public class GenericRoomType implements IRoomType {
-	private ComponentDescription				cdesc;
+	private ComponentDescription							cdesc;
 
-	private IDescriber							desc;
-	
-	protected Map<RelativeDirection, ExitDesc>	exits;
+	private IDescriber										desc;
+
+	protected IFunctionalMap<RelativeDirection, ExitDesc>	exits;
 
 	/**
 	 * Create a new generic room type
@@ -34,7 +32,7 @@ public class GenericRoomType implements IRoomType {
 	 *            The blueprint for exits of this type
 	 */
 	public GenericRoomType(ComponentDescription cdesc, IDescriber desc,
-			Map<RelativeDirection, ExitDesc> exits) {
+			IFunctionalMap<RelativeDirection, ExitDesc> exits) {
 		this.cdesc = cdesc;
 		this.desc = desc;
 		this.exits = exits;
@@ -47,14 +45,12 @@ public class GenericRoomType implements IRoomType {
 
 	@Override
 	public IFunctionalList<RelativeDirection> getExitDirections() {
-		RelativeDirection[] da = new RelativeDirection[0];
-
-		return new FunctionalList<>(exits.keySet().toArray(da));
+		return exits.keyList();
 	}
 
 	@Override
-	public ExitDesc getExitInDirection(RelativeDirection d) {
-		return exits.get(d);
+	public ExitDesc getExitInDirection(RelativeDirection relativeDir) {
+		return exits.get(relativeDir);
 	}
 
 	/*

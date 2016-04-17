@@ -1,12 +1,10 @@
 package bac.crawler.api.impl;
 
-import java.util.Map;
-import java.util.Set;
-
 import bac.crawler.api.IExit;
 import bac.crawler.api.IRoom;
 import bac.crawler.api.util.Direction;
-import bjc.utils.funcdata.FunctionalList;
+import bjc.utils.funcdata.IFunctionalList;
+import bjc.utils.funcdata.IFunctionalMap;
 
 /**
  * A simple implementation of {@link IRoom}
@@ -15,9 +13,9 @@ import bjc.utils.funcdata.FunctionalList;
  *
  */
 public class GenericRoom implements IRoom {
-	private String					description;
-	private Map<Direction, IExit>	exits;
-	private boolean					visited;
+	private String								description;
+	private IFunctionalMap<Direction, IExit>	exits;
+	private boolean								visited;
 
 	/**
 	 * Create a new generic room
@@ -27,7 +25,8 @@ public class GenericRoom implements IRoom {
 	 * @param exts
 	 *            The exits from this room
 	 */
-	public GenericRoom(String desc, Map<Direction, IExit> exts) {
+	public GenericRoom(String desc,
+			IFunctionalMap<Direction, IExit> exts) {
 		description = desc;
 		exits = exts;
 	}
@@ -38,20 +37,13 @@ public class GenericRoom implements IRoom {
 	}
 
 	@Override
-	public FunctionalList<Direction> getExitDirections() {
-		Set<Direction> extDirs = exits.keySet();
-		FunctionalList<Direction> ret = new FunctionalList<>();
-
-		for (Direction direction : extDirs) {
-			ret.add(direction);
-		}
-
-		return ret;
+	public IFunctionalList<Direction> getExitDirections() {
+		return exits.keyList();
 	}
 
 	@Override
-	public IExit getExitInDirection(Direction d) {
-		return exits.get(d);
+	public IExit getExitInDirection(Direction dir) {
+		return exits.get(dir);
 	}
 
 	@Override
@@ -64,7 +56,9 @@ public class GenericRoom implements IRoom {
 		visited = true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

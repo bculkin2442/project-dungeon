@@ -15,8 +15,8 @@ import bjc.utils.cli.GenericCommandMode;
 import bjc.utils.cli.GenericHelp;
 import bjc.utils.cli.GenericCommand;
 import bjc.utils.cli.ICommandMode;
-import bjc.utils.data.experimental.IHolder;
-import bjc.utils.data.experimental.Identity;
+import bjc.utils.data.IHolder;
+import bjc.utils.data.Identity;
 import bjc.utils.funcutils.ListUtils;
 
 /**
@@ -26,6 +26,20 @@ import bjc.utils.funcutils.ListUtils;
  *
  */
 public class NavigatorCommandMode {
+	private static GenericCommand buildLookCommand(
+			Consumer<String> normalOutput, Consumer<String> errorOutput,
+			NavigatorCore core, GenericCommandMode mode) {
+		return new GenericCommand((args) -> {
+			handleLookCommand(normalOutput, errorOutput, core, args);
+
+			return mode;
+		}, "look\tLook around you",
+				"look describes your surroundings, and can"
+						+ " be invoked two ways. Invoking it with no arguments will describe the room"
+						+ " you are currently in. Invoking it with a valid direction (check 'help directions')"
+						+ " will describe whatever lies in that direction..");
+	}
+
 	/**
 	 * Create an instance of the navigator command mode
 	 * 
@@ -45,22 +59,103 @@ public class NavigatorCommandMode {
 			IHolder<EntityPlayer> player, ICommandMode returnMode) {
 		IHolder<StatWindow> windowHolder = new Identity<>();
 
-		GenericCommandMode mode = new GenericCommandMode(normalOutput,
-				errorOutput);
+		GenericCommandMode mode =
+				new GenericCommandMode(normalOutput, errorOutput);
 
 		mode.setModeName("navigator");
 
-		mode.addCommandHandler("look", new GenericCommand((args) -> {
-			handleLookCommand(normalOutput, errorOutput, core, args);
+		mode.addCommandHandler("look",
+				buildLookCommand(normalOutput, errorOutput, core, mode));
+
+		mode.addCommandHandler("go", handleGoCommand(normalOutput,
+				errorOutput, core, returnMode, mode));
+
+		mode.addCommandAlias("go", "move");
+		mode.addCommandAlias("go", "walk");
+
+		mode.addCommandHandler("die",
+				handleDieCommand(normalOutput, returnMode));
+
+		mode.addCommandHandler("debug-check",
+				handleDebugCheckCommand(normalOutput, core, mode));
+
+		mode.addCommandHandler("debug-exitChance",
+				handleDebugExitChance(core, mode));
+
+		mode.addCommandHandler("stats",
+				handleStatsCommand(normalOutput, player, mode));
+
+		mode.addCommandHandler("stats-window",
+				handleStatsWindowCommand(player, windowHolder, mode));
+
+		mode.addHelpTopic("directions", handleDirectionsHelp());
+
+		return mode;
+	}
+
+	private static void describeCurrentRoom(Consumer<String> normalOutput,
+			NavigatorCore core) {
+		normalOutput.accept(core.getRoomDescription());
+
+		if (core.hasBeenVisitedBefore()) {
+			normalOutput.accept("\nThis room seems familiar");
+		}
+
+		normalOutput
+				.accept("\nYou see exits in the following directions: ");
+		normalOutput.accept("\t" + ListUtils
+				.collapseTokens(core.getAvailableDirections(), ", "));
+
+		if (core.isExit()) {
+			normalOutput
+					.accept("\nYou think you see a faint gleam of daylight"
+							+ " coming from the exit leading up");
+		}
+	}
+
+	private static GenericCommand handleDebugCheckCommand(
+			Consumer<String> normalOutput, NavigatorCore core,
+			GenericCommandMode mode) {
+		return new GenericCommand((args) -> {
+			normalOutput.accept("Exit counter: " + core.getExitChance());
 
 			return mode;
-		}, "look\tLook around you",
-				"look describes your surroundings, and can"
-						+ " be invoked two ways. Invoking it with no arguments will describe the room"
-						+ " you are currently in. Invoking it with a valid direction (check 'help directions')"
-						+ " will describe whatever lies in that direction.."));
+		}, "debug-check\tDEBUG COMMAND: check the exit countdown",
+				"debug-check prints the internal value of the exit countdown");
+	}
 
-		mode.addCommandHandler("go", new GenericCommand((args) -> {
+	private static GenericCommand handleDebugExitChance(NavigatorCore core,
+			GenericCommandMode mode) {
+		return new GenericCommand((args) -> {
+			core.setExitChance(Integer.parseInt(args[0]));
+			return mode;
+		}, "debug-exitChance\tDEBUG COMMAND: set the exit countdown",
+				"debug-exit sets the countdown until exits can generate");
+	}
+
+	private static GenericCommand handleDieCommand(
+			Consumer<String> normalOutput, ICommandMode returnMode) {
+		return new GenericCommand((args) -> {
+			normalOutput.accept("Well, if you say so.");
+			normalOutput.accept("\n YOU HAVE DIED. GAME OVER");
+
+			return returnMode;
+		}, "die\tEnd the game",
+				"die will cause you to spontaneously stop existing, ending the game.");
+	}
+
+	private static GenericHelp handleDirectionsHelp() {
+		return new GenericHelp(
+				"directions\tInformations on directions for navigation",
+				"The valid directions for navigation are the four cardinal directions,"
+						+ " (north, south, east, west) plus up and down.");
+	}
+
+	private static GenericCommand handleGoCommand(
+			Consumer<String> normalOutput, Consumer<String> errorOutput,
+			NavigatorCore core, ICommandMode returnMode,
+			GenericCommandMode mode) {
+		return new GenericCommand((args) -> {
 			boolean foundExit = handleMovementCommand(normalOutput,
 					errorOutput, core, args);
 
@@ -73,75 +168,40 @@ public class NavigatorCommandMode {
 			return mode;
 		}, "go (can also use move or walk)\tHead in a given direction",
 				"go will move you in a specified direction"
-						+ " (check 'help directions'). Go is also aliased to move and walk"));
+						+ " (check 'help directions'). Go is also aliased to move and walk");
+	}
 
-		mode.addCommandAlias("go", "move");
-		mode.addCommandAlias("go", "walk");
+	private static void handleLookCommand(Consumer<String> normalOutput,
+			Consumer<String> errorOutput, NavigatorCore core,
+			String[] args) {
+		if (args == null) {
+			normalOutput
+					.accept("You look around and see the following: \n");
 
-		mode.addCommandHandler("die", new GenericCommand((args) -> {
-			normalOutput.accept("Well, if you say so.");
-			normalOutput.accept("\n YOU HAVE DIED. GAME OVER");
+			describeCurrentRoom(normalOutput, core);
+		} else {
+			try {
+				Direction dir = Direction.properValueOf(args[0]);
 
-			return returnMode;
-		}, "die\tEnd the game",
-				"die will cause you to spontaneously stop existing, ending the game."));
+				normalOutput.accept(
+						"You look " + dir + " and see the following: \n");
+				normalOutput.accept(
+						"\t" + core.getDescriptionInDirection(dir));
 
-		mode.addCommandHandler("debug-check",
-				new GenericCommand((args) -> {
-					normalOutput.accept(
-							"Exit counter: " + core.getExitChance());
-
-					return mode;
-				}, "debug-check\tDEBUG COMMAND: check the exit countdown",
-						"debug-check prints the internal value of the exit countdown"));
-
-		mode.addCommandHandler("debug-exitChance",
-				new GenericCommand((args) -> {
-					core.setExitChance(Integer.parseInt(args[0]));
-					return mode;
-				}, "debug-exitChance\tDEBUG COMMAND: set the exit countdown",
-						"debug-exit sets the countdown until exits can generate"));
-
-		mode.addCommandHandler("stats", new GenericCommand((args) -> {
-			normalOutput.accept(player.getValue().toString());
-
-			return mode;
-		}, "stats\tDisplay the players stats",
-				"stats will display the player's current status"));
-
-		mode.addCommandHandler("stats-window",
-				new GenericCommand((args) -> {
-					StatWindow statWindw = new StatWindow(
-							player.getValue());
-
-					statWindw.setDefaultCloseOperation(
-							JFrame.DISPOSE_ON_CLOSE);
-
-					Dimension windowSize = new Dimension(640, 480);
-
-					statWindw.setPreferredSize(windowSize);
-					statWindw.setSize(windowSize);
-
-					statWindw.setVisible(true);
-
-					statWindw.addWindowListener(new WindowAdapter() {
-						@Override
-						public void windowClosed(WindowEvent wev) {
-							windowHolder.replace(null);
-						}
-					});
-
-					windowHolder.replace(statWindw);
-					return mode;
-				}, "stats-window\tDisplay the players stats in a window",
-						"stats will display the player's current status in a window"));
-
-		mode.addHelpTopic("directions", new GenericHelp(
-				"directions\tInformations on directions for navigation",
-				"The valid directions for navigation are the four cardinal directions,"
-						+ " (north, south, east, west) plus up and down."));
-
-		return mode;
+				if (core.hasGoneDirection(dir)) {
+					normalOutput.accept("\nThis way looks familiar");
+				}
+			} catch (@SuppressWarnings("unused") IllegalArgumentException iaex) {
+				// We don't care about specifics
+				errorOutput
+						.accept("I'm sorry, but how am I supposed to look "
+								+ args[0]
+								+ "? That's not a valid direction.");
+				errorOutput
+						.accept("\n\t Valid directions are the four cardinal directions"
+								+ " (north, east, south, west) and up or down");
+			}
+		}
 	}
 
 	private static boolean handleMovementCommand(
@@ -181,56 +241,42 @@ public class NavigatorCommandMode {
 		return false;
 	}
 
-	private static void describeCurrentRoom(Consumer<String> normalOutput,
-			NavigatorCore core) {
-		normalOutput.accept(core.getRoomDescription());
+	private static GenericCommand handleStatsCommand(
+			Consumer<String> normalOutput, IHolder<EntityPlayer> player,
+			GenericCommandMode mode) {
+		return new GenericCommand((args) -> {
+			normalOutput.accept(player.getValue().toString());
 
-		if (core.hasBeenVisitedBefore()) {
-			normalOutput.accept("\nThis room seems familiar");
-		}
-
-		normalOutput
-				.accept("\nYou see exits in the following directions: ");
-		normalOutput.accept("\t" + ListUtils
-				.collapseTokens(core.getAvailableDirections(), ", "));
-
-		if (core.isExit()) {
-			normalOutput
-					.accept("\nYou think you see a faint gleam of daylight"
-							+ " coming from the exit leading up");
-		}
+			return mode;
+		}, "stats\tDisplay the players stats",
+				"stats will display the player's current status");
 	}
 
-	private static void handleLookCommand(Consumer<String> normalOutput,
-			Consumer<String> errorOutput, NavigatorCore core,
-			String[] args) {
-		if (args == null) {
-			normalOutput
-					.accept("You look around and see the following: \n");
+	private static GenericCommand handleStatsWindowCommand(
+			IHolder<EntityPlayer> player, IHolder<StatWindow> windowHolder,
+			GenericCommandMode mode) {
+		return new GenericCommand((args) -> {
+			StatWindow statWindw = new StatWindow(player.getValue());
 
-			describeCurrentRoom(normalOutput, core);
-		} else {
-			try {
-				Direction dir = Direction.properValueOf(args[0]);
+			statWindw.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
-				normalOutput.accept(
-						"You look " + dir + " and see the following: \n");
-				normalOutput.accept(
-						"\t" + core.getDescriptionInDirection(dir));
+			Dimension windowSize = new Dimension(640, 480);
 
-				if (core.hasGoneDirection(dir)) {
-					normalOutput.accept("\nThis way looks familiar");
+			statWindw.setPreferredSize(windowSize);
+			statWindw.setSize(windowSize);
+
+			statWindw.setVisible(true);
+
+			statWindw.addWindowListener(new WindowAdapter() {
+				@Override
+				public void windowClosed(WindowEvent wev) {
+					windowHolder.replace(null);
 				}
-			} catch (@SuppressWarnings("unused") IllegalArgumentException iaex) {
-				// We don't care about specifics
-				errorOutput
-						.accept("I'm sorry, but how am I supposed to look "
-								+ args[0]
-								+ "? That's not a valid direction.");
-				errorOutput
-						.accept("\n\t Valid directions are the four cardinal directions"
-								+ " (north, east, south, west) and up or down");
-			}
-		}
+			});
+
+			windowHolder.replace(statWindw);
+			return mode;
+		}, "stats-window\tDisplay the players stats in a window",
+				"stats will display the player's current status in a window");
 	}
 }

@@ -35,22 +35,22 @@ public enum RelativeDirection {
 	/**
 	 * Change another direction by turning the way this direction specifies
 	 * 
-	 * @param d
+	 * @param dir
 	 *            The direction to change
 	 * @return The direction after turning this way
 	 */
-	public Direction makeAbsolute(Direction d) {
+	public Direction makeAbsolute(Direction dir) {
 		// Only cardinal directions can be truly absolutized
-		if (d.isCardinal()) {
+		if (dir.isCardinal()) {
 			switch (this) {
 				case BACKWARD:
-					return d;
+					return dir;
 				case FORWARD:
-					return d.opposing();
+					return dir.opposing();
 				case LEFT:
-					return d.rotateCounterClockwise();
+					return dir.rotateCounterClockwise();
 				case RIGHT:
-					return d.rotateClockwise();
+					return dir.rotateClockwise();
 				default:
 					throw new InvalidDirectionException(
 							"Attempted to make absolute a direction in a unknown way "
@@ -66,19 +66,19 @@ public enum RelativeDirection {
 	/**
 	 * Properly convert a string to a relative direction
 	 * 
-	 * @param s
+	 * @param value
 	 *            The string to convert
 	 * @return The relative direction represented by the string
 	 */
-	public static RelativeDirection properValueOf(String s) {
-		return valueOf(s.toUpperCase());
+	public static RelativeDirection properValueOf(String value) {
+		return valueOf(value.toUpperCase());
 	}
 
 	/**
 	 * Perform a specified action for a random number of relative
 	 * directions.
 	 * 
-	 * @param nDirections
+	 * @param numDirections
 	 *            The number of cardinal directions to act on. Must be
 	 *            greater than 0 and less then 5
 	 * @param action
@@ -87,26 +87,27 @@ public enum RelativeDirection {
 	 *            Whether or not to not have a chance of one of the
 	 *            directions being backwards
 	 */
-	public static void forRandomDirections(int nDirections,
+	public static void forRandomDirections(int numDirections,
 			Consumer<RelativeDirection> action, boolean ignoreBackwards) {
 		int maxNDirections = ignoreBackwards ? 3 : 4;
-		if (nDirections <= 0 || nDirections > maxNDirections) {
+
+		if (numDirections <= 0 || numDirections > maxNDirections) {
 			throw new IllegalArgumentException(
 					"Tried to do things with incorrect number of relative directions. Tried with "
-							+ nDirections);
+							+ numDirections);
 		}
 
-		IFunctionalList<RelativeDirection> relativeDirs = new FunctionalList<>(
-				values());
+		IFunctionalList<RelativeDirection> relativeDirs =
+				new FunctionalList<>(values());
 
 		if (ignoreBackwards) {
 			relativeDirs.removeMatching(BACKWARD);
 		}
 
-		for (int i = 0; i <= maxNDirections - nDirections; i++) {
-			RelativeDirection rDir = relativeDirs.randItem(RNG::nextInt);
+		for (int i = 0; i <= maxNDirections - numDirections; i++) {
+			RelativeDirection relativeDir = relativeDirs.randItem(RNG::nextInt);
 
-			relativeDirs.removeMatching(rDir);
+			relativeDirs.removeMatching(relativeDir);
 		}
 
 		relativeDirs.forEach(action);

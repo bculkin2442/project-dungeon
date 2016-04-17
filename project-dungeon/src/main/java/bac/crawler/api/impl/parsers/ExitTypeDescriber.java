@@ -14,6 +14,7 @@ public class ExitTypeDescriber implements IDescriber {
 	private static IDescriber	doorDescriber;
 	private static IDescriber	stairDescriber;
 	private static IDescriber	wellDescriber;
+
 	// TODO not sure if this is needed
 	// private static IDescriber chamberDescriber;
 
@@ -22,11 +23,11 @@ public class ExitTypeDescriber implements IDescriber {
 	/**
 	 * Create a new exit type describer for the given exit type
 	 * 
-	 * @param eType
+	 * @param exType
 	 *            The exit type to use
 	 */
-	public ExitTypeDescriber(ExitType eType) {
-		type = eType;
+	public ExitTypeDescriber(ExitType exType) {
+		type = exType;
 	}
 
 	@Override
@@ -36,6 +37,7 @@ public class ExitTypeDescriber implements IDescriber {
 				// TODO Not sure if chamber needs a seperate describer
 				// return chamberDescriber.getDescription();
 			case PASSAGE:
+				// Passages are described the same as doors
 			case DOOR:
 				return doorDescriber.getDescription();
 			case STAIRS:
@@ -63,8 +65,8 @@ public class ExitTypeDescriber implements IDescriber {
 	 * @param stairExitDescriber
 	 *            The describer to use for stairs
 	 */
-	public static void setStairExitDescriber(
-			IDescriber stairExitDescriber) {
+	public static void
+			setStairExitDescriber(IDescriber stairExitDescriber) {
 		ExitTypeDescriber.stairDescriber = stairExitDescriber;
 	}
 

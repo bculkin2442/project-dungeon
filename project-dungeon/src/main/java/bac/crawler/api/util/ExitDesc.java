@@ -1,7 +1,7 @@
 package bac.crawler.api.util;
 
 import bac.crawler.api.IDescriber;
-import bjc.utils.data.experimental.Pair;
+import bjc.utils.data.Pair;
 
 /**
  * Implementation of a description of an exit from a room
@@ -15,6 +15,7 @@ public class ExitDesc extends Pair<ExitType, IDescriber> {
 	 * Create a new blank exit description
 	 */
 	public ExitDesc() {
+		
 	}
 
 	/**

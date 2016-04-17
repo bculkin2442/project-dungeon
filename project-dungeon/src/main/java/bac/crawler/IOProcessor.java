@@ -18,17 +18,18 @@ import bjc.utils.cli.ICommandMode;
  */
 public class IOProcessor extends CommandProcessor {
 	private boolean			exiting;
+
 	private ICommandMode	mode;
 
 	private boolean			wrapText	= false;
 
-	private void doConsoleError(String strang) {
+	private void doConsoleError(String errorMessage) {
 		String wrappedString;
 
 		if (wrapText) {
-			wrappedString = WordUtils.wrap(strang, 75);
+			wrappedString = WordUtils.wrap(errorMessage, 75);
 		} else {
-			wrappedString = strang;
+			wrappedString = errorMessage;
 		}
 
 		DragonConsole console = this.getConsole();
@@ -37,13 +38,13 @@ public class IOProcessor extends CommandProcessor {
 				+ "&" + console.getDefaultColor());
 	}
 
-	private void doConsoleOutput(String strang) {
+	private void doConsoleOutput(String outputMessage) {
 		String wrappedStrang;
 
 		if (wrapText) {
-			wrappedStrang = WordUtils.wrap(strang, 75);
+			wrappedStrang = WordUtils.wrap(outputMessage, 75);
 		} else {
-			wrappedStrang = strang;
+			wrappedStrang = outputMessage;
 		}
 
 		this.getConsole().append(wrappedStrang);
@@ -66,19 +67,21 @@ public class IOProcessor extends CommandProcessor {
 	}
 
 	@Override
-	public void processCommand(String input) {
-		String[] tokens = input.split(" ");
+	public void processCommand(String commandLine) {
+		String[] commandTokens = commandLine.split(" ");
 
-		String[] args;
+		String[] commandArgs;
 
-		if (tokens.length > 1) {
-			args = Arrays.copyOfRange(tokens, 1, tokens.length);
+		if (commandTokens.length > 1) {
+			commandArgs = Arrays.copyOfRange(commandTokens, 1, commandTokens.length);
 		} else {
-			args = null;
+			commandArgs = null;
 		}
 
+		String commandName = commandTokens[0];
+
 		if (exiting) {
-			switch (tokens[0]) {
+			switch (commandName) {
 				case "yes":
 					output("\nExiting now. Thanks for playing :)");
 					System.exit(0);
@@ -86,19 +89,21 @@ public class IOProcessor extends CommandProcessor {
 					output("\nOkay. Keep playing.\n");
 					break;
 				default:
-					output("\nAssuming " + tokens[0]
+					output("\nAssuming " + commandName
 							+ " means no. Keep playing");
 					break;
 			}
 
 			exiting = false;
+
 			printPrompt();
+
 			// This command's no good any longer
 			return;
 		}
 
 		if (mode != null) {
-			switch (tokens[0]) {
+			switch (commandName) {
 				case "exit":
 					exiting = true;
 					output("\nAre you sure you want to exit? (yes/no): ");
@@ -108,7 +113,8 @@ public class IOProcessor extends CommandProcessor {
 					break;
 				default:
 					try {
-						mode = mode.processCommand(tokens[0], args);
+						mode = mode.processCommand(commandName,
+								commandArgs);
 					} catch (@SuppressWarnings("unused") UnsupportedOperationException usex) {
 						// We've already notified the user about it
 					}
@@ -119,7 +125,7 @@ public class IOProcessor extends CommandProcessor {
 			}
 		} else {
 			this.output("\n");
-			this.output("You entered: " + input + "\n");
+			this.output("You entered: " + commandLine + "\n");
 			this.output("crawler>>");
 		}
 	}

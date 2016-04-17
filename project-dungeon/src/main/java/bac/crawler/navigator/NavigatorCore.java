@@ -3,7 +3,6 @@ package bac.crawler.navigator;
 import bac.crawler.api.IExit;
 import bac.crawler.api.IRoom;
 import bac.crawler.api.util.Direction;
-import bjc.utils.funcdata.FunctionalList;
 import bjc.utils.funcdata.IFunctionalList;
 
 /**
@@ -46,8 +45,8 @@ public class NavigatorCore {
 	 * @return A list of all possible directions to travel in
 	 */
 	public IFunctionalList<String> getAvailableDirections() {
-		FunctionalList<Direction> directions = currentRoom
-				.getExitDirections();
+		IFunctionalList<Direction> directions =
+				currentRoom.getExitDirections();
 
 		return directions.map(Direction::toString);
 	}

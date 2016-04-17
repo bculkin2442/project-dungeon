@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 import bac.crawler.api.IExit;
 import bac.crawler.api.IRoom;
-import bjc.utils.data.experimental.LazyPair;
+import bjc.utils.data.LazyPair;
 
 /**
  * Represents a lazy exit from a room, where the destination room may not
@@ -30,11 +30,11 @@ public class LazyExit extends LazyPair<String, IRoom> implements IExit {
 
 	@Override
 	public String getDescription() {
-		return super.merge((left, right) -> left);
+		return super.getLeft();
 	}
 
 	@Override
 	public IRoom getDestination() {
-		return super.merge((left, right) -> right);
+		return super.getRight();
 	}
 }

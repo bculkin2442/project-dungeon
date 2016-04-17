@@ -2,7 +2,7 @@ package bac.crawler.api.impl;
 
 import bac.crawler.api.IExit;
 import bac.crawler.api.IRoom;
-import bjc.utils.data.experimental.Pair;
+import bjc.utils.data.Pair;
 
 /**
  * Represents an exit from a room

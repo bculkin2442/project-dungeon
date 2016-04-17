@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import bac.crawler.api.IRoomArchetype;
-import bjc.utils.data.experimental.IPair;
+import bjc.utils.data.IPair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
 import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;
@@ -31,44 +31,51 @@ public class RoomArchetypeFileParser {
 					// section
 				});
 
-		reader.addPragma("containing-directory", (fst, stat) -> {
-			String path = ListUtils.collapseTokens(fst.toList((s) -> s));
+		reader.addPragma("containing-directory",
+				(tokenizer, currentState) -> {
+					String path =
+							ListUtils.collapseTokens(tokenizer.toList());
 
-			stat.setContainingDirectory(Paths.get(path, ""));
-		});
+					currentState
+							.setContainingDirectory(Paths.get(path, ""));
+				});
 
-		reader.addPragma("component-description", (fst, stat) -> {
-			String path = ListUtils.collapseTokens(fst.toList((s) -> s));
+		reader.addPragma("component-description",
+				(tokenizer, currentState) -> {
+					String path =
+							ListUtils.collapseTokens(tokenizer.toList());
 
-			stat.setComponentDescription(Paths.get(path, ""));
-		});
+					currentState
+							.setComponentDescription(Paths.get(path, ""));
+				});
 
-		reader.addPragma("from-archetype", (fst, stat) -> {
-			int prob = Integer.parseInt(fst.nextToken());
+		reader.addPragma("from-archetype", (tokenizer, currentState) -> {
+			int prob = Integer.parseInt(tokenizer.nextToken());
 
-			stat.addReference(
-					ListUtils.collapseTokens(fst.toList((s) -> s)), prob);
-		});
-	}
-
-	private static void startArchetypes(FunctionalStringTokenizer fst,
-			IPair<String, RoomArchetypeState> par) {
-		par.doWith((initString, stat) -> {
-			stat.setCurrentProbability(Integer.parseInt(fst.nextToken()));
-
-			String path = fst.toList((s) -> s).reduceAux("",
-					(newString, state) -> state + newString, (s) -> s);
-
-			stat.addType(Paths.get(path, ""));
+			currentState.addReference(
+					ListUtils.collapseTokens(tokenizer.toList()), prob);
 		});
 	}
 
-	private static void continueArchetypes(FunctionalStringTokenizer fst,
-			RoomArchetypeState stat) {
-		String path = fst.toList((s) -> s).reduceAux("",
-				(newString, state) -> state + newString, (s) -> s);
+	private static void startArchetypes(
+			FunctionalStringTokenizer tokenizer,
+			IPair<String, RoomArchetypeState> initPair) {
+		initPair.doWith((initString, currentState) -> {
+			currentState.setCurrentProbability(
+					Integer.parseInt(tokenizer.nextToken()));
 
-		stat.addType(Paths.get(path, ""));
+			String path = ListUtils.collapseTokens(tokenizer.toList());
+
+			currentState.addType(Paths.get(path, ""));
+		});
+	}
+
+	private static void continueArchetypes(
+			FunctionalStringTokenizer tokenizer,
+			RoomArchetypeState state) {
+		String path = ListUtils.collapseTokens(tokenizer.toList());
+
+		state.addType(Paths.get(path, ""));
 	}
 
 	/**
@@ -82,7 +89,6 @@ public class RoomArchetypeFileParser {
 	 */
 	public static IRoomArchetype parseFromStream(File inputFile,
 			Map<String, IRoomArchetype> archetypes) {
-
 		try {
 			Path currentDir = inputFile.toPath().resolveSibling("");
 
@@ -102,6 +108,7 @@ public class RoomArchetypeFileParser {
 			Map<String, IRoomArchetype> archetypes, Path currentDir)
 			throws FileNotFoundException {
 		FileInputStream inputStream = new FileInputStream(inputFile);
+
 		RoomArchetypeState initialState =
 				new RoomArchetypeState(currentDir, archetypes);
 

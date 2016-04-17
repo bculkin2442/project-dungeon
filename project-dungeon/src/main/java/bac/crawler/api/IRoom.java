@@ -1,7 +1,7 @@
 package bac.crawler.api;
 
 import bac.crawler.api.util.Direction;
-import bjc.utils.funcdata.FunctionalList;
+import bjc.utils.funcdata.IFunctionalList;
 
 /**
  * Represents a room in a dungeon, the fundamental building block.
@@ -25,16 +25,16 @@ public interface IRoom {
 	 * 
 	 * @return A list of directions that exits lie in
 	 */
-	public FunctionalList<Direction> getExitDirections();
+	public IFunctionalList<Direction> getExitDirections();
 
 	/**
 	 * Get the exit that lies in a particular direction
 	 * 
-	 * @param d
+	 * @param dir
 	 *            The direction to get the exit from
 	 * @return The exit that lies in the given direction
 	 */
-	public IExit getExitInDirection(Direction d);
+	public IExit getExitInDirection(Direction dir);
 
 	/**
 	 * Check if this room has been visited before

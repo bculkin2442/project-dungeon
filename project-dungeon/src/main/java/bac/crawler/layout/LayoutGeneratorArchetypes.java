@@ -12,12 +12,6 @@ import bjc.utils.funcutils.IBuilder;
  *
  */
 public class LayoutGeneratorArchetypes {
-	private IRoomArchetype	initialRooms;
-	private IRoomArchetype	doors;
-	private IRoomArchetype	passages;
-	private IRoomArchetype	stairs;
-	private IRoomArchetype	chambers;
-
 	/**
 	 * A builder for creating these parameters easier
 	 * 
@@ -35,15 +29,42 @@ public class LayoutGeneratorArchetypes {
 			this.building = new LayoutGeneratorArchetypes();
 		}
 
+		@Override
+		public LayoutGeneratorArchetypes build() {
+			if (!isBuilderReady()) {
+				throw new IllegalStateException(
+						"All builder fields must be given a non-null value to build");
+			}
+
+			return building;
+		}
+
+		private boolean isBuilderReady() {
+			boolean areChambersReady = building.chambers != null;
+			boolean areDoorsReady = building.doors != null;
+			boolean areInitialRoomsReady = building.initialRooms != null;
+			boolean arePassagesReady = building.passages != null;
+			boolean areStairsReady = building.stairs != null;
+
+			return areChambersReady && areDoorsReady
+					&& areInitialRoomsReady && arePassagesReady
+					&& areStairsReady;
+		}
+
+		@Override
+		public void reset() {
+			building = new LayoutGeneratorArchetypes();
+		}
+
 		/**
-		 * Set the archetype to use for initial rooms
+		 * Set the archetype to generate chambers with
 		 * 
-		 * @param initialRooms
-		 *            the archetype to use for initial rooms
+		 * @param chambers
+		 *            the archetype to generate chambers with
 		 * @return the builder, for chaining
 		 */
-		public Builder setInitialRooms(IRoomArchetype initialRooms) {
-			building.initialRooms = initialRooms;
+		public Builder setChambers(IRoomArchetype chambers) {
+			building.chambers = chambers;
 
 			return this;
 		}
@@ -57,6 +78,19 @@ public class LayoutGeneratorArchetypes {
 		 */
 		public Builder setDoors(IRoomArchetype doors) {
 			building.doors = doors;
+
+			return this;
+		}
+
+		/**
+		 * Set the archetype to use for initial rooms
+		 * 
+		 * @param initialRooms
+		 *            the archetype to use for initial rooms
+		 * @return the builder, for chaining
+		 */
+		public Builder setInitialRooms(IRoomArchetype initialRooms) {
+			building.initialRooms = initialRooms;
 
 			return this;
 		}
@@ -86,50 +120,6 @@ public class LayoutGeneratorArchetypes {
 
 			return this;
 		}
-
-		/**
-		 * Set the archetype to generate chambers with
-		 * 
-		 * @param chambers
-		 *            the archetype to generate chambers with
-		 * @return the builder, for chaining
-		 */
-		public Builder setChambers(IRoomArchetype chambers) {
-			building.chambers = chambers;
-
-			return this;
-		}
-
-		@Override
-		public LayoutGeneratorArchetypes build() {
-			if (!isBuilderReady()) {
-				throw new IllegalStateException(
-						"All builder fields must be given a non-null value to build");
-			}
-
-			return building;
-		}
-
-		private boolean isBuilderReady() {
-			boolean areChambersReady = building.chambers != null;
-			boolean areDoorsReady = building.doors != null;
-			boolean areInitialRoomsReady = building.initialRooms != null;
-			boolean arePassagesReady = building.passages != null;
-			boolean areStairsReady = building.stairs != null;
-
-			return areChambersReady && areDoorsReady
-					&& areInitialRoomsReady && arePassagesReady
-					&& areStairsReady;
-		}
-
-		@Override
-		public void reset() {
-			building = new LayoutGeneratorArchetypes();
-		}
-	}
-
-	private LayoutGeneratorArchetypes() {
-
 	}
 
 	/**
@@ -152,6 +142,18 @@ public class LayoutGeneratorArchetypes {
 		return generatorArchetypes;
 	}
 
+	private IRoomArchetype	initialRooms;
+	private IRoomArchetype	doors;
+	private IRoomArchetype	passages;
+
+	private IRoomArchetype	stairs;
+
+	private IRoomArchetype	chambers;
+
+	private LayoutGeneratorArchetypes() {
+
+	}
+
 	private LayoutGeneratorArchetypes(IRoomArchetype initialRooms,
 			IRoomArchetype doors, IRoomArchetype passages,
 			IRoomArchetype stairs, IRoomArchetype chambers) {
@@ -163,12 +165,12 @@ public class LayoutGeneratorArchetypes {
 	}
 
 	/**
-	 * Get the archetype used to generate the initial rooms
+	 * Get the archetype used to generate chambers
 	 * 
-	 * @return The archetype used to generate the initial rooms
+	 * @return The archetype used to generate chambers
 	 */
-	public IRoomArchetype getInitialRooms() {
-		return initialRooms;
+	public IRoomArchetype getChambers() {
+		return chambers;
 	}
 
 	/**
@@ -178,6 +180,15 @@ public class LayoutGeneratorArchetypes {
 	 */
 	public IRoomArchetype getDoors() {
 		return doors;
+	}
+
+	/**
+	 * Get the archetype used to generate the initial rooms
+	 * 
+	 * @return The archetype used to generate the initial rooms
+	 */
+	public IRoomArchetype getInitialRooms() {
+		return initialRooms;
 	}
 
 	/**
@@ -196,14 +207,5 @@ public class LayoutGeneratorArchetypes {
 	 */
 	public IRoomArchetype getStairs() {
 		return stairs;
-	}
-
-	/**
-	 * Get the archetype used to generate chambers
-	 * 
-	 * @return The archetype used to generate chambers
-	 */
-	public IRoomArchetype getChambers() {
-		return chambers;
 	}
 }

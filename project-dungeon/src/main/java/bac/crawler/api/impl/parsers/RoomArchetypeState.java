@@ -26,7 +26,7 @@ public class RoomArchetypeState {
 	private Path											currentDirectory;
 	private Path											containingDirectory;
 
-	private ComponentDescription							cdesc;
+	private ComponentDescription							compDesc;
 
 	private WeightedRandom<Function<Boolean, IRoomType>>	roomTypes;
 
@@ -76,17 +76,17 @@ public class RoomArchetypeState {
 	 * @return The archetype this state was used to parse
 	 */
 	public IRoomArchetype getArchetype() {
-		return new GenericRoomArchetype(roomTypes, cdesc);
+		return new GenericRoomArchetype(roomTypes, compDesc);
 	}
 
 	/**
 	 * Set the current probability for added room types
 	 * 
-	 * @param prob
+	 * @param probability
 	 *            The probability for added room types to come up
 	 */
-	public void setCurrentProbability(int prob) {
-		this.currentProbability = prob;
+	public void setCurrentProbability(int probability) {
+		this.currentProbability = probability;
 	}
 
 	/**
@@ -115,32 +115,34 @@ public class RoomArchetypeState {
 	/**
 	 * Set the description for this archetype
 	 * 
-	 * @param descPath
+	 * @param describerPath
 	 *            The path to the file with the description
 	 */
-	public void setComponentDescription(Path descPath) {
-		File sourceFile = containingDirectory.resolve(descPath).toFile();
+	public void setComponentDescription(Path describerPath) {
+		File sourceFile =
+				containingDirectory.resolve(describerPath).toFile();
 
 		try {
 			FileInputStream inputSource = new FileInputStream(sourceFile);
 
-			cdesc = ComponentDescriptionFileParser.fromStream(inputSource);
+			compDesc =
+					ComponentDescriptionFileParser.fromStream(inputSource);
 
 			inputSource.close();
 		} catch (FileNotFoundException fnfex) {
 			PragmaFormatException pfex = new PragmaFormatException(
 					"Could not read component description from file "
 							+ sourceFile);
-			
+
 			pfex.initCause(fnfex);
-			
+
 			throw pfex;
 		} catch (IOException ioex) {
 			IllegalStateException isex = new IllegalStateException(
 					"Got I/O exception attempting to close file.");
-			
+
 			isex.initCause(ioex);
-			
+
 			throw isex;
 		}
 	}
@@ -150,11 +152,12 @@ public class RoomArchetypeState {
 	 * 
 	 * @param reference
 	 *            The name of the archetype to reference
-	 * @param prob
+	 * @param probability
 	 *            The probability of referencing that archetype
 	 */
-	public void addReference(String reference, int prob) {
-		roomTypes.addProbability(prob, (hasEntrance) -> archetypes
-				.get(reference).getType(hasEntrance));
+	public void addReference(String reference, int probability) {
+		roomTypes.addProbability(probability, (hasEntrance) -> {
+			return archetypes.get(reference).getType(hasEntrance);
+		});
 	}
 }

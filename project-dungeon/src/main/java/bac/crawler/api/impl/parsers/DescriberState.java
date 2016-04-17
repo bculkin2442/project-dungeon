@@ -11,33 +11,35 @@ import bjc.utils.gen.WeightedRandom;
  *
  */
 public class DescriberState {
-	private String					desc;
+	private String					currentDescription;
 
-	private WeightedRandom<String>	descs;
-	private int						prob;
+	private WeightedRandom<String>	descriptions;
+
+	private int						descriptionProbability;
 
 	/**
 	 * Create a new description parser
 	 */
 	public DescriberState() {
-		descs = new WeightedRandom<>(new Random());
+		descriptions = new WeightedRandom<>(new Random());
 	}
 
 	/**
 	 * Continue parsing a description
 	 * 
-	 * @param descPart
+	 * @param descriptionPart
 	 *            The next part of the description
 	 */
-	public void continueDesc(String descPart) {
-		desc += descPart;
+	public void continueDesc(String descriptionPart) {
+		currentDescription += descriptionPart;
 	}
 
 	/**
 	 * Stop parsing a description
 	 */
 	public void endDesc() {
-		descs.addProbability(prob, desc);
+		descriptions.addProbability(descriptionProbability,
+				currentDescription);
 	}
 
 	/**
@@ -46,19 +48,19 @@ public class DescriberState {
 	 * @return A collection of description text
 	 */
 	public WeightedRandom<String> getResults() {
-		return descs;
+		return descriptions;
 	}
 
 	/**
 	 * Start parsing a description
 	 * 
-	 * @param prb
+	 * @param probability
 	 *            The probability of this description occuring
-	 * @param descPart
+	 * @param descriptionPart
 	 *            The initial part of this description
 	 */
-	public void startDesc(int prb, String descPart) {
-		prob = prb;
-		desc = descPart;
+	public void startDesc(int probability, String descriptionPart) {
+		descriptionProbability = probability;
+		currentDescription = descriptionPart;
 	}
 }
