@@ -32,15 +32,6 @@ public class NavigatorCore {
 	}
 
 	/**
-	 * Get the description of the room the navigator is currently in
-	 * 
-	 * @return The description of the room the navigator is currently in
-	 */
-	public String getRoomDescription() {
-		return currentRoom.getDescription();
-	}
-
-	/**
 	 * Get all possible directions of travel from your current position
 	 * 
 	 * @return A list of all possible directions to travel in
@@ -71,27 +62,19 @@ public class NavigatorCore {
 				+ " you have other things you should be doing";
 	}
 
+	// Debugging command
+	@SuppressWarnings("javadoc")
+	public int getExitChance() {
+		return exitCounter;
+	}
+
 	/**
-	 * Move into the room in the specified direction
+	 * Get the description of the room the navigator is currently in
 	 * 
-	 * @param dir
-	 * @return A empty string if you succesfully navigated, or a
-	 *         informative string if you didn't
+	 * @return The description of the room the navigator is currently in
 	 */
-	public String navigateInDirection(Direction dir) {
-		IExit exit = currentRoom.getExitInDirection(dir);
-
-		if (exit != null) {
-			currentRoom = exit.getDestination();
-
-			if (exitCounter > 0) {
-				exitCounter -= Math.random() * 10;
-			}
-
-			return "";
-		}
-
-		return "You walk into the wall. Maybe try going a different direction?";
+	public String getRoomDescription() {
+		return currentRoom.getDescription();
 	}
 
 	/**
@@ -138,10 +121,27 @@ public class NavigatorCore {
 				&& !hasGoneDirection(Direction.UP);
 	}
 
-	// Debugging command
-	@SuppressWarnings("javadoc")
-	public int getExitChance() {
-		return exitCounter;
+	/**
+	 * Move into the room in the specified direction
+	 * 
+	 * @param dir
+	 * @return A empty string if you succesfully navigated, or a
+	 *         informative string if you didn't
+	 */
+	public String navigateInDirection(Direction dir) {
+		IExit exit = currentRoom.getExitInDirection(dir);
+
+		if (exit != null) {
+			currentRoom = exit.getDestination();
+
+			if (exitCounter > 0) {
+				exitCounter -= Math.random() * 10;
+			}
+
+			return "";
+		}
+
+		return "You walk into the wall. Maybe try going a different direction?";
 	}
 
 	// Debugging command

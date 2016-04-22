@@ -9,13 +9,13 @@ package bac.crawler.combat;
 public interface IEntity {
 
 	/**
-	 * Give the entity a specified amount of combat damage
+	 * Get the modifier used for an defensive action of the specified type
 	 * 
-	 * @param damage
-	 *            The amount of the damage the entity takes
-	 * @return Whether or not the entity is still alive
+	 * @param type
+	 *            The type of action being undertaken
+	 * @return The modifier to use for the action being taken
 	 */
-	boolean takeDamage(DamageCount damage);
+	int getDefensiveMod(ActionType type);
 
 	/**
 	 * Get the modifier used for an offensive action of the specified type
@@ -27,11 +27,11 @@ public interface IEntity {
 	int getOffensiveMod(ActionType type);
 
 	/**
-	 * Get the modifier used for an defensive action of the specified type
+	 * Give the entity a specified amount of combat damage
 	 * 
-	 * @param type
-	 *            The type of action being undertaken
-	 * @return The modifier to use for the action being taken
+	 * @param damage
+	 *            The amount of the damage the entity takes
+	 * @return Whether or not the entity is still alive
 	 */
-	int getDefensiveMod(ActionType type);
+	boolean takeDamage(DamageCount damage);
 }

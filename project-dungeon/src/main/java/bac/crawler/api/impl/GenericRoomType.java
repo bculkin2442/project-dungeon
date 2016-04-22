@@ -39,21 +39,6 @@ public class GenericRoomType implements IRoomType {
 		this.exits = exits;
 	}
 
-	@Override
-	public IDescriber getDescriber() {
-		return desc;
-	}
-
-	@Override
-	public IFunctionalList<RelativeDirection> getExitDirections() {
-		return exits.keyList();
-	}
-
-	@Override
-	public ExitDesc getExitInDirection(RelativeDirection relativeDir) {
-		return exits.get(relativeDir);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -64,6 +49,11 @@ public class GenericRoomType implements IRoomType {
 		return cdesc.getAuthor();
 	}
 
+	@Override
+	public IDescriber getDescriber() {
+		return desc;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -72,6 +62,16 @@ public class GenericRoomType implements IRoomType {
 	@Override
 	public String getDescription() {
 		return cdesc.getDescription();
+	}
+
+	@Override
+	public IFunctionalList<RelativeDirection> getExitDirections() {
+		return exits.keyList();
+	}
+
+	@Override
+	public ExitDesc getExitInDirection(RelativeDirection relativeDir) {
+		return exits.get(relativeDir);
 	}
 
 	/*

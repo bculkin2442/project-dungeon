@@ -23,14 +23,14 @@ public class EntityMob extends EntityLiving {
 	}
 
 	@Override
-	public boolean takeDamage(DamageCount damage) {
-		currentHealth -= damage.getGeneralAmount();
-
+	public boolean isAlive() {
 		return currentHealth > 0;
 	}
 
 	@Override
-	public boolean isAlive() {
+	public boolean takeDamage(DamageCount damage) {
+		currentHealth -= damage.getGeneralAmount();
+
 		return currentHealth > 0;
 	}
 }

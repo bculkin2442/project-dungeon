@@ -25,15 +25,42 @@ public class EntityStats {
 			building = new EntityStats();
 		}
 
+		@Override
+		public EntityStats build() {
+			EntityStats retValue = building;
+
+			reset();
+
+			return retValue;
+		}
+
+		@Override
+		public void reset() {
+			building = new EntityStats();
+		}
+
 		/**
-		 * Set the strength of the entity
+		 * Set the agility for this entity
 		 * 
-		 * @param strength
-		 *            the strength of the entity
+		 * @param agility
+		 *            The agility of this entity
+		 * @return The builder for chaining
+		 */
+		public Builder setAgility(int agility) {
+			building.agility = agility;
+
+			return this;
+		}
+
+		/**
+		 * Set the constitution of the entity
+		 * 
+		 * @param constitution
+		 *            the constitution of the entity
 		 * @return The builder, for chaining
 		 */
-		public Builder setStrength(int strength) {
-			building.strength = strength;
+		public Builder setConstitution(int constitution) {
+			building.constitution = constitution;
 
 			return this;
 		}
@@ -78,43 +105,16 @@ public class EntityStats {
 		}
 
 		/**
-		 * Set the constitution of the entity
+		 * Set the strength of the entity
 		 * 
-		 * @param constitution
-		 *            the constitution of the entity
+		 * @param strength
+		 *            the strength of the entity
 		 * @return The builder, for chaining
 		 */
-		public Builder setConstitution(int constitution) {
-			building.constitution = constitution;
+		public Builder setStrength(int strength) {
+			building.strength = strength;
 
 			return this;
-		}
-
-		/**
-		 * Set the agility for this entity
-		 * 
-		 * @param agility
-		 *            The agility of this entity
-		 * @return The builder for chaining
-		 */
-		public Builder setAgility(int agility) {
-			building.agility = agility;
-
-			return this;
-		}
-
-		@Override
-		public EntityStats build() {
-			EntityStats retValue = building;
-
-			reset();
-
-			return retValue;
-		}
-
-		@Override
-		public void reset() {
-			building = new EntityStats();
 		}
 	}
 
@@ -128,12 +128,21 @@ public class EntityStats {
 	private int	agility;
 
 	/**
-	 * Get the strength of this entity
+	 * Get the agility of this entity
 	 * 
-	 * @return the strength of this entity
+	 * @return the agility of this entity
 	 */
-	public int getStrength() {
-		return strength;
+	public int getAgility() {
+		return agility;
+	}
+
+	/**
+	 * Get the constitution of this entity
+	 * 
+	 * @return the constitution of this entity
+	 */
+	public int getConstitution() {
+		return constitution;
 	}
 
 	/**
@@ -164,20 +173,11 @@ public class EntityStats {
 	}
 
 	/**
-	 * Get the constitution of this entity
+	 * Get the strength of this entity
 	 * 
-	 * @return the constitution of this entity
+	 * @return the strength of this entity
 	 */
-	public int getConstitution() {
-		return constitution;
-	}
-
-	/**
-	 * Get the agility of this entity
-	 * 
-	 * @return the agility of this entity
-	 */
-	public int getAgility() {
-		return agility;
+	public int getStrength() {
+		return strength;
 	}
 }

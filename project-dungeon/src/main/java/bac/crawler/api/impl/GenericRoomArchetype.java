@@ -38,17 +38,6 @@ public class GenericRoomArchetype implements IRoomArchetype {
 		this.cdesc = cdesc;
 	}
 
-	@Override
-	public IRoomType getType(boolean hasEntrance) {
-		IRoomType type = roomTypes.generateValue().apply(hasEntrance);
-
-		if (hasEntrance && type instanceof ComplexRoomType) {
-			((ComplexRoomType) type).setHasEntrance(true);
-		}
-
-		return type;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -77,6 +66,17 @@ public class GenericRoomArchetype implements IRoomArchetype {
 	@Override
 	public String getName() {
 		return cdesc.getName();
+	}
+
+	@Override
+	public IRoomType getType(boolean hasEntrance) {
+		IRoomType type = roomTypes.generateValue().apply(hasEntrance);
+
+		if (hasEntrance && type instanceof ComplexRoomType) {
+			((ComplexRoomType) type).setHasEntrance(true);
+		}
+
+		return type;
 	}
 
 	/*

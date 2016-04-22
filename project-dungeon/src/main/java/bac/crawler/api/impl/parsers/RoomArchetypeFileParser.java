@@ -58,25 +58,37 @@ public class RoomArchetypeFileParser {
 		});
 	}
 
-	private static void startArchetypes(
-			FunctionalStringTokenizer tokenizer,
-			IPair<String, RoomArchetypeState> initPair) {
-		initPair.doWith((initString, currentState) -> {
-			currentState.setCurrentProbability(
-					Integer.parseInt(tokenizer.nextToken()));
-
-			String path = ListUtils.collapseTokens(tokenizer.toList());
-
-			currentState.addType(Paths.get(path, ""));
-		});
-	}
-
 	private static void continueArchetypes(
 			FunctionalStringTokenizer tokenizer,
 			RoomArchetypeState state) {
 		String path = ListUtils.collapseTokens(tokenizer.toList());
 
 		state.addType(Paths.get(path, ""));
+	}
+
+	private static IRoomArchetype getArchetypeFromStream(File inputFile,
+			Map<String, IRoomArchetype> archetypes, Path currentDir)
+			throws FileNotFoundException {
+		FileInputStream inputStream = new FileInputStream(inputFile);
+
+		RoomArchetypeState initialState = new RoomArchetypeState(
+				currentDir, archetypes);
+
+		IRoomArchetype readArchetype = reader
+				.fromStream(inputStream, initialState).getArchetype();
+
+		try {
+			inputStream.close();
+		} catch (IOException ioex) {
+			IllegalStateException isex = new IllegalStateException(
+					"Got I/O exception attempting to close stream");
+
+			isex.initCause(ioex);
+
+			throw isex;
+		}
+
+		return readArchetype;
 	}
 
 	/**
@@ -105,28 +117,16 @@ public class RoomArchetypeFileParser {
 		}
 	}
 
-	private static IRoomArchetype getArchetypeFromStream(File inputFile,
-			Map<String, IRoomArchetype> archetypes, Path currentDir)
-			throws FileNotFoundException {
-		FileInputStream inputStream = new FileInputStream(inputFile);
+	private static void startArchetypes(
+			FunctionalStringTokenizer tokenizer,
+			IPair<String, RoomArchetypeState> initPair) {
+		initPair.doWith((initString, currentState) -> {
+			currentState.setCurrentProbability(
+					Integer.parseInt(tokenizer.nextToken()));
 
-		RoomArchetypeState initialState = new RoomArchetypeState(
-				currentDir, archetypes);
+			String path = ListUtils.collapseTokens(tokenizer.toList());
 
-		IRoomArchetype readArchetype = reader
-				.fromStream(inputStream, initialState).getArchetype();
-
-		try {
-			inputStream.close();
-		} catch (IOException ioex) {
-			IllegalStateException isex = new IllegalStateException(
-					"Got I/O exception attempting to close stream");
-
-			isex.initCause(ioex);
-
-			throw isex;
-		}
-
-		return readArchetype;
+			currentState.addType(Paths.get(path, ""));
+		});
 	}
 }

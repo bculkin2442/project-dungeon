@@ -22,16 +22,12 @@ import bac.crawler.api.util.RelativeDirection;
  *
  */
 public class ComplexRoomType extends GenericRoomType {
-	private boolean							hasEntrance;
-	private boolean							isLarge;
-
 	private static Random					source	= new Random();
-
 	private static WeightedRandom<Integer>	smallExitCount;
+
 	private static WeightedRandom<Integer>	largeExitCount;
 
 	private static WeightedRandom<ExitType>	typeChooser;
-
 	static {
 		smallExitCount = new WeightedRandom<>(source);
 
@@ -58,6 +54,10 @@ public class ComplexRoomType extends GenericRoomType {
 		typeChooser.addProbability(1, ExitType.WELL);
 	}
 
+	private boolean							hasEntrance;
+
+	private boolean							isLarge;
+
 	/**
 	 * Create a new complex room type
 	 * 
@@ -78,13 +78,6 @@ public class ComplexRoomType extends GenericRoomType {
 
 		this.isLarge = isLarge;
 		this.hasEntrance = hasEntrance;
-	}
-
-	@Override
-	public IFunctionalList<RelativeDirection> getExitDirections() {
-		exits = generateExits();
-
-		return super.getExitDirections();
 	}
 
 	private IFunctionalMap<RelativeDirection, ExitDesc> generateExits() {
@@ -112,6 +105,13 @@ public class ComplexRoomType extends GenericRoomType {
 		}
 
 		return newExits;
+	}
+
+	@Override
+	public IFunctionalList<RelativeDirection> getExitDirections() {
+		exits = generateExits();
+
+		return super.getExitDirections();
 	}
 
 	/**

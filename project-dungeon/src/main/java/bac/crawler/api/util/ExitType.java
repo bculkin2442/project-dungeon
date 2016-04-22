@@ -36,6 +36,26 @@ public enum ExitType {
 	CHAMBER(BIDIRECTIONAL);
 
 	/**
+	 * Get a random exit type that is suitable for horizontal movement
+	 * 
+	 * @return A random exit type suitable for horizontal movement
+	 */
+	public static ExitType getRandomNonVerticalType() {
+		int rval = (int) (Math.random() * 3);
+
+		switch (rval) {
+			case 0:
+				return PASSAGE;
+			case 1:
+				return DOOR;
+			case 2:
+				return CHAMBER;
+		}
+
+		return PASSAGE;
+	}
+
+	/**
 	 * Create a value of the enumeration from a string
 	 * 
 	 * @param value
@@ -61,25 +81,5 @@ public enum ExitType {
 		 * Make sure the word is properly capitalized for english
 		 */
 		return super.toString().toLowerCase();
-	}
-
-	/**
-	 * Get a random exit type that is suitable for horizontal movement
-	 * 
-	 * @return A random exit type suitable for horizontal movement
-	 */
-	public static ExitType getRandomNonVerticalType() {
-		int rval = (int) (Math.random() * 3);
-
-		switch (rval) {
-			case 0:
-				return PASSAGE;
-			case 1:
-				return DOOR;
-			case 2:
-				return CHAMBER;
-		}
-
-		return PASSAGE;
 	}
 }

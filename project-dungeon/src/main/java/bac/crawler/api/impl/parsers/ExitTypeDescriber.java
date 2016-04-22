@@ -18,35 +18,15 @@ public class ExitTypeDescriber implements IDescriber {
 	// TODO not sure if this is needed
 	// private static IDescriber chamberDescriber;
 
-	private ExitType			type;
-
 	/**
-	 * Create a new exit type describer for the given exit type
+	 * Set the describer to use for describing chambers
 	 * 
-	 * @param exType
-	 *            The exit type to use
+	 * @param chamberDescriber
+	 *            The describer for describing chambers
 	 */
-	public ExitTypeDescriber(ExitType exType) {
-		type = exType;
-	}
-
-	@Override
-	public String getDescription() {
-		switch (type) {
-			case CHAMBER:
-				// TODO Not sure if chamber needs a seperate describer
-				// return chamberDescriber.getDescription();
-			case PASSAGE:
-				// Passages are described the same as doors
-			case DOOR:
-				return doorDescriber.getDescription();
-			case STAIRS:
-				return stairDescriber.getDescription();
-			case WELL:
-				return wellDescriber.getDescription();
-		}
-
-		return "Forgot to implement describing for exit type " + type;
+	public static void setChamberDescriber(IDescriber chamberDescriber) {
+		// TODO not sure if this is needed
+		// ExitTypeDescriber.chamberDescriber = chamberDescriber;
 	}
 
 	/**
@@ -80,14 +60,34 @@ public class ExitTypeDescriber implements IDescriber {
 		ExitTypeDescriber.wellDescriber = wellExitDescriber;
 	}
 
+	private ExitType			type;
+
 	/**
-	 * Set the describer to use for describing chambers
+	 * Create a new exit type describer for the given exit type
 	 * 
-	 * @param chamberDescriber
-	 *            The describer for describing chambers
+	 * @param exType
+	 *            The exit type to use
 	 */
-	public static void setChamberDescriber(IDescriber chamberDescriber) {
-		// TODO not sure if this is needed
-		// ExitTypeDescriber.chamberDescriber = chamberDescriber;
+	public ExitTypeDescriber(ExitType exType) {
+		type = exType;
+	}
+
+	@Override
+	public String getDescription() {
+		switch (type) {
+			case CHAMBER:
+				// TODO Not sure if chamber needs a seperate describer
+				// return chamberDescriber.getDescription();
+			case PASSAGE:
+				// Passages are described the same as doors
+			case DOOR:
+				return doorDescriber.getDescription();
+			case STAIRS:
+				return stairDescriber.getDescription();
+			case WELL:
+				return wellDescriber.getDescription();
+		}
+
+		return "Forgot to implement describing for exit type " + type;
 	}
 }

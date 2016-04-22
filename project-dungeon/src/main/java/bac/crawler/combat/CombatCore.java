@@ -20,6 +20,13 @@ public class CombatCore {
 		return (int) (Math.log(modifier * scaleFactor) / Math.log(2));
 	}
 
+	private static int doAttackRoll(EntityLiving roller, ActionType action,
+			double actionTypeMod) {
+		return (int) (d20().roll()
+				+ addMod(roller.getDefensiveMod(action), 2)
+						* actionTypeMod);
+	}
+
 	private EntityLiving		enemy;
 
 	private boolean				isPlayerTurn;
@@ -61,6 +68,46 @@ public class CombatCore {
 		}
 	}
 
+	private CombatResult doCombatAction(EntityLiving attacker,
+			EntityLiving defender, ActionType attackerAction,
+			ActionType defenderAction) {
+		double attackerTypeMod = attackerAction
+				.getMultiplier(defenderAction);
+		double defenderTypeMod = defenderAction
+				.getMultiplier(attackerAction);
+
+		int attackerRoll = doAttackRoll(attacker, attackerAction,
+				attackerTypeMod);
+		int defenderRoll = doAttackRoll(defender, defenderAction,
+				defenderTypeMod);
+
+		if (attackerRoll > defenderRoll) {
+			normalOutput.accept(
+					attacker.getName() + " hit the " + defender.getName());
+
+			return doDamage(attacker, defender);
+		}
+
+		normalOutput.accept(
+				attacker.getName() + " missed the " + defender.getName());
+
+		return CombatResult.CONTINUE;
+	}
+
+	private CombatResult doDamage(EntityLiving attacker,
+			EntityLiving defender) {
+		int damage = d6().roll();
+
+		normalOutput.accept(attacker.getName() + " did " + damage
+				+ " damage to " + defender);
+
+		if (defender.takeDamage(new DamageCount(damage))) {
+			return CombatResult.CONTINUE;
+		}
+
+		return CombatResult.WIN;
+	}
+
 	/**
 	 * Handle a action for the player
 	 * 
@@ -92,20 +139,6 @@ public class CombatCore {
 		return CombatResult.WIN;
 	}
 
-	private CombatResult doDamage(EntityLiving attacker,
-			EntityLiving defender) {
-		int damage = d6().roll();
-
-		normalOutput.accept(attacker.getName() + " did " + damage
-				+ " damage to " + defender);
-
-		if (defender.takeDamage(new DamageCount(damage))) {
-			return CombatResult.CONTINUE;
-		}
-
-		return CombatResult.WIN;
-	}
-
 	private CombatResult doPlayerDefend(ActionType playerAction) {
 		// For now, let the AI be stupid
 		ActionType enemyAction = EnumUtils.getRandomValue(ActionType.class,
@@ -119,46 +152,13 @@ public class CombatCore {
 		return CombatResult.LOSE;
 	}
 
-	private CombatResult doCombatAction(EntityLiving attacker,
-			EntityLiving defender, ActionType attackerAction,
-			ActionType defenderAction) {
-		double attackerTypeMod = attackerAction
-				.getMultiplier(defenderAction);
-		double defenderTypeMod = defenderAction
-				.getMultiplier(attackerAction);
-
-		int attackerRoll = doAttackRoll(attacker, attackerAction,
-				attackerTypeMod);
-		int defenderRoll = doAttackRoll(defender, defenderAction,
-				defenderTypeMod);
-
-		if (attackerRoll > defenderRoll) {
-			normalOutput.accept(
-					attacker.getName() + " hit the " + defender.getName());
-
-			return doDamage(attacker, defender);
-		}
-
-		normalOutput.accept(
-				attacker.getName() + " missed the " + defender.getName());
-
-		return CombatResult.CONTINUE;
-	}
-
-	private static int doAttackRoll(EntityLiving roller, ActionType action,
-			double actionTypeMod) {
-		return (int) (d20().roll()
-				+ addMod(roller.getDefensiveMod(action), 2)
-						* actionTypeMod);
-	}
-
 	/**
-	 * Check if it is the player's turn to attack
+	 * Get the name of the enemy
 	 * 
-	 * @return Whether it is the player's turn to attack
+	 * @return The name of the enemy
 	 */
-	public boolean isPlayerAttacking() {
-		return isPlayerTurn;
+	public String getEnemyName() {
+		return enemy.getName();
 	}
 
 	/**
@@ -179,11 +179,11 @@ public class CombatCore {
 	}
 
 	/**
-	 * Get the name of the enemy
+	 * Check if it is the player's turn to attack
 	 * 
-	 * @return The name of the enemy
+	 * @return Whether it is the player's turn to attack
 	 */
-	public String getEnemyName() {
-		return enemy.getName();
+	public boolean isPlayerAttacking() {
+		return isPlayerTurn;
 	}
 }

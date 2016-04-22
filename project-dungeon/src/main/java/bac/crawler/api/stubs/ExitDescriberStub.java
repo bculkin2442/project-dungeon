@@ -12,23 +12,6 @@ import bac.crawler.api.util.ExitType;
  *
  */
 public class ExitDescriberStub implements IDescriber {
-	private ExitType type;
-
-	/**
-	 * Create a new exit describer stub for the given type
-	 * 
-	 * @param type
-	 *            The type of exit to generate a describer stub for
-	 */
-	public ExitDescriberStub(ExitType type) {
-		this.type = type;
-	}
-
-	@Override
-	public String getDescription() {
-		return "A normal " + type + ". Maybe too normal";
-	}
-
 	/**
 	 * Set the describer members of the generator to proper stubs
 	 */
@@ -44,5 +27,22 @@ public class ExitDescriberStub implements IDescriber {
 
 		ExitTypeDescriber.setWellExitDescriber(
 				new ExitDescriberStub(ExitType.WELL));
+	}
+
+	private ExitType type;
+
+	/**
+	 * Create a new exit describer stub for the given type
+	 * 
+	 * @param type
+	 *            The type of exit to generate a describer stub for
+	 */
+	public ExitDescriberStub(ExitType type) {
+		this.type = type;
+	}
+
+	@Override
+	public String getDescription() {
+		return "A normal " + type + ". Maybe too normal";
 	}
 }

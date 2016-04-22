@@ -7,7 +7,28 @@ package bac.crawler.combat;
  *
  */
 public class EntityPlayer extends EntityLiving {
+	/**
+	 * Create a default player instance
+	 * 
+	 * @return A default player with default stats
+	 */
+	public static EntityPlayer makeDefaultPlayer() {
+		EntityStats.Builder statBuilder = new EntityStats.Builder();
+
+		statBuilder.setStrength(10);
+		statBuilder.setDexterity(10);
+
+		statBuilder.setFortitude(10);
+		statBuilder.setReflexes(10);
+
+		statBuilder.setConstitution(10);
+		statBuilder.setAgility(10);
+
+		return new EntityPlayer(statBuilder.build(),
+				"Sir Henry 'Didn't Pick A Name' Jones the IVth");
+	}
 	private int	currentHealth;
+
 	private int	currentVitality;
 
 	/**
@@ -27,6 +48,47 @@ public class EntityPlayer extends EntityLiving {
 	private void calculateHealth() {
 		currentHealth = getMaxHealth();
 		currentVitality = getMaxVitality();
+	}
+
+	/**
+	 * Get the health of this player
+	 * 
+	 * @return The health of this player
+	 */
+	public int getHealth() {
+		return currentHealth;
+	}
+
+	/**
+	 * Get the maximum health of this player
+	 * 
+	 * @return The maximum health of this player
+	 */
+	public int getMaxHealth() {
+		return stats.getConstitution() * 2;
+	}
+
+	/**
+	 * Get the maximum vitality of this player
+	 * 
+	 * @return The maximum vitality of this player
+	 */
+	public int getMaxVitality() {
+		return getMaxHealth() * 2;
+	}
+
+	/**
+	 * Get the players vitality
+	 * 
+	 * @return The vitality of the player
+	 */
+	public int getVitality() {
+		return currentVitality;
+	}
+
+	@Override
+	public boolean isAlive() {
+		return currentVitality > 0;
 	}
 
 	/*
@@ -57,42 +119,6 @@ public class EntityPlayer extends EntityLiving {
 		}
 
 		return true;
-	}
-
-	/**
-	 * Get the health of this player
-	 * 
-	 * @return The health of this player
-	 */
-	public int getHealth() {
-		return currentHealth;
-	}
-
-	/**
-	 * Get the players vitality
-	 * 
-	 * @return The vitality of the player
-	 */
-	public int getVitality() {
-		return currentVitality;
-	}
-
-	/**
-	 * Get the maximum health of this player
-	 * 
-	 * @return The maximum health of this player
-	 */
-	public int getMaxHealth() {
-		return stats.getConstitution() * 2;
-	}
-
-	/**
-	 * Get the maximum vitality of this player
-	 * 
-	 * @return The maximum vitality of this player
-	 */
-	public int getMaxVitality() {
-		return getMaxHealth() * 2;
 	}
 
 	@Override
@@ -135,31 +161,5 @@ public class EntityPlayer extends EntityLiving {
 		sb.append(getMaxVitality());
 
 		return sb.toString();
-	}
-
-	/**
-	 * Create a default player instance
-	 * 
-	 * @return A default player with default stats
-	 */
-	public static EntityPlayer makeDefaultPlayer() {
-		EntityStats.Builder statBuilder = new EntityStats.Builder();
-
-		statBuilder.setStrength(10);
-		statBuilder.setDexterity(10);
-
-		statBuilder.setFortitude(10);
-		statBuilder.setReflexes(10);
-
-		statBuilder.setConstitution(10);
-		statBuilder.setAgility(10);
-
-		return new EntityPlayer(statBuilder.build(),
-				"Sir Henry 'Didn't Pick A Name' Jones the IVth");
-	}
-
-	@Override
-	public boolean isAlive() {
-		return currentVitality > 0;
 	}
 }

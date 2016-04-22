@@ -33,48 +33,6 @@ public enum RelativeDirection {
 	private static Random RNG = new Random();
 
 	/**
-	 * Change another direction by turning the way this direction specifies
-	 * 
-	 * @param dir
-	 *            The direction to change
-	 * @return The direction after turning this way
-	 */
-	public Direction makeAbsolute(Direction dir) {
-		// Only cardinal directions can be truly absolutized
-		if (dir.isCardinal()) {
-			switch (this) {
-				case BACKWARD:
-					return dir;
-				case FORWARD:
-					return dir.opposing();
-				case LEFT:
-					return dir.rotateCounterClockwise();
-				case RIGHT:
-					return dir.rotateClockwise();
-				default:
-					throw new InvalidDirectionException(
-							"Attempted to make absolute a direction in a unknown way "
-									+ this);
-			}
-		}
-
-		// Since it isn't a cardinal direction, absolutize it against a
-		// random direction
-		return this.makeAbsolute(Direction.NORTH);
-	}
-
-	/**
-	 * Properly convert a string to a relative direction
-	 * 
-	 * @param value
-	 *            The string to convert
-	 * @return The relative direction represented by the string
-	 */
-	public static RelativeDirection properValueOf(String value) {
-		return valueOf(value.toUpperCase());
-	}
-
-	/**
 	 * Perform a specified action for a random number of relative
 	 * directions.
 	 * 
@@ -112,5 +70,47 @@ public enum RelativeDirection {
 		}
 
 		relativeDirs.forEach(action);
+	}
+
+	/**
+	 * Properly convert a string to a relative direction
+	 * 
+	 * @param value
+	 *            The string to convert
+	 * @return The relative direction represented by the string
+	 */
+	public static RelativeDirection properValueOf(String value) {
+		return valueOf(value.toUpperCase());
+	}
+
+	/**
+	 * Change another direction by turning the way this direction specifies
+	 * 
+	 * @param dir
+	 *            The direction to change
+	 * @return The direction after turning this way
+	 */
+	public Direction makeAbsolute(Direction dir) {
+		// Only cardinal directions can be truly absolutized
+		if (dir.isCardinal()) {
+			switch (this) {
+				case BACKWARD:
+					return dir;
+				case FORWARD:
+					return dir.opposing();
+				case LEFT:
+					return dir.rotateCounterClockwise();
+				case RIGHT:
+					return dir.rotateClockwise();
+				default:
+					throw new InvalidDirectionException(
+							"Attempted to make absolute a direction in a unknown way "
+									+ this);
+			}
+		}
+
+		// Since it isn't a cardinal direction, absolutize it against a
+		// random direction
+		return this.makeAbsolute(Direction.NORTH);
 	}
 }

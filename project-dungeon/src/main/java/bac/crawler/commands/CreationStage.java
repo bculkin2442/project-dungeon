@@ -29,6 +29,15 @@ public enum CreationStage {
 	MISC;
 
 	/**
+	 * Get the initial stage in character creation
+	 * 
+	 * @return The initial stage in character creation
+	 */
+	public static CreationStage getInitialStage() {
+		return NAME;
+	}
+
+	/**
 	 * Move from this stage to the next one
 	 * 
 	 * @return The next stage, or null if this was the final one
@@ -48,14 +57,5 @@ public enum CreationStage {
 			default:
 				return null;
 		}
-	}
-
-	/**
-	 * Get the initial stage in character creation
-	 * 
-	 * @return The initial stage in character creation
-	 */
-	public static CreationStage getInitialStage() {
-		return NAME;
 	}
 }

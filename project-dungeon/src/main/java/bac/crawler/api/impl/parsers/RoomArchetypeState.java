@@ -52,43 +52,17 @@ public class RoomArchetypeState {
 	}
 
 	/**
-	 * Set the containing directory for the files this room archetype needs
+	 * Add a reference to another archetype
 	 * 
-	 * @param container
-	 *            The path of a directory with supporting files.
-	 */
-	public void setContainingDirectory(Path container) {
-		containingDirectory = currentDirectory.resolve(container);
-	}
-
-	/**
-	 * Resolve the name of a support file for this room archetype
-	 * 
-	 * @param fName
-	 *            The name of the support file
-	 * @return A path to the support file in the proper directory
-	 */
-	public Path getContainedPath(String fName) {
-		return containingDirectory.resolve(fName);
-	}
-
-	/**
-	 * Get the archetype this state was used to parse
-	 * 
-	 * @return The archetype this state was used to parse
-	 */
-	public IRoomArchetype getArchetype() {
-		return new GenericRoomArchetype(roomTypes, compDesc);
-	}
-
-	/**
-	 * Set the current probability for added room types
-	 * 
+	 * @param reference
+	 *            The name of the archetype to reference
 	 * @param probability
-	 *            The probability for added room types to come up
+	 *            The probability of referencing that archetype
 	 */
-	public void setCurrentProbability(int probability) {
-		this.currentProbability = probability;
+	public void addReference(String reference, int probability) {
+		roomTypes.addProbability(probability, (hasEntrance) -> {
+			return archetypes.get(reference).getType(hasEntrance);
+		});
 	}
 
 	/**
@@ -112,6 +86,26 @@ public class RoomArchetypeState {
 			roomTypes.addProbability(currentProbability,
 					(hasEntrance) -> type);
 		}
+	}
+
+	/**
+	 * Get the archetype this state was used to parse
+	 * 
+	 * @return The archetype this state was used to parse
+	 */
+	public IRoomArchetype getArchetype() {
+		return new GenericRoomArchetype(roomTypes, compDesc);
+	}
+
+	/**
+	 * Resolve the name of a support file for this room archetype
+	 * 
+	 * @param fName
+	 *            The name of the support file
+	 * @return A path to the support file in the proper directory
+	 */
+	public Path getContainedPath(String fName) {
+		return containingDirectory.resolve(fName);
 	}
 
 	/**
@@ -150,16 +144,22 @@ public class RoomArchetypeState {
 	}
 
 	/**
-	 * Add a reference to another archetype
+	 * Set the containing directory for the files this room archetype needs
 	 * 
-	 * @param reference
-	 *            The name of the archetype to reference
-	 * @param probability
-	 *            The probability of referencing that archetype
+	 * @param container
+	 *            The path of a directory with supporting files.
 	 */
-	public void addReference(String reference, int probability) {
-		roomTypes.addProbability(probability, (hasEntrance) -> {
-			return archetypes.get(reference).getType(hasEntrance);
-		});
+	public void setContainingDirectory(Path container) {
+		containingDirectory = currentDirectory.resolve(container);
+	}
+
+	/**
+	 * Set the current probability for added room types
+	 * 
+	 * @param probability
+	 *            The probability for added room types to come up
+	 */
+	public void setCurrentProbability(int probability) {
+		this.currentProbability = probability;
 	}
 }

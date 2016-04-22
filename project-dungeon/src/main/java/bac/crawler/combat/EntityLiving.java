@@ -19,11 +19,11 @@ public abstract class EntityLiving implements IEntity {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see bac.crawler.combat.IEntity#getOffensiveMod(bac.crawler.combat.
+	 * @see bac.crawler.combat.IEntity#getDefensiveMod(bac.crawler.combat.
 	 * ActionType)
 	 */
 	@Override
-	public int getOffensiveMod(ActionType type) {
+	public int getDefensiveMod(ActionType type) {
 		switch (type) {
 			case FINESSE:
 				return stats.getDexterity();
@@ -39,14 +39,23 @@ public abstract class EntityLiving implements IEntity {
 		}
 	}
 
+	/**
+	 * Get the name of the entity
+	 * 
+	 * @return the name of the entity
+	 */
+	public String getName() {
+		return name;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see bac.crawler.combat.IEntity#getDefensiveMod(bac.crawler.combat.
+	 * @see bac.crawler.combat.IEntity#getOffensiveMod(bac.crawler.combat.
 	 * ActionType)
 	 */
 	@Override
-	public int getDefensiveMod(ActionType type) {
+	public int getOffensiveMod(ActionType type) {
 		switch (type) {
 			case FINESSE:
 				return stats.getDexterity();
@@ -80,15 +89,6 @@ public abstract class EntityLiving implements IEntity {
 	 */
 	public EntityStats getStats() {
 		return stats;
-	}
-
-	/**
-	 * Get the name of the entity
-	 * 
-	 * @return the name of the entity
-	 */
-	public String getName() {
-		return name;
 	}
 
 	/**

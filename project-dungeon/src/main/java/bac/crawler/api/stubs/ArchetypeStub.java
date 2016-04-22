@@ -14,8 +14,6 @@ import bac.crawler.api.impl.ComplexRoomType;
  *
  */
 public class ArchetypeStub implements IRoomArchetype {
-	private IDescriber					roomDescriber;
-
 	private static ComponentDescription	cdesc;
 
 	static {
@@ -23,6 +21,8 @@ public class ArchetypeStub implements IRoomArchetype {
 
 		cdesc = new ComponentDescription(name, "", "", 1);
 	}
+
+	private IDescriber					roomDescriber;
 
 	/**
 	 * Create a new stub archetype that describes rooms a particular way

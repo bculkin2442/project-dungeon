@@ -52,11 +52,6 @@ public class GenericRoom implements IRoom {
 		return visited;
 	}
 
-	@Override
-	public void visit() {
-		visited = true;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -66,5 +61,10 @@ public class GenericRoom implements IRoom {
 	public String toString() {
 		return "GenericRoom [description=" + description + ", exits="
 				+ exits + ", visited=" + visited + "]";
+	}
+
+	@Override
+	public void visit() {
+		visited = true;
 	}
 }

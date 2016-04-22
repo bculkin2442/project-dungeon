@@ -70,110 +70,9 @@ public class CharacterCreationMode implements ICommandMode {
 	}
 
 	@Override
-	public ICommandMode processCommand(String command, String[] args) {
-		if (currentStage == null) {
-			playerHolder.replace(createCharacter());
-
-			initialOutput.accept(normalOutput);
-
-			return returnMode;
-		}
-
-		switch (currentStage) {
-			case DEFENSIVE:
-				handleDefensive(command);
-				break;
-			case MISC:
-				handleMisc(command);
-				break;
-			case OFFENSIVE:
-				handleOffensive(command);
-				break;
-			case DIFFICULTY:
-				handleDifficulty(command);
-				break;
-			case NAME:
-				handleName(command, args);
-				break;
-			default:
-				throw new IllegalStateException(
-						"Reached a unknown stage of character creation");
-		}
-
-		return this;
-	}
-
-	private void handleName(String command, String[] args) {
-		if (command == "") {
-			playerName = defaultNames.generateValue().get();
-		} else {
-			playerName = command + " " + String.join(" ", args);
-		}
-
-		currentStage = currentStage.nextStage();
-	}
-
-	private void handleDifficulty(String command) {
-		switch (command.toLowerCase()) {
-			case "easy":
-				statBase = 20;
-				break;
-			case "medium":
-				statBase = 10;
-				break;
-			case "hard":
-				statBase = 5;
-				break;
-			default:
-				errorOutput
-						.accept("ERROR: I'm sorry, that isn't a valid choice."
-								+ " Valid choices are easy, medium and hard");
-				return;
-		}
-
-		currentStage = currentStage.nextStage();
-	}
-
-	private void handleOffensive(String command) {
-		switch (command.toLowerCase()) {
-			case "force":
-				offensePreference = ActionType.FORCE;
-				break;
-			case "skill":
-				offensePreference = ActionType.FINESSE;
-				break;
-			case "balanced":
-				offensePreference = ActionType.NEUTRAL;
-				break;
-			default:
-				errorOutput
-						.accept("ERROR: I'm sorry, that isn't a valid choice."
-								+ " Valid choices are force, skill and balanced");
-				return;
-		}
-
-		currentStage = currentStage.nextStage();
-	}
-
-	private void handleMisc(String command) {
-		switch (command.toLowerCase()) {
-			case "outlast":
-				miscPreference = ActionType.FORCE;
-				break;
-			case "outrun":
-				miscPreference = ActionType.FINESSE;
-				break;
-			case "balanced":
-				miscPreference = ActionType.NEUTRAL;
-				break;
-			default:
-				errorOutput
-						.accept("ERROR: I'm sorry, that isn't a valid choice."
-								+ " Valid choices are outlast, outrun and balanced");
-				return;
-		}
-
-		currentStage = currentStage.nextStage();
+	public boolean canHandleCommand(String command) {
+		// We don't handle specific commands
+		return true;
 	}
 
 	private EntityPlayer createCharacter() {
@@ -242,43 +141,6 @@ public class CharacterCreationMode implements ICommandMode {
 		return new EntityPlayer(playerStats, playerName);
 	}
 
-	private void handleDefensive(String command) {
-		switch (command.toLowerCase()) {
-			case "brace":
-				defensePreference = ActionType.FORCE;
-				break;
-			case "evade":
-				defensePreference = ActionType.FINESSE;
-				break;
-			case "balanced":
-				defensePreference = ActionType.NEUTRAL;
-				break;
-			default:
-				errorOutput
-						.accept("ERROR: I'm sorry, that isn't a valid choice."
-								+ " Valid choices are brace, evade and balanced");
-				return;
-		}
-
-		currentStage = currentStage.nextStage();
-	}
-
-	@Override
-	public String getName() {
-		return "Character Creator";
-	}
-
-	@Override
-	public boolean canHandleCommand(String command) {
-		// We don't handle specific commands
-		return true;
-	}
-
-	@Override
-	public boolean useCustomPrompt() {
-		return true;
-	}
-
 	@Override
 	public String getCustomPrompt() {
 		if (currentStage == null) {
@@ -311,5 +173,143 @@ public class CharacterCreationMode implements ICommandMode {
 						"Reached a unknown stage of character creation");
 
 		}
+	}
+
+	@Override
+	public String getName() {
+		return "Character Creator";
+	}
+
+	private void handleDefensive(String command) {
+		switch (command.toLowerCase()) {
+			case "brace":
+				defensePreference = ActionType.FORCE;
+				break;
+			case "evade":
+				defensePreference = ActionType.FINESSE;
+				break;
+			case "balanced":
+				defensePreference = ActionType.NEUTRAL;
+				break;
+			default:
+				errorOutput
+						.accept("ERROR: I'm sorry, that isn't a valid choice."
+								+ " Valid choices are brace, evade and balanced");
+				return;
+		}
+
+		currentStage = currentStage.nextStage();
+	}
+
+	private void handleDifficulty(String command) {
+		switch (command.toLowerCase()) {
+			case "easy":
+				statBase = 20;
+				break;
+			case "medium":
+				statBase = 10;
+				break;
+			case "hard":
+				statBase = 5;
+				break;
+			default:
+				errorOutput
+						.accept("ERROR: I'm sorry, that isn't a valid choice."
+								+ " Valid choices are easy, medium and hard");
+				return;
+		}
+
+		currentStage = currentStage.nextStage();
+	}
+
+	private void handleMisc(String command) {
+		switch (command.toLowerCase()) {
+			case "outlast":
+				miscPreference = ActionType.FORCE;
+				break;
+			case "outrun":
+				miscPreference = ActionType.FINESSE;
+				break;
+			case "balanced":
+				miscPreference = ActionType.NEUTRAL;
+				break;
+			default:
+				errorOutput
+						.accept("ERROR: I'm sorry, that isn't a valid choice."
+								+ " Valid choices are outlast, outrun and balanced");
+				return;
+		}
+
+		currentStage = currentStage.nextStage();
+	}
+
+	private void handleName(String command, String[] args) {
+		if (command == "") {
+			playerName = defaultNames.generateValue().get();
+		} else {
+			playerName = command + " " + String.join(" ", args);
+		}
+
+		currentStage = currentStage.nextStage();
+	}
+
+	private void handleOffensive(String command) {
+		switch (command.toLowerCase()) {
+			case "force":
+				offensePreference = ActionType.FORCE;
+				break;
+			case "skill":
+				offensePreference = ActionType.FINESSE;
+				break;
+			case "balanced":
+				offensePreference = ActionType.NEUTRAL;
+				break;
+			default:
+				errorOutput
+						.accept("ERROR: I'm sorry, that isn't a valid choice."
+								+ " Valid choices are force, skill and balanced");
+				return;
+		}
+
+		currentStage = currentStage.nextStage();
+	}
+
+	@Override
+	public ICommandMode processCommand(String command, String[] args) {
+		if (currentStage == null) {
+			playerHolder.replace(createCharacter());
+
+			initialOutput.accept(normalOutput);
+
+			return returnMode;
+		}
+
+		switch (currentStage) {
+			case DEFENSIVE:
+				handleDefensive(command);
+				break;
+			case MISC:
+				handleMisc(command);
+				break;
+			case OFFENSIVE:
+				handleOffensive(command);
+				break;
+			case DIFFICULTY:
+				handleDifficulty(command);
+				break;
+			case NAME:
+				handleName(command, args);
+				break;
+			default:
+				throw new IllegalStateException(
+						"Reached a unknown stage of character creation");
+		}
+
+		return this;
+	}
+
+	@Override
+	public boolean useCustomPrompt() {
+		return true;
 	}
 }
