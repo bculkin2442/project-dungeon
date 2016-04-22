@@ -2,13 +2,14 @@ package bac.crawler;
 
 import java.util.Arrays;
 
+import bjc.utils.cli.ICommandMode;
+
 import org.apache.commons.lang3.text.WordUtils;
 
 import com.eleet.dragonconsole.CommandProcessor;
 import com.eleet.dragonconsole.DragonConsole;
 
 import bac.crawler.commands.InitialCommandMode;
-import bjc.utils.cli.ICommandMode;
 
 /**
  * Handles input/output for the game
@@ -73,7 +74,8 @@ public class IOProcessor extends CommandProcessor {
 		String[] commandArgs;
 
 		if (commandTokens.length > 1) {
-			commandArgs = Arrays.copyOfRange(commandTokens, 1, commandTokens.length);
+			commandArgs = Arrays.copyOfRange(commandTokens, 1,
+					commandTokens.length);
 		} else {
 			commandArgs = null;
 		}

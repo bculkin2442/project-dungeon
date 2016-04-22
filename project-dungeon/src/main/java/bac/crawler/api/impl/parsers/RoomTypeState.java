@@ -7,16 +7,17 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.EnumMap;
 
-import bac.crawler.api.IDescriber;
-import bac.crawler.api.IRoomType;
-import bac.crawler.api.impl.GenericRoomType;
-import bac.crawler.api.util.ExitDesc;
-import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.ComponentDescription;
 import bjc.utils.components.ComponentDescriptionFileParser;
 import bjc.utils.exceptions.PragmaFormatException;
 import bjc.utils.funcdata.FunctionalMap;
 import bjc.utils.funcdata.IFunctionalMap;
+
+import bac.crawler.api.IDescriber;
+import bac.crawler.api.IRoomType;
+import bac.crawler.api.impl.GenericRoomType;
+import bac.crawler.api.util.ExitDesc;
+import bac.crawler.api.util.RelativeDirection;
 
 /**
  * State for room type parser

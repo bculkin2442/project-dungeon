@@ -1,7 +1,8 @@
 package bac.crawler.api;
 
-import bac.crawler.api.util.Direction;
 import bjc.utils.funcdata.IFunctionalList;
+
+import bac.crawler.api.util.Direction;
 
 /**
  * Represents a room in a dungeon, the fundamental building block.

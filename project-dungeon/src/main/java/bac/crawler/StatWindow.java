@@ -6,10 +6,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import bac.crawler.combat.EntityPlayer;
-import bac.crawler.combat.EntityStats;
 import bjc.utils.gui.layout.HLayout;
 import bjc.utils.gui.layout.VLayout;
+
+import bac.crawler.combat.EntityPlayer;
+import bac.crawler.combat.EntityStats;
 
 /**
  * Represents a window that displays the player's status
@@ -58,8 +59,8 @@ public class StatWindow extends JFrame {
 		offensiveStatsPanel.setLayout(new HLayout(2));
 
 		strengthStatLabel = new JLabel("Strength: " + stats.getStrength());
-		dexterityStatLabel =
-				new JLabel("Dexterity: " + stats.getDexterity());
+		dexterityStatLabel = new JLabel(
+				"Dexterity: " + stats.getDexterity());
 
 		offensiveStatsPanel.add(strengthStatLabel);
 		offensiveStatsPanel.add(dexterityStatLabel);
@@ -69,8 +70,8 @@ public class StatWindow extends JFrame {
 		JPanel defensiveStatsPanel = new JPanel();
 		defensiveStatsPanel.setLayout(new HLayout(2));
 
-		fortitudeStatLabel =
-				new JLabel("Fortitude: " + stats.getFortitude());
+		fortitudeStatLabel = new JLabel(
+				"Fortitude: " + stats.getFortitude());
 		reflexesStatLabel = new JLabel("Reflexes: " + stats.getReflexes());
 
 		defensiveStatsPanel.add(fortitudeStatLabel);
@@ -81,8 +82,8 @@ public class StatWindow extends JFrame {
 		JPanel miscStatsPanel = new JPanel();
 		miscStatsPanel.setLayout(new HLayout(2));
 
-		constitutionStatLabel =
-				new JLabel("Constitution: " + stats.getConstitution());
+		constitutionStatLabel = new JLabel(
+				"Constitution: " + stats.getConstitution());
 		agilityStatPanel = new JLabel("Agility: " + stats.getAgility());
 
 		miscStatsPanel.add(constitutionStatLabel);
@@ -93,11 +94,11 @@ public class StatWindow extends JFrame {
 		JPanel healthStatsPanel = new JPanel();
 		healthStatsPanel.setLayout(new VLayout(2));
 
-		healthStatLabel =
-				new JLabel("Current Health: " + player.getHealth()
-						+ "\tMax Health: " + player.getMaxHealth());
-		vitalityStatLabel =
-				new JLabel("Current Vitality: " + player.getVitality()
+		healthStatLabel = new JLabel(
+				"Current Health: " + player.getHealth() + "\tMax Health: "
+						+ player.getMaxHealth());
+		vitalityStatLabel = new JLabel(
+				"Current Vitality: " + player.getVitality()
 						+ "\tMax Vitality: " + player.getMaxVitality());
 
 		healthStatsPanel.add(healthStatLabel);

@@ -2,9 +2,10 @@ package bac.crawler.api.impl;
 
 import java.util.function.Supplier;
 
+import bjc.utils.data.LazyPair;
+
 import bac.crawler.api.IExit;
 import bac.crawler.api.IRoom;
-import bjc.utils.data.LazyPair;
 
 /**
  * Represents a lazy exit from a room, where the destination room may not

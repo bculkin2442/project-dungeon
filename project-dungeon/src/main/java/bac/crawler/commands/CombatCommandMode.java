@@ -2,11 +2,12 @@ package bac.crawler.commands;
 
 import java.util.function.Consumer;
 
-import bac.crawler.combat.ActionType;
-import bac.crawler.combat.CombatCore;
 import bjc.utils.cli.GenericCommand;
 import bjc.utils.cli.GenericCommandMode;
 import bjc.utils.cli.ICommandMode;
+
+import bac.crawler.combat.ActionType;
+import bac.crawler.combat.CombatCore;
 
 /**
  * A command mode used for handling combat between the player and something
@@ -143,10 +144,10 @@ public class CombatCommandMode implements ICommandMode {
 	}
 
 	private void initializeCommandModes() {
-		GenericCommandMode pendingOffense =
-				new GenericCommandMode(normalOutput, errorOutput);
-		GenericCommandMode pendingDefense =
-				new GenericCommandMode(normalOutput, errorOutput);
+		GenericCommandMode pendingOffense = new GenericCommandMode(
+				normalOutput, errorOutput);
+		GenericCommandMode pendingDefense = new GenericCommandMode(
+				normalOutput, errorOutput);
 
 		buildOffenseHandlers(pendingOffense);
 

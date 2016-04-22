@@ -8,13 +8,15 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Function;
-import bac.crawler.api.IRoomArchetype;
-import bac.crawler.api.IRoomType;
-import bac.crawler.api.impl.GenericRoomArchetype;
+
 import bjc.utils.components.ComponentDescription;
 import bjc.utils.components.ComponentDescriptionFileParser;
 import bjc.utils.exceptions.PragmaFormatException;
 import bjc.utils.gen.WeightedRandom;
+
+import bac.crawler.api.IRoomArchetype;
+import bac.crawler.api.IRoomType;
+import bac.crawler.api.impl.GenericRoomArchetype;
 
 /**
  * Internal state for room archetype parser
@@ -119,14 +121,14 @@ public class RoomArchetypeState {
 	 *            The path to the file with the description
 	 */
 	public void setComponentDescription(Path describerPath) {
-		File sourceFile =
-				containingDirectory.resolve(describerPath).toFile();
+		File sourceFile = containingDirectory.resolve(describerPath)
+				.toFile();
 
 		try {
 			FileInputStream inputSource = new FileInputStream(sourceFile);
 
-			compDesc =
-					ComponentDescriptionFileParser.fromStream(inputSource);
+			compDesc = ComponentDescriptionFileParser
+					.fromStream(inputSource);
 
 			inputSource.close();
 		} catch (FileNotFoundException fnfex) {

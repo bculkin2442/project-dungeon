@@ -7,17 +7,18 @@ import java.util.function.Consumer;
 
 import javax.swing.JFrame;
 
-import bac.crawler.StatWindow;
-import bac.crawler.api.util.Direction;
-import bac.crawler.combat.EntityPlayer;
-import bac.crawler.navigator.NavigatorCore;
+import bjc.utils.cli.GenericCommand;
 import bjc.utils.cli.GenericCommandMode;
 import bjc.utils.cli.GenericHelp;
-import bjc.utils.cli.GenericCommand;
 import bjc.utils.cli.ICommandMode;
 import bjc.utils.data.IHolder;
 import bjc.utils.data.Identity;
 import bjc.utils.funcutils.ListUtils;
+
+import bac.crawler.StatWindow;
+import bac.crawler.api.util.Direction;
+import bac.crawler.combat.EntityPlayer;
+import bac.crawler.navigator.NavigatorCore;
 
 /**
  * A command mode to use when navigating around the map
@@ -59,8 +60,8 @@ public class NavigatorCommandMode {
 			IHolder<EntityPlayer> player, ICommandMode returnMode) {
 		IHolder<StatWindow> windowHolder = new Identity<>();
 
-		GenericCommandMode mode =
-				new GenericCommandMode(normalOutput, errorOutput);
+		GenericCommandMode mode = new GenericCommandMode(normalOutput,
+				errorOutput);
 
 		mode.setModeName("navigator");
 

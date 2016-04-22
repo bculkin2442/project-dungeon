@@ -10,6 +10,16 @@ import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import bjc.utils.cli.GenericCommand;
+import bjc.utils.cli.GenericCommandMode;
+import bjc.utils.cli.ICommandMode;
+import bjc.utils.data.IHolder;
+import bjc.utils.data.Lazy;
+import bjc.utils.funcdata.FunctionalList;
+import bjc.utils.funcdata.IFunctionalList;
+import bjc.utils.funcutils.ListUtils;
+import bjc.utils.gen.WeightedRandom;
+
 import bac.crawler.api.IDescriber;
 import bac.crawler.api.IDungeon;
 import bac.crawler.api.IRoom;
@@ -21,15 +31,6 @@ import bac.crawler.layout.GeneratorInitializer;
 import bac.crawler.layout.LayoutGenerator;
 import bac.crawler.layout.LayoutGeneratorArchetypes.Builder;
 import bac.crawler.navigator.NavigatorCore;
-import bjc.utils.cli.GenericCommand;
-import bjc.utils.cli.GenericCommandMode;
-import bjc.utils.cli.ICommandMode;
-import bjc.utils.data.IHolder;
-import bjc.utils.data.Lazy;
-import bjc.utils.funcdata.FunctionalList;
-import bjc.utils.funcdata.IFunctionalList;
-import bjc.utils.funcutils.ListUtils;
-import bjc.utils.gen.WeightedRandom;
 
 /**
  * The mode for commands when the game is first started
@@ -76,8 +77,8 @@ public class InitialCommandMode {
 	 */
 	public static ICommandMode createMode(Consumer<String> normalOutput,
 			Consumer<String> errorOutput) {
-		GenericCommandMode mode =
-				new GenericCommandMode(normalOutput, errorOutput);
+		GenericCommandMode mode = new GenericCommandMode(normalOutput,
+				errorOutput);
 
 		mode.addCommandHandler("stub-start",
 				buildStubStartCommand(normalOutput, errorOutput, mode));
@@ -107,14 +108,14 @@ public class InitialCommandMode {
 
 		ArchetypeStub passageStub = new ArchetypeStub(passageDescriber);
 
-		RoomArchetypeState doorBuilder =
-				new RoomArchetypeState(null, archetypeMap);
+		RoomArchetypeState doorBuilder = new RoomArchetypeState(null,
+				archetypeMap);
 
 		doorBuilder.addReference("passage", 2);
 		doorBuilder.addReference("chamber", 1);
 
-		RoomArchetypeState stairBuilder =
-				new RoomArchetypeState(null, archetypeMap);
+		RoomArchetypeState stairBuilder = new RoomArchetypeState(null,
+				archetypeMap);
 
 		stairBuilder.addReference("chamber", 2);
 		stairBuilder.addReference("passage", 1);
@@ -140,8 +141,8 @@ public class InitialCommandMode {
 	}
 
 	private static IFunctionalList<String> loadRandomNames() {
-		Path namePath =
-				dataDir.resolve("names").resolve("player-names.txt");
+		Path namePath = dataDir.resolve("names")
+				.resolve("player-names.txt");
 
 		try {
 			IFunctionalList<String> names = new FunctionalList<>();
@@ -173,21 +174,21 @@ public class InitialCommandMode {
 	private static ICommandMode startNavigationMode(
 			Consumer<String> normalOutput, Consumer<String> errorOutput,
 			ICommandMode returnTo) {
-		IDungeon dungeon =
-				GeneratorInitializer.createGenerator(layoutDataDir);
+		IDungeon dungeon = GeneratorInitializer
+				.createGenerator(layoutDataDir);
 
 		NavigatorCore navCore = new NavigatorCore(dungeon.buildDungeon());
 
-		IHolder<EntityPlayer> player =
-				new Lazy<>(EntityPlayer.makeDefaultPlayer());
+		IHolder<EntityPlayer> player = new Lazy<>(
+				EntityPlayer.makeDefaultPlayer());
 
 		ICommandMode navMode = NavigatorCommandMode.createMode(
 				normalOutput, errorOutput, navCore, player, returnTo);
 
 		IFunctionalList<String> randomNames = loadRandomNames();
 
-		WeightedRandom<Supplier<String>> nameGenerator =
-				new WeightedRandom<>(new Random());
+		WeightedRandom<Supplier<String>> nameGenerator = new WeightedRandom<>(
+				new Random());
 
 		nameGenerator.addProbability(1, () -> {
 			return "<INSERT NAME HERE>";
@@ -199,11 +200,11 @@ public class InitialCommandMode {
 			return randomNames.randItem(rnd::nextInt);
 		});
 
-		CharacterCreationMode createMode =
-				new CharacterCreationMode(normalOutput, errorOutput,
-						navMode, player, (normalOutpt) -> {
-							printInitialText(normalOutpt, navCore);
-						}, nameGenerator);
+		CharacterCreationMode createMode = new CharacterCreationMode(
+				normalOutput, errorOutput, navMode, player,
+				(normalOutpt) -> {
+					printInitialText(normalOutpt, navCore);
+				}, nameGenerator);
 
 		return createMode;
 	}
@@ -223,16 +224,16 @@ public class InitialCommandMode {
 			printInitialText(normalOutput, navCore);
 		};
 
-		IHolder<EntityPlayer> player =
-				new Lazy<>(EntityPlayer.makeDefaultPlayer());
+		IHolder<EntityPlayer> player = new Lazy<>(
+				EntityPlayer.makeDefaultPlayer());
 
 		ICommandMode navMode = NavigatorCommandMode.createMode(
 				normalOutput, errorOutput, navCore, player, returnTo);
 
 		IFunctionalList<String> randomNames = loadRandomNames();
 
-		WeightedRandom<Supplier<String>> nameGenerator =
-				new WeightedRandom<>(new Random());
+		WeightedRandom<Supplier<String>> nameGenerator = new WeightedRandom<>(
+				new Random());
 
 		nameGenerator.addProbability(1, () -> {
 			return "<INSERT NAME HERE>";
@@ -248,9 +249,9 @@ public class InitialCommandMode {
 			return randomNames.randItem(rnd::nextInt);
 		});
 
-		CharacterCreationMode createMode =
-				new CharacterCreationMode(normalOutput, errorOutput,
-						navMode, player, initialOutput, nameGenerator);
+		CharacterCreationMode createMode = new CharacterCreationMode(
+				normalOutput, errorOutput, navMode, player, initialOutput,
+				nameGenerator);
 
 		return createMode;
 	}

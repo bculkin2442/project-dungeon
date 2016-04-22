@@ -8,11 +8,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import bac.crawler.api.IRoomArchetype;
 import bjc.utils.data.IPair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
 import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;
+
+import bac.crawler.api.IRoomArchetype;
 
 /**
  * Parses room archetypes from a file
@@ -33,8 +34,8 @@ public class RoomArchetypeFileParser {
 
 		reader.addPragma("containing-directory",
 				(tokenizer, currentState) -> {
-					String path =
-							ListUtils.collapseTokens(tokenizer.toList());
+					String path = ListUtils
+							.collapseTokens(tokenizer.toList());
 
 					currentState
 							.setContainingDirectory(Paths.get(path, ""));
@@ -42,8 +43,8 @@ public class RoomArchetypeFileParser {
 
 		reader.addPragma("component-description",
 				(tokenizer, currentState) -> {
-					String path =
-							ListUtils.collapseTokens(tokenizer.toList());
+					String path = ListUtils
+							.collapseTokens(tokenizer.toList());
 
 					currentState
 							.setComponentDescription(Paths.get(path, ""));
@@ -109,8 +110,8 @@ public class RoomArchetypeFileParser {
 			throws FileNotFoundException {
 		FileInputStream inputStream = new FileInputStream(inputFile);
 
-		RoomArchetypeState initialState =
-				new RoomArchetypeState(currentDir, archetypes);
+		RoomArchetypeState initialState = new RoomArchetypeState(
+				currentDir, archetypes);
 
 		IRoomArchetype readArchetype = reader
 				.fromStream(inputStream, initialState).getArchetype();

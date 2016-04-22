@@ -65,8 +65,8 @@ public class ExitTypeDescriber implements IDescriber {
 	 * @param stairExitDescriber
 	 *            The describer to use for stairs
 	 */
-	public static void
-			setStairExitDescriber(IDescriber stairExitDescriber) {
+	public static void setStairExitDescriber(
+			IDescriber stairExitDescriber) {
 		ExitTypeDescriber.stairDescriber = stairExitDescriber;
 	}
 

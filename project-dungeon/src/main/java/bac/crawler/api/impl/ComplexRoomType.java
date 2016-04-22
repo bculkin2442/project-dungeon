@@ -2,16 +2,17 @@ package bac.crawler.api.impl;
 
 import java.util.Random;
 
-import bac.crawler.api.IDescriber;
-import bac.crawler.api.impl.parsers.ExitTypeDescriber;
-import bac.crawler.api.util.ExitDesc;
-import bac.crawler.api.util.ExitType;
-import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.ComponentDescription;
 import bjc.utils.funcdata.FunctionalMap;
 import bjc.utils.funcdata.IFunctionalList;
 import bjc.utils.funcdata.IFunctionalMap;
 import bjc.utils.gen.WeightedRandom;
+
+import bac.crawler.api.IDescriber;
+import bac.crawler.api.impl.parsers.ExitTypeDescriber;
+import bac.crawler.api.util.ExitDesc;
+import bac.crawler.api.util.ExitType;
+import bac.crawler.api.util.RelativeDirection;
 
 /**
  * A room type where the exits change whenever you ask what exits are
@@ -87,8 +88,7 @@ public class ComplexRoomType extends GenericRoomType {
 	}
 
 	private IFunctionalMap<RelativeDirection, ExitDesc> generateExits() {
-		IFunctionalMap<RelativeDirection, ExitDesc> newExits =
-				new FunctionalMap<>();
+		IFunctionalMap<RelativeDirection, ExitDesc> newExits = new FunctionalMap<>();
 
 		int numExits;
 

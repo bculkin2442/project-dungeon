@@ -3,10 +3,10 @@ package bac.crawler.api.util;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang3.text.WordUtils;
-
 import bjc.utils.funcdata.FunctionalList;
 import bjc.utils.funcdata.IFunctionalList;
+
+import org.apache.commons.lang3.text.WordUtils;
 
 /**
  * A set of cardinal directions

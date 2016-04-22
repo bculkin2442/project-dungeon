@@ -1,6 +1,8 @@
 package bac.crawler.api.util;
 
-import static bac.crawler.api.util.Directionality.*;
+import static bac.crawler.api.util.Directionality.BIDIRECTIONAL;
+import static bac.crawler.api.util.Directionality.BOTH;
+import static bac.crawler.api.util.Directionality.UNIDIRECTIONAL;
 
 /**
  * Represents the possible types of exits from a room

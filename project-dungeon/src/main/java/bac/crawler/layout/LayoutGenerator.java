@@ -3,6 +3,12 @@ package bac.crawler.layout;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import bjc.utils.components.ComponentDescription;
+import bjc.utils.data.IHolder;
+import bjc.utils.data.Identity;
+import bjc.utils.funcdata.FunctionalMap;
+import bjc.utils.funcdata.IFunctionalMap;
+
 import bac.crawler.api.IDescriber;
 import bac.crawler.api.IDungeon;
 import bac.crawler.api.IExit;
@@ -15,11 +21,6 @@ import bac.crawler.api.util.Direction;
 import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.ExitType;
 import bac.crawler.api.util.RelativeDirection;
-import bjc.utils.components.ComponentDescription;
-import bjc.utils.data.IHolder;
-import bjc.utils.data.Identity;
-import bjc.utils.funcdata.FunctionalMap;
-import bjc.utils.funcdata.IFunctionalMap;
 
 /**
  * Core generator class for basic dungeon layout
@@ -38,10 +39,9 @@ public class LayoutGenerator implements IDungeon {
 
 		int version = 1;
 
-		String description =
-				"A simple table-based dungeon generator using tables from"
-						+ " D&D's Fifth-edition DMG to create rooms. Works on a lazy"
-						+ " basis, as only explored rooms are generated";
+		String description = "A simple table-based dungeon generator using tables from"
+				+ " D&D's Fifth-edition DMG to create rooms. Works on a lazy"
+				+ " basis, as only explored rooms are generated";
 
 		cdesc = new ComponentDescription(name, author, description,
 				version);
@@ -109,8 +109,8 @@ public class LayoutGenerator implements IDungeon {
 				.toIterable()) {
 			IHolder<Direction> absoluteDir = new Identity<>(
 					relativeDirection.makeAbsolute(entranceDirection));
-			ExitDesc exitDescription =
-					type.getExitInDirection(relativeDirection);
+			ExitDesc exitDescription = type
+					.getExitInDirection(relativeDirection);
 
 			IHolder<Supplier<IRoom>> roomSupplier = new Identity<>();
 
@@ -168,8 +168,8 @@ public class LayoutGenerator implements IDungeon {
 				.toIterable()) {
 			IHolder<Direction> absoluteDir = new Identity<>(
 					relativeDirection.makeAbsolute(entrance));
-			ExitDesc exitDescription =
-					type.getExitInDirection(relativeDirection);
+			ExitDesc exitDescription = type
+					.getExitInDirection(relativeDirection);
 
 			IHolder<Supplier<IRoom>> roomSupplier = new Identity<>();
 

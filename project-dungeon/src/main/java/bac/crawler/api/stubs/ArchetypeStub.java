@@ -1,10 +1,11 @@
 package bac.crawler.api.stubs;
 
+import bjc.utils.components.ComponentDescription;
+
 import bac.crawler.api.IDescriber;
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.IRoomType;
 import bac.crawler.api.impl.ComplexRoomType;
-import bjc.utils.components.ComponentDescription;
 
 /**
  * Stub implementation of room archetype for testing

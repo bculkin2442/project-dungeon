@@ -3,12 +3,13 @@ package bac.crawler.commands;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import bac.crawler.combat.ActionType;
-import bac.crawler.combat.EntityPlayer;
-import bac.crawler.combat.EntityStats;
 import bjc.utils.cli.ICommandMode;
 import bjc.utils.data.IHolder;
 import bjc.utils.gen.WeightedRandom;
+
+import bac.crawler.combat.ActionType;
+import bac.crawler.combat.EntityPlayer;
+import bac.crawler.combat.EntityStats;
 
 /**
  * A command mode for creating a character

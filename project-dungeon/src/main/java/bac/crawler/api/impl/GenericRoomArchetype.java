@@ -1,10 +1,12 @@
 package bac.crawler.api.impl;
 
 import java.util.function.Function;
-import bac.crawler.api.IRoomArchetype;
-import bac.crawler.api.IRoomType;
+
 import bjc.utils.components.ComponentDescription;
 import bjc.utils.gen.WeightedRandom;
+
+import bac.crawler.api.IRoomArchetype;
+import bac.crawler.api.IRoomType;
 
 /**
  * A generic implementation of a room archetype

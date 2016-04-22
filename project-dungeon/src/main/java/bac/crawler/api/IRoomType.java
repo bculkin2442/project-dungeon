@@ -1,9 +1,10 @@
 package bac.crawler.api;
 
-import bac.crawler.api.util.ExitDesc;
-import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.components.IDescribedComponent;
 import bjc.utils.funcdata.IFunctionalList;
+
+import bac.crawler.api.util.ExitDesc;
+import bac.crawler.api.util.RelativeDirection;
 
 /**
  * Represents a type of room.

@@ -1,10 +1,11 @@
 package bac.crawler.api.impl;
 
+import bjc.utils.funcdata.IFunctionalList;
+import bjc.utils.funcdata.IFunctionalMap;
+
 import bac.crawler.api.IExit;
 import bac.crawler.api.IRoom;
 import bac.crawler.api.util.Direction;
-import bjc.utils.funcdata.IFunctionalList;
-import bjc.utils.funcdata.IFunctionalMap;
 
 /**
  * A simple implementation of {@link IRoom}

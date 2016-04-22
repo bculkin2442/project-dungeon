@@ -1,6 +1,7 @@
 package bac.crawler.combat;
 
-import static bjc.dicelang.PolyhedralDice.*;
+import static bjc.dicelang.PolyhedralDice.d20;
+import static bjc.dicelang.PolyhedralDice.d6;
 
 import java.util.Random;
 import java.util.function.Consumer;

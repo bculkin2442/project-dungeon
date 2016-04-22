@@ -2,12 +2,13 @@ package bac.crawler.api.impl.parsers;
 
 import java.io.InputStream;
 
-import bac.crawler.api.IDescriber;
-import bac.crawler.api.impl.GenericDescriber;
 import bjc.utils.data.IPair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
 import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;
+
+import bac.crawler.api.IDescriber;
+import bac.crawler.api.impl.GenericDescriber;
 
 /**
  * Create implementations of {@link IDescriber} from text streams
@@ -43,8 +44,8 @@ public class DescriberFileParser {
 	private static void continueDescription(
 			FunctionalStringTokenizer tokenizer,
 			DescriberState currentState) {
-		String descriptionPart =
-				ListUtils.collapseTokens(tokenizer.toList(), " ");
+		String descriptionPart = ListUtils
+				.collapseTokens(tokenizer.toList(), " ");
 
 		currentState.continueDesc(descriptionPart);
 	}
@@ -67,8 +68,8 @@ public class DescriberFileParser {
 	 * @return A describer generated from the provided stream
 	 */
 	public static GenericDescriber parseFile(InputStream inputSource) {
-		DescriberState readState =
-				reader.fromStream(inputSource, new DescriberState());
+		DescriberState readState = reader.fromStream(inputSource,
+				new DescriberState());
 
 		return new GenericDescriber(readState.getResults());
 	}
@@ -89,8 +90,8 @@ public class DescriberFileParser {
 
 		int prob = Integer.parseInt(probabilityString);
 
-		String descriptionPart =
-				ListUtils.collapseTokens(tokenizer.toList(), " ");
+		String descriptionPart = ListUtils
+				.collapseTokens(tokenizer.toList(), " ");
 
 		initPair.getRight().startDesc(prob, descriptionPart);
 	}

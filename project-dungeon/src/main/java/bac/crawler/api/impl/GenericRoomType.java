@@ -1,12 +1,13 @@
 package bac.crawler.api.impl;
 
+import bjc.utils.components.ComponentDescription;
+import bjc.utils.funcdata.IFunctionalList;
+import bjc.utils.funcdata.IFunctionalMap;
+
 import bac.crawler.api.IDescriber;
 import bac.crawler.api.IRoomType;
 import bac.crawler.api.util.ExitDesc;
 import bac.crawler.api.util.RelativeDirection;
-import bjc.utils.components.ComponentDescription;
-import bjc.utils.funcdata.IFunctionalList;
-import bjc.utils.funcdata.IFunctionalMap;
 
 /**
  * A generic implementation of a room type

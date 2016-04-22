@@ -6,14 +6,15 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import bac.crawler.api.IRoomType;
-import bac.crawler.api.util.ExitDesc;
-import bac.crawler.api.util.ExitType;
-import bac.crawler.api.util.RelativeDirection;
 import bjc.utils.data.IPair;
 import bjc.utils.funcdata.FunctionalStringTokenizer;
 import bjc.utils.funcutils.ListUtils;
 import bjc.utils.parserutils.RuleBasedConfigReader;
+
+import bac.crawler.api.IRoomType;
+import bac.crawler.api.util.ExitDesc;
+import bac.crawler.api.util.ExitType;
+import bac.crawler.api.util.RelativeDirection;
 
 /**
  * Parse a room type from a file
@@ -33,8 +34,8 @@ public class RoomTypeFileParser {
 
 		reader.addPragma("component-description",
 				(tokenizer, currentState) -> {
-					String path =
-							ListUtils.collapseTokens(tokenizer.toList());
+					String path = ListUtils
+							.collapseTokens(tokenizer.toList());
 
 					currentState
 							.setComponentDescription(Paths.get(path, ""));
@@ -46,8 +47,8 @@ public class RoomTypeFileParser {
 		initPair.doWith((initialString, currentState) -> {
 			switch (initialString) {
 				case "describer":
-					String describerPath =
-							ListUtils.collapseTokens(tokenizer.toList());
+					String describerPath = ListUtils
+							.collapseTokens(tokenizer.toList());
 
 					currentState
 							.setDescriber(Paths.get(describerPath, ""));
@@ -60,8 +61,8 @@ public class RoomTypeFileParser {
 
 	private static void parseExit(FunctionalStringTokenizer tokenizer,
 			RoomTypeState currentState) {
-		RelativeDirection relativeDir =
-				RelativeDirection.properValueOf(tokenizer.nextToken());
+		RelativeDirection relativeDir = RelativeDirection
+				.properValueOf(tokenizer.nextToken());
 		ExitType exType = ExitType.properValueOf(tokenizer.nextToken());
 
 		currentState.addExit(relativeDir,
@@ -81,18 +82,18 @@ public class RoomTypeFileParser {
 		try {
 			RoomTypeState initState = new RoomTypeState(currentDirectory);
 
-			FileInputStream stream =
-					new FileInputStream(inputFile.toFile());
+			FileInputStream stream = new FileInputStream(
+					inputFile.toFile());
 
-			IRoomType type =
-					reader.fromStream(stream, initState).toRoomType();
+			IRoomType type = reader.fromStream(stream, initState)
+					.toRoomType();
 
 			stream.close();
 
 			return type;
 		} catch (FileNotFoundException fnfex) {
-			IllegalStateException isex =
-					new IllegalStateException("Could not read room type");
+			IllegalStateException isex = new IllegalStateException(
+					"Could not read room type");
 
 			isex.initCause(fnfex);
 

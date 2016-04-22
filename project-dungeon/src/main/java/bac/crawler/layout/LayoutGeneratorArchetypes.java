@@ -1,8 +1,9 @@
 package bac.crawler.layout;
 
-import bac.crawler.api.IRoomArchetype;
 import bjc.utils.funcdata.IFunctionalMap;
 import bjc.utils.funcutils.IBuilder;
+
+import bac.crawler.api.IRoomArchetype;
 
 /**
  * Parameter object for storing the archetypes needed by the layout
@@ -131,13 +132,12 @@ public class LayoutGeneratorArchetypes {
 	 */
 	public static LayoutGeneratorArchetypes fromRepository(
 			IFunctionalMap<String, IRoomArchetype> archetypeRepo) {
-		LayoutGeneratorArchetypes generatorArchetypes =
-				new LayoutGeneratorArchetypes(
-						archetypeRepo.get("init-rooms.rarch"),
-						archetypeRepo.get("doors.rarch"),
-						archetypeRepo.get("passages.rarch"),
-						archetypeRepo.get("stairs.rarch"),
-						archetypeRepo.get("chambers.rarch"));
+		LayoutGeneratorArchetypes generatorArchetypes = new LayoutGeneratorArchetypes(
+				archetypeRepo.get("init-rooms.rarch"),
+				archetypeRepo.get("doors.rarch"),
+				archetypeRepo.get("passages.rarch"),
+				archetypeRepo.get("stairs.rarch"),
+				archetypeRepo.get("chambers.rarch"));
 
 		return generatorArchetypes;
 	}

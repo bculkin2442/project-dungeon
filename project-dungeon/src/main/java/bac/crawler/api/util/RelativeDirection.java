@@ -97,15 +97,16 @@ public enum RelativeDirection {
 							+ numDirections);
 		}
 
-		IFunctionalList<RelativeDirection> relativeDirs =
-				new FunctionalList<>(values());
+		IFunctionalList<RelativeDirection> relativeDirs = new FunctionalList<>(
+				values());
 
 		if (ignoreBackwards) {
 			relativeDirs.removeMatching(BACKWARD);
 		}
 
 		for (int i = 0; i <= maxNDirections - numDirections; i++) {
-			RelativeDirection relativeDir = relativeDirs.randItem(RNG::nextInt);
+			RelativeDirection relativeDir = relativeDirs
+					.randItem(RNG::nextInt);
 
 			relativeDirs.removeMatching(relativeDir);
 		}

@@ -45,8 +45,8 @@ public class DungeonCrawler {
 	 *            The frame to build a menu for
 	 * @return A menubar for the specified frame
 	 */
-	private static JMenuBar
-			createMenubar(DragonConsoleFrame consoleFrame) {
+	private static JMenuBar createMenubar(
+			DragonConsoleFrame consoleFrame) {
 		JMenuBar menuBar = new JMenuBar();
 
 		DragonConsole console = consoleFrame.getConsole();

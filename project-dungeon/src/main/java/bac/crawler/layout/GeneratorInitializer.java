@@ -8,13 +8,14 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import bjc.utils.components.FileComponentRepository;
+
 import bac.crawler.api.IDungeon;
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.impl.GenericDescriber;
 import bac.crawler.api.impl.parsers.DescriberFileParser;
 import bac.crawler.api.impl.parsers.ExitTypeDescriber;
 import bac.crawler.api.impl.parsers.RoomArchetypeFileParser;
-import bjc.utils.components.FileComponentRepository;
 
 /**
  * Utility class for initializing the core layout engine
@@ -36,18 +37,16 @@ public class GeneratorInitializer {
 
 		Map<String, IRoomArchetype> env = new HashMap<>();
 
-		FileComponentRepository<IRoomArchetype> archetypeRepo =
-				new FileComponentRepository<>(dataDir.toFile(),
-						(inputPath) -> {
-							return RoomArchetypeFileParser
-									.parseFromStream(inputPath, env);
-						});
+		FileComponentRepository<IRoomArchetype> archetypeRepo = new FileComponentRepository<>(
+				dataDir.toFile(), (inputPath) -> {
+					return RoomArchetypeFileParser
+							.parseFromStream(inputPath, env);
+				});
 
 		archetypeRepo.getComponents().forEach(env::put);
 
-		LayoutGeneratorArchetypes chosenArchetypes =
-				LayoutGeneratorArchetypes
-						.fromRepository(archetypeRepo.getComponents());
+		LayoutGeneratorArchetypes chosenArchetypes = LayoutGeneratorArchetypes
+				.fromRepository(archetypeRepo.getComponents());
 
 		LayoutGenerator lgen = new LayoutGenerator(chosenArchetypes);
 
@@ -77,15 +76,15 @@ public class GeneratorInitializer {
 		}
 	}
 
-	private static GenericDescriber
-			readDescriberFromPath(Path describerPaths, String path)
-					throws FileNotFoundException {
+	private static GenericDescriber readDescriberFromPath(
+			Path describerPaths, String path)
+			throws FileNotFoundException {
 		File inputSource = describerPaths.resolve(path).toFile();
 
 		FileInputStream inputStream = new FileInputStream(inputSource);
 
-		GenericDescriber describer =
-				DescriberFileParser.parseFile(inputStream);
+		GenericDescriber describer = DescriberFileParser
+				.parseFile(inputStream);
 
 		try {
 			inputStream.close();

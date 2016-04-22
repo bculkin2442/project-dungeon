@@ -1,7 +1,8 @@
 package bac.crawler.api.impl;
 
-import bac.crawler.api.IDescriber;
 import bjc.utils.gen.WeightedRandom;
+
+import bac.crawler.api.IDescriber;
 
 /**
  * Generic implementation of a {@link WeightedRandom} based describer
