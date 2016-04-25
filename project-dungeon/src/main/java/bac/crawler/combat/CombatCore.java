@@ -81,6 +81,11 @@ public class CombatCore {
 		int defenderRoll = doAttackRoll(defender, defenderAction,
 				defenderTypeMod);
 
+		System.err.println("TRACE: " + attacker.toString() + " rolled "
+				+ attackerRoll);
+		System.err.println("TRACE: " + defender.toString() + " rolled "
+				+ defenderRoll);
+
 		if (attackerRoll > defenderRoll) {
 			normalOutput.accept(
 					attacker.getName() + " hit the " + defender.getName());
@@ -98,7 +103,7 @@ public class CombatCore {
 			EntityLiving defender) {
 		int damage = d6().roll();
 
-		normalOutput.accept(attacker.getName() + " did " + damage
+		normalOutput.accept("\n" + attacker.getName() + " did " + damage
 				+ " damage to " + defender);
 
 		if (defender.takeDamage(new DamageCount(damage))) {
@@ -131,6 +136,8 @@ public class CombatCore {
 		ActionType enemyAction = EnumUtils.getRandomValue(ActionType.class,
 				new Random());
 
+		System.err.println("TRACE: enemy performs " + enemyAction);
+
 		if (doCombatAction(player, enemy, playerAction,
 				enemyAction) == CombatResult.CONTINUE) {
 			return CombatResult.CONTINUE;
@@ -143,6 +150,8 @@ public class CombatCore {
 		// For now, let the AI be stupid
 		ActionType enemyAction = EnumUtils.getRandomValue(ActionType.class,
 				new Random());
+
+		System.err.println("TRACE: enemy performs " + enemyAction);
 
 		if (doCombatAction(enemy, player, enemyAction,
 				playerAction) == CombatResult.CONTINUE) {

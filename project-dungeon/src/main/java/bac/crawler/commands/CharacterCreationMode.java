@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import bjc.utils.cli.ICommandMode;
 import bjc.utils.data.IHolder;
+import bjc.utils.funcutils.StringUtils;
 import bjc.utils.gen.WeightedRandom;
 
 import bac.crawler.combat.ActionType;
@@ -244,10 +245,14 @@ public class CharacterCreationMode implements ICommandMode {
 	}
 
 	private void handleName(String command, String[] args) {
-		if (command == "") {
+		if (command == "" || StringUtils.containsOnly(command, "\\w+")) {
 			playerName = defaultNames.generateValue().get();
 		} else {
-			playerName = command + " " + String.join(" ", args);
+			if (args != null) {
+				playerName = command + " " + String.join(" ", args);
+			} else {
+				playerName = command;
+			}
 		}
 
 		currentStage = currentStage.nextStage();

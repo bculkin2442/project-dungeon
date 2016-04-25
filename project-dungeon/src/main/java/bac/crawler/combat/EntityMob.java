@@ -20,6 +20,8 @@ public class EntityMob extends EntityLiving {
 	 */
 	public EntityMob(EntityStats stats, String name) {
 		super(stats, name);
+
+		currentHealth = stats.getConstitution() * 2;
 	}
 
 	@Override
@@ -32,5 +34,10 @@ public class EntityMob extends EntityLiving {
 		currentHealth -= damage.getGeneralAmount();
 
 		return currentHealth > 0;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

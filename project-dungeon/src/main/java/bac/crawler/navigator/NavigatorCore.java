@@ -5,6 +5,8 @@ import bjc.utils.funcdata.IFunctionalList;
 import bac.crawler.api.IExit;
 import bac.crawler.api.IRoom;
 import bac.crawler.api.util.Direction;
+import bac.crawler.api.util.RoomProperties;
+import bac.crawler.combat.EncounterStatus;
 
 /**
  * Core system of navigation engine
@@ -17,6 +19,8 @@ public class NavigatorCore {
 
 	private int		exitCounter;
 
+	private int		encounterCounter;
+
 	/**
 	 * Create a new navigator core, starting in the provided room
 	 * 
@@ -24,8 +28,8 @@ public class NavigatorCore {
 	 *            The room for the navigator to start in
 	 */
 	public NavigatorCore(IRoom initialRoom) {
-		// FIXME pick a more appropriate value for this
-		exitCounter = 50;
+		exitCounter = 500;
+		encounterCounter = 50;
 
 		currentRoom = initialRoom;
 		currentRoom.visit();
@@ -129,13 +133,24 @@ public class NavigatorCore {
 	 *         informative string if you didn't
 	 */
 	public String navigateInDirection(Direction dir) {
+		System.err.println("TRACE: navigating in direction " + dir
+				+ "\tExit counter: " + exitCounter
+				+ "\tEncounter Counter: " + encounterCounter);
+
 		IExit exit = currentRoom.getExitInDirection(dir);
 
 		if (exit != null) {
 			currentRoom = exit.getDestination();
 
 			if (exitCounter > 0) {
-				exitCounter -= Math.random() * 10;
+				exitCounter -= Math.random() * 20;
+			}
+
+			if (encounterCounter > 0) {
+				encounterCounter -= Math.random() * 20;
+			} else {
+				encounterCounter = 50;
+				triggerEncounter();
 			}
 
 			return "";
@@ -144,9 +159,32 @@ public class NavigatorCore {
 		return "You walk into the wall. Maybe try going a different direction?";
 	}
 
+	private void triggerEncounter() {
+		currentRoom.setProperty(RoomProperties.ENCOUNTER, null);
+	}
+
+	/**
+	 * Get the encounter status of this navigator
+	 * 
+	 * @return The encounter status of this navigator
+	 */
+	public EncounterStatus getEncounterStatus() {
+		if (currentRoom.hasProperty(RoomProperties.ENCOUNTER)) {
+			return EncounterStatus.ACTIVE;
+		}
+
+		return EncounterStatus.NONE;
+	}
+
 	// Debugging command
 	@SuppressWarnings("javadoc")
 	public void setExitChance(int chance) {
 		exitCounter = chance;
+	}
+
+	// Debugging command
+	@SuppressWarnings("javadoc")
+	public void setEncounter() {
+		encounterCounter = 0;
 	}
 }

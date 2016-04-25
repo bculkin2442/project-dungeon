@@ -152,6 +152,9 @@ public class CombatCommandMode implements ICommandMode {
 		buildOffenseHandlers(pendingOffense);
 
 		buildDefendHandlers(pendingDefense);
+		
+		offenseMode = pendingOffense;
+		defenseMode = pendingDefense;
 	}
 
 	@Override

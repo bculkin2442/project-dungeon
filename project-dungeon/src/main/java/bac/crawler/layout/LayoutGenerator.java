@@ -120,7 +120,7 @@ public class LayoutGenerator implements IDungeon {
 			});
 		}
 
-		exits.put(entranceDirection.opposing(),
+		exits.put(entranceDirection,
 				new LazyExit(entranceDescriber::getDescription, () -> {
 					return entranceRoom.getValue();
 				}));

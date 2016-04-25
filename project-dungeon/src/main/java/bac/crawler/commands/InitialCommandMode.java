@@ -14,6 +14,7 @@ import bjc.utils.cli.GenericCommand;
 import bjc.utils.cli.GenericCommandMode;
 import bjc.utils.cli.ICommandMode;
 import bjc.utils.data.IHolder;
+import bjc.utils.data.Identity;
 import bjc.utils.data.Lazy;
 import bjc.utils.funcdata.FunctionalList;
 import bjc.utils.funcdata.IFunctionalList;
@@ -26,6 +27,7 @@ import bac.crawler.api.IRoom;
 import bac.crawler.api.IRoomArchetype;
 import bac.crawler.api.impl.parsers.RoomArchetypeState;
 import bac.crawler.api.stubs.ArchetypeStub;
+import bac.crawler.combat.EnemyGenerator;
 import bac.crawler.combat.EntityPlayer;
 import bac.crawler.layout.GeneratorInitializer;
 import bac.crawler.layout.LayoutGenerator;
@@ -212,6 +214,7 @@ public class InitialCommandMode {
 	private static ICommandMode startStubbedNavigationMode(
 			Consumer<String> normalOutput, Consumer<String> errorOutput,
 			ICommandMode returnTo) {
+		EnemyGenerator.loadNames(dataDir.resolve("names"));
 
 		GeneratorInitializer.loadExitDescribers(layoutDataDir);
 
@@ -224,7 +227,7 @@ public class InitialCommandMode {
 			printInitialText(normalOutput, navCore);
 		};
 
-		IHolder<EntityPlayer> player = new Lazy<>(
+		IHolder<EntityPlayer> player = new Identity<>(
 				EntityPlayer.makeDefaultPlayer());
 
 		ICommandMode navMode = NavigatorCommandMode.createMode(

@@ -31,16 +31,18 @@ public class ComplexRoomType extends GenericRoomType {
 	static {
 		smallExitCount = new WeightedRandom<>(source);
 
+		// Make sure bug in generation doesn't cause issues
 		// smallExitCount.addProbability(5, 0);
-		smallExitCount.addProbability(6, 1);
+		// smallExitCount.addProbability(6, 1);
 		smallExitCount.addProbability(4, 2);
 		smallExitCount.addProbability(3, 3);
 		smallExitCount.addProbability(2, 4);
 
 		largeExitCount = new WeightedRandom<>(source);
 
+		// Make sure bug in generation doesn't cause issues
 		// largeExitCount.addProbability(3, 0);
-		largeExitCount.addProbability(5, 1);
+		// largeExitCount.addProbability(5, 1);
 		largeExitCount.addProbability(5, 2);
 		largeExitCount.addProbability(3, 3);
 		largeExitCount.addProbability(3, 4);
@@ -54,9 +56,9 @@ public class ComplexRoomType extends GenericRoomType {
 		typeChooser.addProbability(1, ExitType.WELL);
 	}
 
-	private boolean							hasEntrance;
+	private boolean	hasEntrance;
 
-	private boolean							isLarge;
+	private boolean	isLarge;
 
 	/**
 	 * Create a new complex room type

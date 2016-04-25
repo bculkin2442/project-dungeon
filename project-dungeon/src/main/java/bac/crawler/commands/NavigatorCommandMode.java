@@ -17,6 +17,10 @@ import bjc.utils.funcutils.ListUtils;
 
 import bac.crawler.StatWindow;
 import bac.crawler.api.util.Direction;
+import bac.crawler.combat.CombatCore;
+import bac.crawler.combat.EncounterStatus;
+import bac.crawler.combat.EnemyGenerator;
+import bac.crawler.combat.EntityLiving;
 import bac.crawler.combat.EntityPlayer;
 import bac.crawler.navigator.NavigatorCore;
 
@@ -60,6 +64,8 @@ public class NavigatorCommandMode {
 			IHolder<EntityPlayer> player, ICommandMode returnMode) {
 		IHolder<StatWindow> windowHolder = new Identity<>();
 
+		EnemyGenerator enemyGen = new EnemyGenerator();
+
 		GenericCommandMode mode = new GenericCommandMode(normalOutput,
 				errorOutput);
 
@@ -68,8 +74,8 @@ public class NavigatorCommandMode {
 		mode.addCommandHandler("look",
 				buildLookCommand(normalOutput, errorOutput, core, mode));
 
-		mode.addCommandHandler("go", handleGoCommand(normalOutput,
-				errorOutput, core, returnMode, mode));
+		mode.addCommandHandler("go", buildGoCommand(normalOutput,
+				errorOutput, core, returnMode, mode, player, enemyGen));
 
 		mode.addCommandAlias("go", "move");
 		mode.addCommandAlias("go", "walk");
@@ -83,6 +89,14 @@ public class NavigatorCommandMode {
 		mode.addCommandHandler("debug-exitChance",
 				handleDebugExitChance(core, mode));
 
+		mode.addCommandHandler("debug-combat",
+				new GenericCommand((args) -> {
+					core.setEncounter();
+					return mode;
+				}, "debug-combat\tDEBUG COMMAND: immediately trigger an encounter"
+						+ " on next navigation",
+						"Immediately triggers an encounter on next navigation"
+								+ ""));
 		mode.addCommandHandler("stats",
 				handleStatsCommand(normalOutput, player, mode));
 
@@ -152,21 +166,22 @@ public class NavigatorCommandMode {
 						+ " (north, south, east, west) plus up and down.");
 	}
 
-	private static GenericCommand handleGoCommand(
+	private static GenericCommand buildGoCommand(
 			Consumer<String> normalOutput, Consumer<String> errorOutput,
-			NavigatorCore core, ICommandMode returnMode,
-			GenericCommandMode mode) {
+			NavigatorCore core, ICommandMode returnMode, ICommandMode mode,
+			IHolder<EntityPlayer> player, EnemyGenerator enemyGen) {
 		return new GenericCommand((args) -> {
-			boolean foundExit = handleMovementCommand(normalOutput,
-					errorOutput, core, args);
+			ICommandMode nextMode = handleMovementCommand(normalOutput,
+					errorOutput, core, args, mode, returnMode,
+					player.getValue(), enemyGen);
 
-			if (foundExit) {
+			if (nextMode == null) {
 				normalOutput.accept(
 						"You have escaped. Congratulations, you win :)");
 				return returnMode;
 			}
 
-			return mode;
+			return nextMode;
 		}, "go (can also use move or walk)\tHead in a given direction",
 				"go will move you in a specified direction"
 						+ " (check 'help directions'). Go is also aliased to move and walk");
@@ -205,9 +220,11 @@ public class NavigatorCommandMode {
 		}
 	}
 
-	private static boolean handleMovementCommand(
+	private static ICommandMode handleMovementCommand(
 			Consumer<String> normalOutput, Consumer<String> errorOutput,
-			NavigatorCore core, String[] args) {
+			NavigatorCore core, String[] args, ICommandMode winMode,
+			ICommandMode loseMode, EntityPlayer player,
+			EnemyGenerator enemyGen) {
 		if (args == null) {
 			normalOutput.accept("Where?\n");
 		} else {
@@ -215,7 +232,7 @@ public class NavigatorCommandMode {
 				Direction dir = Direction.properValueOf(args[0]);
 
 				if (dir == Direction.UP && core.isExit()) {
-					return true;
+					return null;
 				}
 
 				normalOutput.accept(
@@ -225,9 +242,15 @@ public class NavigatorCommandMode {
 
 				if (!navigationResult.equals("")) {
 					normalOutput.accept(navigationResult);
-				} else {
-					describeCurrentRoom(normalOutput, core);
+
+					return doEncounter(normalOutput, errorOutput, core,
+							winMode, loseMode, player, enemyGen);
 				}
+
+				describeCurrentRoom(normalOutput, core);
+
+				return doEncounter(normalOutput, errorOutput, core,
+						winMode, loseMode, player, enemyGen);
 			} catch (@SuppressWarnings("unused") IllegalArgumentException iaex) {
 				// We don't care about specifics
 				errorOutput.accept(
@@ -239,7 +262,35 @@ public class NavigatorCommandMode {
 			}
 		}
 
-		return false;
+		return winMode;
+	}
+
+	private static ICommandMode doEncounter(Consumer<String> normalOutput,
+			Consumer<String> errorOutput, NavigatorCore core,
+			ICommandMode winMode, ICommandMode loseMode,
+			EntityPlayer player, EnemyGenerator enemyGen) {
+		if (core.getEncounterStatus() == EncounterStatus.ACTIVE) {
+			EntityLiving enemy = enemyGen.get();
+
+			CombatCore encounterCore = new CombatCore(player, enemy,
+					normalOutput, errorOutput);
+
+			normalOutput.accept("\nYou've encountered " + enemy.getName()
+					+ ". Prepare to fight!");
+
+			if (encounterCore.isPlayerAttacking()) {
+				normalOutput.accept("\nYou're attacking first.");
+			} else {
+				normalOutput.accept("\nYou're defending first.");
+			}
+			
+			ICommandMode combatMode = new CombatCommandMode(normalOutput,
+					errorOutput, encounterCore, winMode, loseMode);
+
+			return combatMode;
+		}
+
+		return winMode;
 	}
 
 	private static GenericCommand handleStatsCommand(

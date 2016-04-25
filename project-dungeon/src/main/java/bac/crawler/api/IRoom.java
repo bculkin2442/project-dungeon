@@ -3,6 +3,7 @@ package bac.crawler.api;
 import bjc.utils.funcdata.IFunctionalList;
 
 import bac.crawler.api.util.Direction;
+import bac.crawler.api.util.RoomProperties;
 
 /**
  * Represents a room in a dungeon, the fundamental building block.
@@ -48,4 +49,32 @@ public interface IRoom {
 	 * Mark a room as being visited
 	 */
 	public void visit();
+
+	/**
+	 * Get a property previously set on this room
+	 * 
+	 * @param key
+	 *            The name of the property to look up
+	 * @return The value bound to the property, or null if no key exists
+	 */
+	Object getProperty(RoomProperties key);
+
+	/**
+	 * Set a property on this room
+	 * 
+	 * @param key
+	 *            The name of the property to set
+	 * @param value
+	 *            The value to bind to the property
+	 */
+	void setProperty(RoomProperties key, Object value);
+
+	/**
+	 * Check if this room has a given property
+	 * 
+	 * @param key
+	 *            The key to check for
+	 * @return Whether or not this room has a value for the property
+	 */
+	boolean hasProperty(RoomProperties key);
 }
